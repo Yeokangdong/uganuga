@@ -83,6 +83,19 @@ export class Level {
     for(const[col,top,bottom]of map.ladders??[])for(let r=top;r<bottom;r++)for(let c=col;c<col+1;c++){
       if(c>=0&&c<this.cols&&r>=0&&r<this.rows)this.ladders[r*this.cols+c]=1
     }
+    // A ladder may overlay a cliff face, but its foot must not continue into
+    // the solid ground below an exposed landing. Share the corrected end
+    // between rendering and climbing, rather than only hiding the artwork.
+    for(let c=0;c<this.cols;c++)for(let r=0;r<this.rows;){
+      if(!this.isLadder(c,r)){r++;continue}
+      const top=r
+      while(this.isLadder(c,r))r++
+      const end=r
+      let floor=end
+      while(floor>top&&this.isSolidTile(this.tile(c,floor-1)))floor--
+      if(floor>top&&floor<end&&this.tile(c,floor-1)===T.Empty)
+        for(let y=floor;y<end;y++)this.ladders[y*this.cols+c]=0
+    }
     // One fish per connected jungle pool, never in lava or an ice field.
     let poolGuard=false
     if(!this.def.cave&&!this.def.aquatic&&this.def.theme.n==='')for(let r=0;r<this.rows;r++)for(let c=0;c<this.cols;){
@@ -339,10 +352,16 @@ export class Level {
     }
     // Actual ladder span, shared with physics; one narrow shaft per connected run.
     for(let r=0;r<this.rows;r++)for(let c=0;c<this.cols;c++){
-      if(!this.isLadderTop(c,r)||this.isLadder(c-1,r))continue
-      let w=1,bottom=r;while(this.isLadder(c+w,r))w++;while(this.isLadder(c,bottom))bottom++
-      const x=(c+w/2)*TILE,top=r*TILE-1,end=bottom*TILE+1
+      if(!this.isLadderTop(c,r))continue
+      let w=1,bottom=r;while(this.isLadder(c,bottom))bottom++
+      while(this.isLadderTop(c+w,r)){
+        let nextBottom=r;while(this.isLadder(c+w,nextBottom))nextBottom++
+        if(nextBottom!==bottom)break
+        w++
+      }
+      const x=(c+w/2)*TILE,top=r*TILE-1,end=bottom*TILE
       ladder(g,theme,x,top,end)
+      c+=w-1
     }
     if(this.def.aquatic){
       g.save();g.globalCompositeOperation='source-atop';g.fillStyle='rgba(26,128,147,.28)';g.fillRect(0,0,this.width,this.height);g.restore()
