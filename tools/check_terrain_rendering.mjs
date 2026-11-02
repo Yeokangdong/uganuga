@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import {build} from 'esbuild'
+process.on('uncaughtException',e=>{console.error(e.message);process.exit(1)})
 const root=new URL('../',import.meta.url).pathname.replace(/^\/(\w:)/,'$1')
 const b=await build({stdin:{contents:"export {Level} from './src/game/level.ts';export {STAGES} from './src/game/stages.ts';export {art} from './src/game/art.ts';export * from './src/game/paintedMap.ts'",resolveDir:root},bundle:true,platform:'node',format:'esm',write:false,define:{'import.meta.env.BASE_URL':JSON.stringify('/'),'import.meta.env.DEV':'false'}})
 const {Level,STAGES,art,ladder,terrainSupport,terrainDeck}=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'))
@@ -31,8 +32,8 @@ for(const pit of [false,true]){
  const stepped=Array.from({length:14},(_,r)=>Array.from({length:16},(_,c)=>
    r===3&&c>=4&&c<=9?'=':c>=4&&c<=6&&r>=8?'#':c>=7&&c<=9&&r>=10&&!(pit&&c===9)?'#':'.').join(''))
  calls.length=0
- new Level({...STAGES[19],map:stepped,encounters:[],aquatic:undefined,aerial:undefined,arenaCol:14})
- const feet=calls.filter(a=>a[0]===art.images['world.elevated.vine']&&a[2]>0&&a[5]===64)
+ new Level({...STAGES[1],map:stepped,encounters:[],aquatic:undefined,aerial:undefined,arenaCol:14})
+ const feet=calls.filter(a=>a[0]===art.images['world.elevated.basalt']&&a[2]>0&&a[5]===64)
  assert.equal(feet.length,1,'Wide structure painted twice or missing')
  const baseline=pit?15*16:10*16
  assert.equal(feet[0][6]+feet[0][8],baseline+6,'Feet float above lower bank/pit')
@@ -56,4 +57,4 @@ for(const object of ['vine','stone','basalt','ice','ruin','mushroom','bone','cor
  const cap=calls[0];assert(Math.abs(cap[3]/cap[4]-cap[7]/cap[8])<1e-6,'Crown squashed')
  assert.equal(calls[1][2],cap[4],'Duplicate full support instead of lower segment')
 }
-console.log(`Terrain passed: all ${runs} platform runs in 20 maps are visible; unsupported bridges, 80 ladder spans, support ceilings, stepped-bank/pit foundations and 9 undistorted crowns.`)
+console.log(`Terrain passed: all ${runs} platform runs in ${STAGES.length} maps are visible; unsupported bridges, 80 ladder spans, support ceilings, stepped-bank/pit foundations and 9 undistorted crowns.`)

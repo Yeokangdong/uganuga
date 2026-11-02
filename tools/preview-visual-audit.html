@@ -1,0 +1,40 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>전체 표지판·이동 발판 점검</title><style>body{margin:0;padding:12px;background:#221d18;color:#f3e2bd;font:14px 'Malgun Gothic'}h1{font-size:21px;margin:0 0 10px}nav{margin-bottom:10px}a{color:#ffe4a5;margin-right:20px}main{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:1150px}figure{margin:0;padding:5px;background:#40362b;border-radius:5px}canvas{width:100%;display:block}figcaption{padding:4px 0}#status{margin:8px 0}</style><h1>실제 게임 렌더러 · 전체 15판 검수</h1><nav><a href="?mode=signs">돌 표지판 전체</a><a href="?mode=crossings">이동 장치 전체</a><a href="?mode=terrain">지형 전체</a></nav><main></main><p id="status">확인 중</p><script type="module">
+import {art} from '/src/game/art.ts'
+import {STAGES} from '/src/game/stages.ts'
+import {drawStageSign} from '/src/game/stageSign.ts'
+import {Level} from '/src/game/level.ts'
+import {Game} from '/src/game/game.ts'
+import {Background} from '/src/game/background.ts'
+import {crossings,drawCrossings,advanceCrossings} from '/src/game/traversal.ts'
+const mode=new URLSearchParams(location.search).get('mode')??'signs'
+window.addEventListener('unhandledrejection',e=>document.querySelector('#status').textContent=String(e.reason))
+const packs=await Promise.all(['stage-signs-v1','stage-backgrounds-v1','terrain-v10','elevated-objects-v1'].map(async folder=>({folder,pack:await(await fetch('/assets/'+folder+'/manifest.json')).json()})))
+async function load(key,src){if(art.images[key])return;const im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src='/assets/'+src});art.images[key]=im}
+await Promise.all(packs.flatMap(({folder,pack})=>Object.entries(pack.images).filter(([key])=>!/^terrain\.|stage\.bg|ui\.biome_sign_/.test(key)).map(([key,src])=>load(key,folder+'/'+src))))
+await load('traversal.vineSupport','traversal-v2/support.webp');await load('traversal.vine','traversal-v2/vine.webp')
+for(const def of STAGES){
+ await Promise.all(packs.flatMap(({folder,pack})=>Object.entries(pack.images).filter(([key])=>key===`ui.biome_sign_${def.id}`||key===`stage.bg${def.id}`||key.startsWith(`terrain.${def.id}.`)).map(([key,src])=>load(key,folder+'/'+src))))
+ const figure=document.createElement('figure'),cv=document.createElement('canvas');cv.width=mode==='signs'?384:768;cv.height=mode==='signs'?280:432
+ const g=cv.getContext('2d');g.scale(2,2)
+ const bg=new Background();bg.setStage(def.id)
+ if(mode==='signs'){
+  const im=art.images['stage.bg'+def.id];g.drawImage(im,0,0,192,140);g.fillStyle='#726445';g.fillRect(0,130,192,10)
+  drawStageSign(g,def.id,34,131,124)
+ }else{
+  const lv=new Level(def),game={level:lv,stage:def,time:1,players:[]}
+  advanceCrossings(game,1)
+  const nodes=crossings(lv),n=nodes.find(n=>n.kind==='raft')??nodes[0]
+  const cx=mode==='crossings'&&n?Math.max(0,Math.min(lv.width-384,n.x-140)):0
+  const cy=mode==='crossings'&&n?Math.max(0,Math.min(lv.height-216,n.y-80)):lv.height-216
+  bg.draw(g,cx,0,cy,lv.height-216);g.drawImage(lv.canvas,cx*4,cy*4,1536,864,0,0,384,216)
+  Game.prototype.drawWater.call(game,g,cx,cy)
+  if(mode==='crossings')drawCrossings(game,g,cx,cy)
+  lv.canvas.width=0;lv.canvas.height=0
+ }
+ const caption=document.createElement('figcaption');caption.textContent=`${def.id} · ${def.sub}`
+ figure.append(cv,caption);document.querySelector('main').append(figure)
+ document.querySelector('#status').textContent=`${def.id}/${STAGES.length} 확인`
+ await new Promise(resolve=>requestAnimationFrame(resolve))
+}
+document.querySelector('#status').textContent=`완료 · ${STAGES.length}개 스테이지`
+</script></html>

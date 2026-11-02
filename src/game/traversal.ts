@@ -10,7 +10,7 @@ import {image} from './art'
 export type CrossingKind='vine'|'lift'|'raft'|'sink'|'spring'|'shuttle'|'crumble'|'orbit'
 export interface Crossing {
   kind:CrossingKind;x:number;y:number;w:number;homeX:number;homeY:number
-  left:number;right:number;bankY:number;pivotX:number;pivotY:number;length:number
+  left:number;right:number;bankY:number;rightBankY:number;waterY?:number;pivotX:number;pivotY:number;length:number
   angle:number;omega:number;age:number;load:number;broken:number;dx:number;dy:number;phase:number
 }
 const kinds:CrossingKind[]=['vine','lift','raft','sink','raft','spring','shuttle','lift','raft','spring','lift','shuttle','raft','vine','crumble','crumble','raft','shuttle','orbit','vine']
@@ -18,6 +18,14 @@ const worlds=new WeakMap<Level,Crossing[]>()
 const rides=new WeakMap<Player,{node:Crossing;age:number}>()
 const lock=new WeakMap<Player,number>()
 const solid=(c:string|undefined)=>c==='#'||c==='R'
+
+/** A raft belongs on a connected water surface, never on an upper route. */
+export function crossingWater(def:StageDef,start:number,end:number,row:number):number|null {
+  for(let r=row;r<=row+2;r++){
+    if(Array.from({length:end-start},(_,i)=>start+i).every(c=>def.map[r]?.[c]==='w'&&def.map[r-1]?.[c]!=='w'))return r*TILE
+  }
+  return null
+}
 
 /** Put crossings between real ledges, with both takeoff and landing banks. */
 export function makeCrossings(def:StageDef):Crossing[]{
@@ -37,6 +45,9 @@ export function makeCrossings(def:StageDef):Crossing[]{
     const b=spans.filter(b=>b.a-a.b>=2&&b.a-a.b<=10&&Math.abs(a.r-b.r)<=2).sort((u,v)=>u.a-v.a||Math.abs(u.r-a.r)-Math.abs(v.r-a.r))[0]
     if(!b)continue
     const left=(a.b-.6)*TILE,right=(b.a+.6)*TILE,x=(left+right)/2,y=Math.min(a.r,b.r)*TILE
+    const kind=kinds[def.id-1]!
+    const waterY=kind==='raft'?crossingWater(def,a.b,b.a,Math.min(a.r,b.r)):null
+    if(kind==='raft'&&waterY===null)continue
     const spacing=Math.max(150,def.arenaCol*TILE/11)
     if(nodes.some(n=>Math.abs(n.homeX-x)<spacing)||nodes.length>=10)continue
     const length=Math.max(70,(right-left)/(2*Math.sin(.9)))
@@ -48,7 +59,8 @@ export function makeCrossings(def:StageDef):Crossing[]{
       return clear(x+Math.sin(angle)*length,pivotY+Math.cos(angle)*length-4)
     }).every(Boolean))continue
     const w=Math.max(44,Math.min(80,(right-left)*.4))
-    nodes.push({kind:kinds[def.id-1]!,x:x-w/2,y,w,homeX:x-w/2,homeY:y,left,right,bankY:a.r*TILE,
+    const homeY=waterY===null?y:waterY-6
+    nodes.push({kind,x:x-w/2,y:homeY,w,homeX:x-w/2,homeY,left,right,bankY:a.r*TILE,rightBankY:b.r*TILE,waterY:waterY??undefined,
       pivotX:x,pivotY,length,angle:-.9,omega:0,age:0,load:0,broken:0,dx:0,dy:0,phase:nodes.length*1.7})
   }
   return nodes
@@ -73,7 +85,7 @@ export function advanceCrossings(g:Game,dt:number):void {
         if(Math.abs(n.angle)>=1.05&&n.angle*n.omega>0)n.omega*=-.25
       }
     }else if(n.kind==='lift'){n.y=n.homeY-22-Math.sin(t*1.1)*30}
-    else if(n.kind==='raft'){n.x=n.homeX+Math.sin(t*.65)*range;n.y=n.homeY+5+Math.sin(t*1.5)*6+Math.min(9,n.load*8)}
+    else if(n.kind==='raft'){n.x=n.homeX+Math.sin(t*.65)*range;n.y=n.homeY+Math.sin(t*1.5)*1.2+Math.min(2,n.load*2)}
     else if(n.kind==='sink'){n.y=n.homeY+Math.min(44,n.load*28)}
     else if(n.kind==='shuttle'){n.x=n.homeX+Math.sin(t*.9)*range;n.y=n.homeY-4}
     else if(n.kind==='orbit'){n.x=n.homeX+Math.sin(t*.8)*range;n.y=n.homeY-20-Math.cos(t*.8)*22}
@@ -157,16 +169,21 @@ export function drawCrossings(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:n
       }
     }else{
       if(n.broken>0){ctx.restore();continue}
-      if(n.kind==='lift'||n.kind==='shuttle'){
+      if(n.kind!=='raft'){
         // Visible suspension attaches the moving ledge to the banks.
         ctx.strokeStyle='#8b7652';ctx.lineWidth=1.2
-        ctx.beginPath();ctx.moveTo(n.left,n.bankY);ctx.lineTo(n.x+3,n.y+5);ctx.moveTo(n.right,n.homeY);ctx.lineTo(n.x+n.w-3,n.y+5);ctx.stroke()
+        ctx.beginPath();ctx.moveTo(n.left,n.bankY);ctx.lineTo(n.x+3,n.y+5);ctx.moveTo(n.right,n.rightBankY);ctx.lineTo(n.x+n.w-3,n.y+5);ctx.stroke()
       }
       terrainDeck(ctx,n.x,n.y,g.level.def.id,n.w,'local')
       if(n.kind==='crumble'&&n.load>.25){
         ctx.strokeStyle='#2b2730';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(n.x+10,n.y);ctx.lineTo(n.x+17,n.y+4);ctx.lineTo(n.x+14,n.y+9);ctx.moveTo(n.x+30,n.y);ctx.lineTo(n.x+26,n.y+8);ctx.stroke()
       }
-      if(n.kind==='raft'){ctx.strokeStyle='rgba(160,220,217,.5)';ctx.lineWidth=.8;ctx.beginPath();ctx.ellipse(n.x+n.w/2,n.y+12,n.w*.65,2,0,0,Math.PI*2);ctx.stroke()}
+      if(n.kind==='raft'&&n.waterY!==undefined){
+        const waterLeft=Math.ceil(n.left/TILE)*TILE,waterRight=Math.floor(n.right/TILE)*TILE
+        ctx.save();ctx.beginPath();ctx.rect(waterLeft,n.waterY,waterRight-waterLeft,6);ctx.clip()
+        ctx.strokeStyle='rgba(160,220,217,.5)';ctx.lineWidth=.8;ctx.beginPath()
+        ctx.ellipse(n.x+n.w/2,n.waterY+3,n.w*.65,2,0,0,Math.PI*2);ctx.stroke();ctx.restore()
+      }
     }
     ctx.restore()
   }

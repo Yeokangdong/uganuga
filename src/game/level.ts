@@ -4,6 +4,7 @@ import { ROWS, type StageDef, type EnemyCfg } from './stages'
 import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, type ElevatedObject } from './paintedMap'
 import { terrainTheme } from './terrainThemes'
 import { cloudFloor } from './cloudTerrain'
+import {drawStageSign} from './stageSign'
 import type {Weapon} from './weapons'
 
 export const T = { Empty: 0, Solid: 1, Platform: 2, Rock: 3, Ladder: 4, Water: 5 } as const
@@ -372,12 +373,8 @@ export class Level {
       }
     }
     if(!this.def.cave){
-      const biomeSign=image(`ui.biome_sign_${this.def.id}`),x=3*TILE
-      if(biomeSign){
-        const w=70,h=w*biomeSign.height/biomeSign.width
-        const floor=this.floorBelow(x+w/2,0),y=floor-h+1.5
-        g.drawImage(biomeSign,x,y,w,h)
-      }
+      const x=3*TILE
+      drawStageSign(g,this.def.id,x,this.floorBelow(x+35,0))
     }
     return cv
   }
