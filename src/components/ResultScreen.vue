@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 import { art } from '../game/art'
 import type { EndKind } from '../game/game'
 
@@ -18,7 +18,6 @@ try {
 } catch {
   /* 저장소 사용 불가 */
 }
-const total = computed(() => props.scores.reduce((a, b) => a + b, 0))
 
 function onKey(e: KeyboardEvent) {
   if (e.code === 'Enter' || e.code === 'Space') emit('retry')
@@ -34,11 +33,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     <p v-if="kind === 'clear'" class="rescue-message">누가 공주를 구했습니다!</p>
     <p class="msg">STAGE {{stage}}</p>
     <div class="scores">
-      <div v-for="(s, i) in scores" :key="i" class="line">
-        <span :class="'p' + i">{{i+1}}P {{i === 0 ? '우가' : '부가'}}</span>
+      <div v-for="s in scores.slice(0, 1)" :key="0" class="line">
+        <span class="p0">1P 우가</span>
         <b>{{String(s).padStart(7,'0')}}</b>
       </div>
-      <div v-if="scores.length > 1" class="line total"><span>합계</span><b>{{String(total).padStart(7,'0')}}</b></div>
       <div class="line hi"><span>최고 점수</span><b>{{String(hi).padStart(7,'0')}}</b></div>
     </div>
     <div class="btns">
@@ -64,7 +62,6 @@ h1 {
 .line { display: flex; justify-content: space-between; gap: 3cqw; padding: 0.3cqw 0; font-size: 2.2cqw; }
 .line b { font-family: monospace; }
 .line .p0 { color: #ff9a3a; }
-.line .p1 { color: #c48cff; }
 .line.total { border-top: 0.2cqw dashed #7a4415; margin-top: 0.4cqw; padding-top: 0.6cqw; }
 .line.hi { color: #ffe14a; }
 .line em { font-style: normal; background: #ff3a2a; color: #fff; padding: 0 0.5cqw; border-radius: 0.4cqw; font-size: 1.4cqw; animation: blink 0.5s infinite; }

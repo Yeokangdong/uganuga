@@ -232,7 +232,7 @@ export function image(key: string): HTMLImageElement | null {
   return art.images[key] ?? null
 }
 
-const paintedWords: Record<string, string> = {"점수": "ui.word_score", "시간": "ui.word_time", "목숨": "ui.word_lives", "1P": "ui.word_1p", "2P": "ui.word_2p", "우가": "ui.word_uga", "부가": "ui.word_buga", "클릭 시 시작": "ui.word_click_to_start", "보스 등장!": "ui.word_boss_appears", "스테이지 클리어!": "ui.word_stage_clear", "게임 오버": "ui.word_game_over", "일시 정지": "ui.word_paused", "모두 클리어!": "ui.word_all_clear", "최고 점수": "ui.word_high_score", "팅!": "ui.word_ting", "폭군룡 쿵쾅이": "ui.word_tyrant_king", "용암룡 들이박": "ui.word_lava_dragon", "빙하룡 만년설": "ui.word_woolly_mammoth"}
+const paintedWords: Record<string, string> = {"점수": "ui.word_score", "시간": "ui.word_time", "목숨": "ui.word_lives", "1P": "ui.word_1p", "우가": "ui.word_uga", "클릭 시 시작": "ui.word_click_to_start", "보스 등장!": "ui.word_boss_appears", "스테이지 클리어!": "ui.word_stage_clear", "게임 오버": "ui.word_game_over", "일시 정지": "ui.word_paused", "모두 클리어!": "ui.word_all_clear", "최고 점수": "ui.word_high_score", "팅!": "ui.word_ting", "폭군룡 쿵쾅이": "ui.word_tyrant_king", "용암룡 들이박": "ui.word_lava_dragon", "빙하룡 만년설": "ui.word_woolly_mammoth"}
 
 Object.assign(paintedWords, {
   '나무몽둥이':'ui.word_bone',

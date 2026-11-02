@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { art, loadArt } from '../game/art'
 
-const emit = defineEmits<{ start: [players: number] }>()
+const emit = defineEmits<{ start: [] }>()
 
 const ready = ref(false)
 const scene=ref<HTMLCanvasElement|null>(null)
@@ -33,7 +33,7 @@ const dust = Array.from({ length: 18 }, (_, i) => ({
 function start() {
   clearTimeout(timer)
   slammed.value = true
-  emit('start', 1)
+  emit('start')
 }
 
 function onKey(e: KeyboardEvent) {

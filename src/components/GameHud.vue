@@ -16,7 +16,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 <template>
   <div class="hud">
     <div v-if="hud.trail&&!hud.paused&&!hud.boss" class="trail-clue" role="status">{{hud.trail}}</div>
-    <div class="status" v-for="p in hud.players" :key="p.name" :class="{out:p.out}" :aria-label="p.name+' 캐릭터 정보'" :style="{'--panel-image':`url(${art.images['ui.status_panel']?.src})`}">
+    <div class="status" v-for="p in hud.players.slice(0, 1)" :key="p.name" :class="{out:p.out}" :aria-label="p.name+' 캐릭터 정보'" :style="{'--panel-image':`url(${art.images['ui.status_panel']?.src})`}">
       <img :src="art.images['ui.portrait']?.src" class="portrait" alt="우가"/>
       <div class="status-content">
         <div class="stats">

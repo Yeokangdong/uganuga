@@ -177,7 +177,7 @@ export class Game {
   private dark: HTMLCanvasElement
   private darkCtx: CanvasRenderingContext2D
 
-  constructor(canvas: HTMLCanvasElement, numPlayers: number, private cb: GameCallbacks, startStage = 0, private directStage = false) {
+  constructor(canvas: HTMLCanvasElement, private cb: GameCallbacks, startStage = 0, private directStage = false) {
     canvas.width = VIEW_W * SCALE
     canvas.height = VIEW_H * SCALE
     this.ctx = canvas.getContext('2d')!
@@ -185,13 +185,12 @@ export class Game {
     this.dark.width = VIEW_W * SCALE
     this.dark.height = VIEW_H * SCALE
     this.darkCtx = this.dark.getContext('2d')!
-    this.input = new Input(numPlayers)
+    this.input = new Input()
     this.stageIdx = Math.max(0, Math.min(STAGES.length - 1, startStage))
     this.stage = STAGES[this.stageIdx]
     this.level = new Level(this.stage)
-    const defs: [string, string][] = [['우가', '#ff9a3a'], ['부가', '#c48cff']]
-    for (let i = 0; i < numPlayers; i++) this.players.push(new Player(i, defs[i][0], defs[i][1]))
-    this.dreamCount = this.stageIdx===0&&!this.directStage?numPlayers:0
+    this.players.push(new Player(0, '우가', '#ff9a3a'))
+    this.dreamCount = this.stageIdx===0&&!this.directStage?1:0
     this.beginStage()
   }
 

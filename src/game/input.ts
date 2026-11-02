@@ -16,7 +16,7 @@ type Action = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump' | 'throw'
 type KeyMap = Record<Action, string[]>
 
 // 1P: 방향키 이동, ↑ 점프, 스페이스 공격
-const P1_2P: KeyMap = {
+const P1_SOLO: KeyMap = {
   left: ['ArrowLeft'],
   right: ['ArrowRight'],
   up: ['ArrowUp'],
@@ -25,17 +25,6 @@ const P1_2P: KeyMap = {
   jump: ['ArrowUp'],
   throw: ['KeyX'],
 }
-// 2P: A/D 이동, W 점프, F 공격
-const P2_2P: KeyMap = {
-  left: ['KeyA'],
-  right: ['KeyD'],
-  up: ['KeyW'],
-  down: ['KeyS'],
-  attack: ['KeyF'],
-  jump: ['KeyW'],
-  throw: ['KeyG'],
-}
-const P1_SOLO: KeyMap = P1_2P
 
 const BLOCK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Slash', 'KeyX'])
 
@@ -52,8 +41,8 @@ export class Input {
   private maps: KeyMap[]
   private states: PlayerInput[]
 
-  constructor(numPlayers: number) {
-    this.maps = numPlayers === 1 ? [P1_SOLO] : [P1_2P, P2_2P]
+  constructor() {
+    this.maps = [P1_SOLO]
     this.states = this.maps.map(() => empty())
     window.addEventListener('keydown', this.onDown)
     window.addEventListener('keyup', this.onUp)

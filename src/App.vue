@@ -16,7 +16,6 @@ onMounted(async()=>{try{await loadArt()}catch(error){console.error('Game art loa
 const reload=()=>location.reload()
 
 const screen = ref<Screen>('title')
-const numPlayers = ref(1)
 const runId = ref(0)
 const development = import.meta.env.DEV
 const gameView=ref<InstanceType<typeof GameView>|null>(null)
@@ -24,9 +23,8 @@ const selectedStage = ref(Number(new URLSearchParams(location.search).get('stage
 const directStage = ref(false)
 const result = ref<{ kind: EndKind; scores: number[]; stage: number }>({ kind: 'over', scores: [], stage: 1 })
 
-function start(_n?: number) {
+function start() {
   sfx.init()
-  numPlayers.value = 1
   runId.value++
   screen.value = 'game'
 }
@@ -53,7 +51,6 @@ function onEnd(kind: EndKind, scores: number[], stage: number) {
         ref="gameView"
         v-else-if="!loading && !loadError && screen === 'game'"
         :key="runId"
-        :players="numPlayers"
         :start-stage="selectedStage"
         :direct-stage="directStage"
         @end="onEnd"
@@ -64,7 +61,7 @@ function onEnd(kind: EndKind, scores: number[], stage: number) {
         :kind="result.kind"
         :scores="result.scores"
         :stage="result.stage"
-        @retry="start(numPlayers)"
+        @retry="start()"
         @title="screen = 'title'"
       />
     </div>

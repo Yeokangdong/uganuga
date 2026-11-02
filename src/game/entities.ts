@@ -11,7 +11,7 @@ import { CHARACTER_SCALE, CHARGE_TIME, CLIMB_SPEED, GRAVITY, JUMP_VEL, MAX_FALL,
 import { drawSprite, drawSpriteRot, sprites, type PlayerSprites, type Sprite } from './sprites'
 import { drawArt, frameAt, walkFrame, progressFrame, has, image, drawPaintedText } from './art'
 
-// Both players use normalized key poses; hurt and ladder retain sheet2.
+// The player uses normalized key poses; hurt and ladder retain sheet2.
 
 // ????????????????????????? 臾쇰━ ?????????????????????????
 export interface Body extends Rect {
@@ -230,7 +230,7 @@ export class Player implements Body {
   spr: PlayerSprites
 
   constructor(public idx: number, public name: string, public color: string) {
-    this.spr = idx === 0 ? sprites().p1 : sprites().p2
+    this.spr = sprites().p1
   }
 
   get alive(): boolean {
@@ -240,7 +240,7 @@ export class Player implements Body {
     return this.x + this.w / 2
   }
   get key(): string {
-    return this.idx === 0 ? 'p1' : 'p2'
+    return 'p1'
   }
 
   private safeX = 40
@@ -249,7 +249,7 @@ export class Player implements Body {
   spawnAt(g: Game, keepWeapon = false): void {
     releaseCrossing(this)
     const lv = g.level
-    const desiredX = this.dead ? this.safeX : 40 + this.idx * 24
+    const desiredX = this.dead ? this.safeX : 40
     const desiredY = this.dead ? this.safeY : lv.height - TILE * 3 - this.h
     let best = Infinity, px = desiredX, py = desiredY
     for (let c = 1; c < lv.cols - 1; c++) for (let r = 3; r < lv.rows; r++) {

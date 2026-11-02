@@ -4,7 +4,7 @@ import { Game, type EndKind, type HudState } from '../game/game'
 import GameHud from './GameHud.vue'
 import { loadArt } from '../game/art'
 
-const props = defineProps<{ players: number; startStage: number; directStage: boolean }>()
+const props = defineProps<{ startStage: number; directStage: boolean }>()
 const emit = defineEmits<{ end: [kind: EndKind, scores: number[], stage: number]; quit: [] }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -24,7 +24,7 @@ onMounted(async () => {
   if (disposed || !canvas.value) return
   // 개발용: 주소 뒤에 ?stage=2 를 붙이면 해당 스테이지부터
   const startStage = props.startStage
-  game = new Game(canvas.value!, props.players, {
+  game = new Game(canvas.value!, {
     onHud: (h) => (hud.value = h),
     onEnd: (k, s, st) => emit('end', k, s, st),
   }, Number.isFinite(startStage) ? startStage : 0, props.directStage)
