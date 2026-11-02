@@ -43,13 +43,13 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
       <span>{{hud.banner}}</span>
       <small v-if="hud.bannerSub"><span>{{hud.bannerSub}}</span></small>
     </div>
-    <div v-if="help && !hud.paused && !hud.boss" class="help">{{hud.aquatic?'방향키 헤엄치기 · 수면 / 공기 주머니에서 숨 회복 · Space 공격 · X 던지기':hud.aerial?'← → 이동 · ↑ 점프 / 길게 눌러 활공 · 빛나는 상승기류로 섬 사이 건너기 · Space 공격':'← → 이동 · ↑ 점프 / 사다리 · ↓ 동굴 / 내려가기 · Space 공격 · X 던지기 · P 일시정지'}}</div>
+    <div v-if="help && !hud.paused && !hud.boss" class="help">{{hud.aquatic?'방향키 헤엄치기 · 수면 / 공기 주머니에서 숨 회복 · Space 공격':hud.aerial?'← → 이동 · ↑ 점프 / 길게 눌러 활공 · 빛나는 상승기류로 섬 사이 건너기 · Space 공격':'← → 이동 · ↑ 점프 / 사다리 · ↓ 동굴 / 내려가기 · Space 공격 · P 일시정지'}}</div>
     <span v-if="hud.muted" class="mute">음소거</span>
     <div v-if="hud.paused" class="pause">
       <div class="pause-card"><h2>잠깐 쉬어가기</h2>
         <p>빛나는 몽둥이에 다가가면 바로 장착합니다.<br>나무 · 돌 · 뼈 · 불 몽둥이는 위력과 공격 속도가 다릅니다.</p>
         <p class="pattern-description"><strong>{{hud.patternName}}</strong><br>{{hud.patternHint}}</p>
-        <p>{{hud.aquatic?'방향키로 상하좌우 헤엄치기 · ↑ 수면으로 올라오기':hud.aerial?'← → 공중 이동　↑ 점프 · 길게 누르면 천천히 활공':'← → 이동　↑ 점프·사다리　↓ 동굴·내려가기'}}</p><p v-if="hud.aerial">화살표가 떠오르는 상승기류를 타고 높은 섬으로 이동하세요.<br>섬에 착지하면 재시작 위치가 저장됩니다. 구름 아래로 추락하지 않게 조심하세요.</p><p v-if="hud.aquatic">숨은 20초입니다. 수면이나 공기 주머니에서 회복하세요.<br>숨이 모두 줄면 체력이 조금씩 감소합니다.</p><p>Space 공격 · X 던지기 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모아 깃발로 이동하세요. 지나온 길로 돌아갈 수 있습니다.</p>
+        <p>{{hud.aquatic?'방향키로 상하좌우 헤엄치기 · ↑ 수면으로 올라오기':hud.aerial?'← → 공중 이동　↑ 점프 · 길게 누르면 천천히 활공':'← → 이동　↑ 점프·사다리　↓ 동굴·내려가기'}}</p><p v-if="hud.aerial">화살표가 떠오르는 상승기류를 타고 높은 섬으로 이동하세요.<br>섬에 착지하면 재시작 위치가 저장됩니다. 구름 아래로 추락하지 않게 조심하세요.</p><p v-if="hud.aquatic">숨은 20초입니다. 수면이나 공기 주머니에서 회복하세요.<br>숨이 모두 줄면 체력이 조금씩 감소합니다.</p><p>Space 공격 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모아 깃발로 이동하세요. 지나온 길로 돌아갈 수 있습니다.</p>
         <button @click="$emit('resume')" aria-label="계속하기">계속하기 <kbd>Esc</kbd></button>
         <button @click="$emit('quit')" aria-label="시작 화면">시작 화면 <kbd>Q</kbd></button>
       </div>

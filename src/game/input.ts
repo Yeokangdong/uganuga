@@ -9,10 +9,9 @@ export interface PlayerInput {
   attackReleased: boolean
   jumpPressed: boolean
   downPressed: boolean
-  throwPressed?: boolean
 }
 
-type Action = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump' | 'throw'
+type Action = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump'
 type KeyMap = Record<Action, string[]>
 
 // 1P: 방향키 이동, ↑ 점프, 스페이스 공격
@@ -23,10 +22,9 @@ const P1_SOLO: KeyMap = {
   down: ['ArrowDown'],
   attack: ['Space'],
   jump: ['ArrowUp'],
-  throw: ['KeyX'],
 }
 
-const BLOCK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Slash', 'KeyX'])
+const BLOCK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space'])
 
 function empty(): PlayerInput {
   return {
@@ -96,7 +94,6 @@ export class Input {
       s.attackReleased = !s.attack && prev.attack
       s.jumpPressed = (s.jump && !prev.jump) || tapped('jump')
       s.downPressed = (s.down && !prev.down) || tapped('down')
-      s.throwPressed=tapped('throw')
       this.states[i] = s
     })
   }

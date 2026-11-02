@@ -172,7 +172,7 @@ export class Fx {
 
 // ????????????????????????? ?뚮젅?댁뼱 ?????????????????????????
 
-type SwingKind = 'swing' | 'up' | 'air' | 'smash' | 'throw'
+type SwingKind = 'swing' | 'up' | 'air' | 'smash'
 
 export class Player implements Body {
   gliding=false
@@ -415,7 +415,6 @@ export class Player implements Body {
     }
 
     // ?? 怨듦꺽: ?먯뿉 ???뚮룄?쇰줈 ?뚮━湲???
-    if(inp.throwPressed&&this.swingT<=0&&!g.projectiles.some(p=>p.kind==='club'&&p.owner===this&&!p.dead))this.startSwing(g,'throw')
     if (inp.attackPressed && this.swingT <= 0) {
       this.charge = 0
       this.chargeReady = false
@@ -490,7 +489,7 @@ export class Player implements Body {
   private startSwing(g: Game, kind: SwingKind): void {
     const st = WEAPON_STAT[this.weapon]
     this.swingKind = kind
-    this.swingDur = kind === 'smash' ? 0.5 : kind==='throw'?.4:st.time
+    this.swingDur = kind === 'smash' ? 0.5 : st.time
     this.swingT = this.swingDur
     this.swingHit.clear()
     this.smashDone = false
@@ -500,7 +499,7 @@ export class Player implements Body {
 
   /** 吏湲?怨듦꺽 ?먯젙 ?ш컖??(?놁쑝硫?null) */
   hitbox(): Rect | null {
-    if (this.swingT <= 0 || this.swingKind==='throw') return null
+    if (this.swingT <= 0) return null
     const p = this.swingDur - this.swingT
     const st = WEAPON_STAT[this.weapon]
     if (this.swingKind === 'smash') {
@@ -524,10 +523,6 @@ export class Player implements Body {
     if (this.swingT <= 0) return
     const p = this.swingDur - this.swingT
     this.swingT -= dt
-    if(this.swingKind==='throw'&&p>=this.swingDur*.5&&!this.smashDone){
-      this.smashDone=true
-      g.projectiles.push(new Projectile('club',this.cx+this.facing*12*CHARACTER_SCALE,this.y+12*CHARACTER_SCALE,this.facing*220,-45,this))
-    }
     const hb = this.hitbox()
     if (this.swingKind === 'smash' && p >= 0.2 && !this.smashDone) {
       this.smashDone = true
@@ -647,7 +642,7 @@ export class Player implements Body {
     }
     if(this.knockbackT>0){const key=pick(`${k}.hurt`);return {key,frame:this.poseFrame(key,false)}}
     if(this.swingT>0){
-      const action=this.swingKind==='throw'?'throw':this.swingKind==='up'?'attackUp':this.swingKind==='air'||this.swingKind==='smash'?'attackDown':'attack'
+      const action=this.swingKind==='up'?'attackUp':this.swingKind==='air'||this.swingKind==='smash'?'attackDown':'attack'
       const key=pick(`${k}.${action}`,`${k}.attack`)
       return {key,frame:progressFrame(key,(this.swingDur-this.swingT)/this.swingDur)}
     }
@@ -717,7 +712,7 @@ export class Player implements Body {
   }
 
   private drawHeldWeapon(ctx:CanvasRenderingContext2D,bx:number,by:number):void {
-    if(this.dead||this.climbing||this.ropeAngle!==null||this.weapon==='axe'||this.swingKind==='throw'&&this.swingT>0&&this.swingT<this.swingDur*.5)return
+    if(this.dead||this.climbing||this.ropeAngle!==null||this.weapon==='axe')return
     const attacking=this.swingT>0
     const up=attacking&&this.swingKind==='up'
     const down=attacking&&(this.swingKind==='air'||this.swingKind==='smash')
@@ -774,10 +769,9 @@ export class Player implements Body {
 }
 
 // ????????????????????????? ?ъ궗泥??????????????????????????
-export type ProjKind = 'club' | 'shock' | 'rock' | 'fireball' | 'lavarock' | 'lavablob' | 'spear' | 'iceball' | 'icicle' | 'stalactite'
+export type ProjKind = 'shock' | 'rock' | 'fireball' | 'lavarock' | 'lavablob' | 'spear' | 'iceball' | 'icicle' | 'stalactite'
 
 const PROJ: Record<ProjKind, { size: number; dmg: number; life: number; pierce: boolean; big: boolean; art: string[] }> = {
-  club: { size: 9, dmg: 1, life: .85, pierce: false, big: false, art: ['v2.log'] },
   shock: { size: 12, dmg: 2, life: 0.9, pierce: true, big: true, art: ['fx.shock'] },
   rock: { size: 12, dmg: 2, life: 4, pierce: false, big: true, art: ['proj.rock'] },
   fireball: { size: 10, dmg: 2, life: 3, pierce: false, big: true, art: ['proj.fireball'] },
@@ -790,7 +784,6 @@ const PROJ: Record<ProjKind, { size: number; dmg: number; life: number; pierce: 
 }
 
 export class Projectile implements Body {
-  thrownWeapon:Weapon='axe'
   x: number
   y: number
   w: number
@@ -824,7 +817,6 @@ export class Projectile implements Body {
     this.w = c.size
     this.h = c.size
     this.dmg = c.dmg
-    if(kind==='club'&&owner){this.thrownWeapon=owner.weapon;this.dmg=WEAPON_STAT[this.thrownWeapon].dmg}
     this.life = c.life
     this.pierce = c.pierce
     this.big = c.big
@@ -886,10 +878,6 @@ export class Projectile implements Body {
         if (Math.random() < 0.5) g.particles.push(new Particle(this.cx, this.cy, 0, -10, 0.25, '#ff7a1a', 2, -30))
         if (lv.solidAt(this.cx, this.cy)) this.pop(g, '#ff5a1a')
         break
-      case 'club':
-        this.vy+=180*dt;this.x+=this.vx*dt;this.y+=this.vy*dt;this.rot+=dt*14*this.startDir
-        if(lv.solidAt(this.cx,this.cy))this.pop(g,'#a47a49')
-        break
       case 'spear':
         this.vy += 260 * dt
         this.x += this.vx * dt
@@ -915,7 +903,7 @@ export class Projectile implements Body {
       ctx.fill()
       return
     }
-    const key = (this.kind==='club'?[`item.weapon.${this.thrownWeapon}`,...PROJ.club.art]:PROJ[this.kind].art).find((a) => has(a))
+    const key = PROJ[this.kind].art.find((a) => has(a))
     if (key) {
       ctx.save()
       ctx.translate(this.cx - cx, this.cy - cy)
