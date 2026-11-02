@@ -286,6 +286,19 @@ export const HABITATS:Habitat[]=[
   {ground:['mantis','golem','scarab','boar','mushroom'],canopy:['mantis','mushroom','golem'],air:['owl','ray'],formation:'새벽 정원의 마지막 혼성 경비대'}
 ]
 
+/** Local silhouettes for the bamboo, canyon, crystal, coast and moonlit trails. */
+function middleDecks(index:number,x:number,section:number):[Island,Island] {
+  const shift=section%2
+  const bands:[number,number][][]=[
+    [[4,18],[5,17],[12,15+shift],[5,17],[4,18]],
+    [[5,18],[5,16],[10,14+shift],[5,16],[5,18]],
+    [[4,18],[6,16],[10,15-shift],[6,16],[4,18]],
+    [[6,18],[6,17],[6,16+shift],[6,17],[6,18]],
+    [[5,18],[5,17],[10,16-shift],[5,17],[5,18]],
+  ]
+  const top=index===5?10+shift:index===6?8+shift:index===7?9+shift:index===8?12:11+shift
+  return [island(x,1,...bands[index-5]!),island(x+8,1,[3,top+1],[8,top],[3,top+1])]
+}
 /** New routes keep jump gaps short and connect every raised deck with ladders. */
 function expedition(index:number):MapLayout {
   const w=176+(index%5)*8
@@ -293,12 +306,13 @@ function expedition(index:number):MapLayout {
   for(let x=0;x<w;x+=16)ground.push([x,Math.min(w-1,x+15),21+((Math.floor(x/16)+index)%3===0?1:0)])
   for(let section=0;section<3;section++){
     const x=16+section*48+(index%3)*2+(index===3?[0,4,-3][section]!:0)
-    const low=index===3?island(x,3,[4,18],[4,16],[8,15],[4,16])
+    let low=index===3?island(x,3,[4,18],[4,16],[8,15],[4,16])
       :index===4?island(x,3,[5,18],[10,17],[5,18]):island(x,3,[4,17],[12,16],[4,17])
-    const high=index===3?island(x+6,3,[3,10],[8,9],[3,10])
+    let high=index===3?island(x+6,3,[3,10],[8,9],[3,10])
       :index===4?island(x+6,3,[4,13],[6,12],[4,13]):island(x+6,3,[3,11],[8,10],[3,11])
+    if(index>=5&&index<=9)[low,high]=middleDecks(index,x,section)
     islands.push(low,high)
-    const floor=index===3||index===4?ground.find(([l,r])=>x+3>=l&&x+3<=r)![2]:22
+    const floor=index>=3&&index<=9?ground.find(([l,r])=>x+3>=l&&x+3<=r)![2]:22
     ladders.push(link(x+3,low,floor),link(x+9,high,low),link(x+17,high,low))
     marks.push([x+6,15,'E'],[x+12,9,'M'],[x+25,20,'U'])
   }
@@ -320,17 +334,18 @@ function extendExpedition(map:MapLayout,index:number):MapLayout {
   for(let section=0;section<sections;section++){
     const x=8+Math.floor(section*w/sections)+(index+section)%3
     const crest=15+(index+section)%2
-    const low=index===0?island(x,1,[3,18],[4,17],[6,16],[8,15+section%2],[6,16],[3,17])
+    let low=index===0?island(x,1,[3,18],[4,17],[6,16],[8,15+section%2],[6,16],[3,17])
       :index===1?island(x,1,[4,18],[4,16],[12,14+section%2],[6,16],[4,18])
       :index===2?island(x,1,[6,18],[6,17],[8,16-section%2],[6,17],[4,18])
       :index===3?island(x,1,[5,18],[5,16],[10,15-section%2],[5,16],[5,18])
       :index===4?island(x,1,[6,18],[6,17],[8,16+section%2],[6,17],[4,18])
       :island(x,1,[3,18],[4,17],[6,16],[6,crest],[6,16],[3,17],[2,18])
-    const high=index===1?island(x+8,1,[4,10],[6,8],[4,10])
+    let high=index===1?island(x+8,1,[4,10],[6,8],[4,10])
       :index===2?island(x+8,1,[4,11],[6,10],[4,11])
       :index===3?island(x+8,1,[4,11],[6,9],[4,11])
       :index===4?island(x+8,1,[5,12],[5,11],[4,12])
       :island(x+8,1,[3,11],[3,10],[5,9+(index+section)%2],[3,10])
+    if(index>=5&&index<=9)[low,high]=middleDecks(index,x,section+1)
     islands.push(low,high)
     const floorAt=(col:number)=>ground.find(([l,r])=>col>=l&&col<=r)![2]
     ladders.push(link(x+2,low,floorAt(x+2)),link(x+11,high,low),
