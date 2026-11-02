@@ -1100,10 +1100,9 @@ export class Game {
         const py=y+h-((this.time*80+i*43+p.col*7)%h)
         const px=x+w*(.22+(i%3)*.28)+Math.sin(this.time*2+i)*3
         ctx.globalAlpha=.35+(i%3)*.15
-        ctx.beginPath();ctx.moveTo(px-3,py+4);ctx.lineTo(px,py);ctx.lineTo(px+3,py+4);ctx.moveTo(px,py);ctx.lineTo(px,py+14);ctx.stroke()
+        ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+14);ctx.stroke()
       }
-      ctx.globalAlpha=1;ctx.font='bold 8px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.lineWidth=2;ctx.strokeStyle='#31586b';ctx.fillStyle='#edffff'
-      ctx.strokeText('↑ 상승기류',x+w/2,y+10);ctx.fillText('↑ 상승기류',x+w/2,y+10)
+      ctx.globalAlpha=1
     }
     ctx.restore()
   }
@@ -1119,8 +1118,6 @@ export class Game {
       ctx.fillStyle=light;ctx.fillRect(x,y,w,h)
       ctx.strokeStyle='#b6ece2';ctx.lineWidth=1
       ctx.beginPath();ctx.moveTo(x,y+h);ctx.quadraticCurveTo(x+w/2,y+h+Math.sin(this.time*2+p.col)*2,x+w,y+h);ctx.stroke()
-      ctx.font='bold 9px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.fillStyle='#edffd6';ctx.strokeStyle='#193c43';ctx.lineWidth=2
-      ctx.strokeText('공기',x+w/2,y+14);ctx.fillText('공기',x+w/2,y+14)
     }
     ctx.restore()
   }

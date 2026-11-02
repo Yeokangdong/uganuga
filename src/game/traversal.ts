@@ -151,18 +151,9 @@ export function drawCrossings(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:n
         const width=(n.pivotX-(n.left-12))/.75,height=(n.bankY+5-n.pivotY)/.95
         ctx.drawImage(support,n.pivotX-width*.98,n.pivotY-height*.03,width,height)
       }
-      const e=vineEnd(n)
       if(vine){
         ctx.save();ctx.translate(n.pivotX,n.pivotY);ctx.rotate(-n.angle)
         ctx.drawImage(vine,-5,-1,10,n.length+8);ctx.restore()
-      }
-      const rider=g.players.find(p=>rides.get(p)?.node===n)
-      const nearby=g.players.some(p=>p.alive&&Math.hypot(p.cx-e.x,p.y+5-e.y)<60)
-      if(rider||nearby){
-        ctx.font='bold 6px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.lineWidth=2
-        ctx.strokeStyle='#314525';ctx.fillStyle='#fff1c9'
-        const text=rider?'← 흔들기 → · ↑ 뛰기':'↑ 덩굴 잡기',y=(rider?.y??e.y)-12
-        ctx.strokeText(text,rider?.cx??e.x,y);ctx.fillText(text,rider?.cx??e.x,y)
       }
     }else{
       if(n.broken>0){ctx.restore();continue}
