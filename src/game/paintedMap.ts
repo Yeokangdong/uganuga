@@ -45,8 +45,7 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
     g.restore();return
   }
   const h=Math.max(72,bottom-top+14)
-  const w=theme.structure==='snow'?Math.min(42,h*im.width/im.height)
-    :theme.structure==='ice'?h*im.width/im.height
+  const w=(theme.structure==='snow'||theme.structure==='ice')?h*im.width/im.height
     :theme.organic?Math.min(132,h*im.width/im.height):Math.min(48,h*im.width/im.height)
   const center=Math.max(left+w*.25,Math.min(right-w*.25,x))
   g.save()
