@@ -1,0 +1,293 @@
+{
+  "version": "11-draft",
+  "style": "painted-v6",
+  "alpha": true,
+  "cell": [
+    512,
+    384
+  ],
+  "atlas": [
+    1536,
+    768
+  ],
+  "minimumPadding": [
+    96,
+    80
+  ],
+  "themes": {
+    "jungle": {
+      "image": "jungle.webp",
+      "tiles": {
+        "top-left": {
+          "frame": [
+            96,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "top-middle": {
+          "frame": [
+            608,
+            80,
+            320,
+            224
+          ],
+          "repeat": "x"
+        },
+        "top-right": {
+          "frame": [
+            1120,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "side": {
+          "frame": [
+            96,
+            464,
+            320,
+            224
+          ],
+          "repeat": "xy"
+        },
+        "cave": {
+          "frame": [
+            608,
+            464,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "ladder": {
+          "frame": [
+            1235,
+            464,
+            90,
+            224
+          ],
+          "repeat": "none"
+        }
+      }
+    },
+    "volcano": {
+      "image": "volcano.webp",
+      "tiles": {
+        "top-left": {
+          "frame": [
+            96,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "top-middle": {
+          "frame": [
+            608,
+            80,
+            320,
+            224
+          ],
+          "repeat": "x"
+        },
+        "top-right": {
+          "frame": [
+            1120,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "side": {
+          "frame": [
+            96,
+            464,
+            320,
+            224
+          ],
+          "repeat": "xy"
+        },
+        "cave": {
+          "frame": [
+            608,
+            464,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "ladder": {
+          "frame": [
+            1235,
+            464,
+            90,
+            224
+          ],
+          "repeat": "none"
+        }
+      }
+    },
+    "glacier": {
+      "image": "glacier.webp",
+      "tiles": {
+        "top-left": {
+          "frame": [
+            96,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "top-middle": {
+          "frame": [
+            608,
+            80,
+            320,
+            224
+          ],
+          "repeat": "x"
+        },
+        "top-right": {
+          "frame": [
+            1120,
+            80,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "side": {
+          "frame": [
+            96,
+            464,
+            320,
+            224
+          ],
+          "repeat": "xy"
+        },
+        "cave": {
+          "frame": [
+            608,
+            464,
+            320,
+            224
+          ],
+          "repeat": "none"
+        },
+        "ladder": {
+          "frame": [
+            1235,
+            464,
+            90,
+            224
+          ],
+          "repeat": "none"
+        }
+      }
+    }
+  },
+  "stageVariants": [
+    {
+      "stage": 4,
+      "baseTheme": "jungle",
+      "hueShiftDegrees": -25,
+      "saturation": 0.8,
+      "brightness": 1.05
+    },
+    {
+      "stage": 5,
+      "baseTheme": "volcano",
+      "hueShiftDegrees": -25,
+      "saturation": 0.8,
+      "brightness": 1.05
+    },
+    {
+      "stage": 6,
+      "baseTheme": "glacier",
+      "hueShiftDegrees": -25,
+      "saturation": 0.8,
+      "brightness": 1.05
+    },
+    {
+      "stage": 7,
+      "baseTheme": "jungle",
+      "hueShiftDegrees": 15,
+      "saturation": 1,
+      "brightness": 0.9
+    },
+    {
+      "stage": 8,
+      "baseTheme": "volcano",
+      "hueShiftDegrees": 15,
+      "saturation": 1,
+      "brightness": 0.9
+    },
+    {
+      "stage": 9,
+      "baseTheme": "glacier",
+      "hueShiftDegrees": 15,
+      "saturation": 1,
+      "brightness": 0.9
+    },
+    {
+      "stage": 10,
+      "baseTheme": "jungle",
+      "hueShiftDegrees": 35,
+      "saturation": 0.7,
+      "brightness": 1.1
+    },
+    {
+      "stage": 11,
+      "baseTheme": "volcano",
+      "hueShiftDegrees": 35,
+      "saturation": 0.7,
+      "brightness": 1.1
+    },
+    {
+      "stage": 12,
+      "baseTheme": "glacier",
+      "hueShiftDegrees": 35,
+      "saturation": 0.7,
+      "brightness": 1.1
+    },
+    {
+      "stage": 13,
+      "baseTheme": "jungle",
+      "hueShiftDegrees": -10,
+      "saturation": 1.15,
+      "brightness": 0.95
+    },
+    {
+      "stage": 14,
+      "baseTheme": "volcano",
+      "hueShiftDegrees": -10,
+      "saturation": 1.15,
+      "brightness": 0.95
+    },
+    {
+      "stage": 15,
+      "baseTheme": "glacier",
+      "hueShiftDegrees": -10,
+      "saturation": 1.15,
+      "brightness": 0.95
+    }
+  ],
+  "assembly": {
+    "topSequence": [
+      "top-left",
+      "top-middle*",
+      "top-right"
+    ],
+    "coordinates": "crop frame before assembly, omit transparent cell padding",
+    "join": "matching shared edge texels with 20px transition",
+    "wall": "side repeats xy beneath top blocks; overlay cave and ladder",
+    "stage4to15": "draft color transforms; no runtime code modifications"
+  }
+}

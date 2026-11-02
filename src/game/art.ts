@@ -1,3 +1,5 @@
+import { STAGES } from './stages'
+import { WORLD_CAST } from './world-cast'
 import { CHARACTER_SCALE } from './constants'
 import { defineComponent, h } from 'vue'
 /**
@@ -47,98 +49,67 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-let loading: Promise<void> | null = null
-
-export function loadArt():Promise<void> {
-  // Re-entering the game in development must pick up a newly packed manifest.
-  if(loading&&art.ready&&import.meta.env.DEV)return loadAnimationPack()
-  if(loading)return loading
-  loading=(async()=>{
-    art.images['title.logo']=await loadImage('runtime_logo_crisp.webp')
-    await loadAnimationPack()
-    art.ready=true
-  })()
-  return loading
+const imageCache=new Map<string,Promise<HTMLImageElement>>()
+const cachedImage=(src:string)=>{if(!imageCache.has(src))imageCache.set(src,loadImage(src).catch(error=>{imageCache.delete(src);throw error}));return imageCache.get(src)!}
+const stageLoads=new Map<number,Promise<void>>()
+let manifests:Promise<{folder:string;pack:any}[]>|null=null
+export function loadArt():Promise<void>{return loadStageArt(1)}
+export function loadStageArt(stage:number):Promise<void>{
+  if(stageLoads.has(stage))return stageLoads.get(stage)!
+  const request=loadAnimationPack(stage).catch(error=>{stageLoads.delete(stage);throw error})
+  stageLoads.set(stage,request);return request
 }
-
-async function loadAnimationPack():Promise<void> {
-  const response=await fetch(BASE+'painted-v6/manifest.json')
-  if(!response.ok)throw new Error('painted-v6/manifest.json')
-  const pack=await response.json()
-  if(pack.total!==Object.values(pack.sprites).reduce((n:number,s:any)=>n+s.frames.length,0))throw new Error('Animation frame count mismatch')
-  const cache=new Map<string,Promise<HTMLImageElement>>()
-  await Promise.all(Object.entries(pack.sprites).map(async([key,value])=>{
-    const v=value as {h:number;ppu:number;fps:number;pixelArt?:boolean;durationsMs?:number[];facingLeft:boolean;frames:{src:string;rect:number[]}[]}
-    const src=v.frames[0]!.src
-    if(!cache.has(src))cache.set(src,loadImage('painted-v6/'+src))
-    art.sprites[key]={img:await cache.get(src)!,frames:v.frames.map(f=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:1,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+async function loadAnimationPack(stage:number):Promise<void>{
+  art.images['title.logo']=await cachedImage('runtime_logo_crisp.webp')
+  if(!manifests)manifests=Promise.all(['painted-v6','terrain-v10','stage-backgrounds-v1','stage-signs-v1','elevated-objects-v1','monsters-v7','world-v8','monsters-v9','underwater-v1','fierce-monsters-v1','hq-monsters-v1','weapons-v1'].map(async folder=>{
+    const response=await fetch(BASE+folder+'/manifest.json')
+    if(!response.ok)throw new Error(folder+'/manifest.json')
+    return {folder,pack:await response.json()}
   }))
-  await Promise.all(Object.entries(pack.images as Record<string,string>).map(async([key,src])=>{art.images[key]=await loadImage('painted-v6/'+src)}))
-  const terrainResponse=await fetch(BASE+'terrain-v10/manifest.json')
-  if(terrainResponse.ok&&terrainResponse.headers.get('content-type')?.includes('json')){
-    const terrain=await terrainResponse.json() as {images:Record<string,string>}
-    await Promise.all(Object.entries(terrain.images).map(async([key,src])=>{art.images[key]=await loadImage('terrain-v10/'+src)}))
+  const cast=WORLD_CAST[stage-1]!
+  const local=new Set<string>([...cast.normal,cast.boss,cast.door])
+  const regional=new Set<string>(WORLD_CAST.flatMap(c=>[...c.normal,c.boss,c.door]))
+  const encounters=new Set(STAGES[stage-1]!.encounters?.map(e=>e.cfg.key)??[])
+  const companions=new Set(['scarab','sandScorpion','marshFrog','coralCrab','sporeling','stoneGuard','bambooMantis','moonOwl','emberTortoise','cloudRay'])
+  const needed=(key:string)=>{
+    const prefix=key.split('.')[0]!
+    if(companions.has(prefix))return encounters.has(prefix)
+    if(key.startsWith('underwater.')||/^p[12]\.swim/.test(key))return stage===17
+    if(/^proj2\.|^item2\./.test(key))return STAGES[stage-1]!.theme.n==='2'
+    if(/^proj3\.|^item3\./.test(key))return STAGES[stage-1]!.theme.n==='3'
+    if(regional.has(prefix)&&!local.has(prefix))return false
+    const numbered=key.match(/^(?:terrain\.|stage\.bg|ui\.biome_sign_|ui\.stage_sign_)(\d+)(?:\.|$)/)
+    if(numbered)return Number(numbered[1])===stage
+    if(prefix.startsWith('stage')&&/^stage\d+_/.test(prefix))return local.has(prefix)
+    if(/^dino[123]_/.test(prefix))return local.has(prefix)
+    if(/^boss[23]?$/.test(prefix))return local.has(prefix)
+    if(key.startsWith('sky.'))return stage===18
+    return true
   }
-  const backgroundsResponse=await fetch(BASE+'stage-backgrounds-v1/manifest.json')
-  if(!backgroundsResponse.ok)throw new Error('stage-backgrounds-v1/manifest.json')
-  const backgrounds=await backgroundsResponse.json() as {images:Record<string,string>}
-  await Promise.all(Object.entries(backgrounds.images).map(async([key,src])=>{
-    art.images[key]=await loadImage('stage-backgrounds-v1/'+src)
-  }))
-  const signsResponse=await fetch(BASE+'stage-signs-v1/manifest.json')
-  art.images['sky.cloudFloor']=await loadImage('sky-v1/cloud-floor.webp')
-  art.images['sky.background']=await loadImage('sky-v1/cloud-background.webp')
-  art.images['traversal.vineSupport']=await loadImage('traversal-v2/support.webp')
-  art.images['traversal.vine']=await loadImage('traversal-v2/vine.webp')
-  if(!signsResponse.ok)throw new Error('stage-signs-v1/manifest.json')
-  const signs=await signsResponse.json() as {images:Record<string,string>}
-  await Promise.all(Object.entries(signs.images).map(async([key,src])=>{
-    art.images[key]=await loadImage('stage-signs-v1/'+src)
-  }))
-  const elevatedResponse=await fetch(BASE+'elevated-objects-v1/manifest.json')
-  if(elevatedResponse.ok&&elevatedResponse.headers.get('content-type')?.includes('json')){
-    const elevated=await elevatedResponse.json() as {images:Record<string,string>}
-    await Promise.all(Object.entries(elevated.images).map(async([key,src])=>{
-      art.images[key]=await loadImage('elevated-objects-v1/'+src)
-    }))
+  const sprites=new Map<string,{folder:string;v:any}>(),images=new Map<string,string>()
+  for(const {folder,pack}of await manifests){
+    for(const [key,v]of Object.entries(pack.sprites??{}))if(needed(key))sprites.set(key,{folder,v})
+    for(const [key,src]of Object.entries(pack.images??{}))if(needed(key))images.set(key,folder+'/'+src)
   }
+  await Promise.all([...sprites].map(async([key,{folder,v}])=>{
+    const img=await cachedImage(folder+'/'+v.frames[0].src)
+    art.sprites[key]={img,frames:v.frames.map((f:any)=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:folder==='painted-v6'?1:240/256,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+  }))
+  await Promise.all([...images].map(async([key,src])=>{art.images[key]=await cachedImage(src)}))
+  if(stage===18)await Promise.all(['cloud-floor','cloud-background'].map(async(name,i)=>{art.images[i?'sky.background':'sky.cloudFloor']=await cachedImage('sky-v1/'+name+'.webp')}))
+  await Promise.all(['support','vine'].map(async name=>{art.images[name==='support'?'traversal.vineSupport':'traversal.vine']=await cachedImage('traversal-v2/'+name+'.webp')}))
   const alias=(prefix:string,to:string,from:string)=>{if(!art.sprites[prefix+'.'+to]&&art.sprites[prefix+'.'+from])art.sprites[prefix+'.'+to]=art.sprites[prefix+'.'+from]!}
   alias('p1','boneIdle','idle')
   for(const prefix of ['dino1_0','dino1_1','bear','boar']){
     for(const [to,from]of Object.entries({run:'walk',swing:'attack',throw:'attack',jump:'walk',charge:'walk',dive:'attack',dead:'collapse'}))alias(prefix,to,from)
   }
   for(const [to,from]of Object.entries({idle:'fly',walk:'fly',run:'fly',jump:'fly',attack:'dive',windup:'dive',swing:'dive',throw:'dive',dead:'collapse'}))alias('dino1_2',to,from)
-  for(let n=2;n<=3;n++)for(let row=0;row<3;row++)for(const[key,value]of Object.entries(art.sprites))if(key.startsWith(`dino1_${row}.`))art.sprites[key.replace('dino1_',`dino${n}_`)]=value
+  for(let n=2;n<=3;n++)for(let row=0;row<3;row++)for(const[key,value]of Object.entries(art.sprites))if(key.startsWith(`dino1_${row}.`)){const target=key.replace('dino1_',`dino${n}_`);if(!art.sprites[target])art.sprites[target]=value}
   for(const key of ['boss','boss2','boss3']){alias(key,'roar','attack');alias(key,'collapse','dead');alias(key,'run','charge')}
   for(const [to,from]of Object.entries({collapse:'dead',windup:'attack',swing:'attack',charge:'attack'}))alias('spider',to,from)
   const spiderFall=art.sprites['spider.dead']
   if(spiderFall)art.sprites['spider.recover']={...spiderFall,frames:[...spiderFall.frames].reverse(),durationsMs:spiderFall.durationsMs?[...spiderFall.durationsMs].reverse():undefined}
-  // Load after legacy aliases so volcanic and glacial monsters keep their own art.
-  const resolvedSprites=new Map<string,{folder:string;value:any}>()
-  const resolvedImages=new Map<string,{folder:string;src:string}>()
-  for(const folder of ['monsters-v7','world-v8','monsters-v9','underwater-v1','fierce-monsters-v1','hq-monsters-v1','weapons-v1']){
-  const monsterResponse=await fetch(BASE+folder+'/manifest.json')
-  // An in-progress optional art pack must not prevent the title/game loading.
-  // Vite returns the HTML app shell for missing public files with status 200.
-  if(!monsterResponse.ok||!monsterResponse.headers.get('content-type')?.includes('json')){
-    if(folder==='world-v8'||folder==='fierce-monsters-v1'||folder==='hq-monsters-v1')continue
-    throw new Error(folder+'/manifest.json')
-  }
-  const monsters=await monsterResponse.json()
-  if(monsters.total!==Object.values(monsters.sprites).reduce((n:number,s:any)=>n+s.frames.length,0))throw new Error('Monster frame count mismatch')
-  for(const [key,value]of Object.entries(monsters.sprites))resolvedSprites.set(key,{folder,value})
-  for(const [key,src]of Object.entries(monsters.images??{}))resolvedImages.set(key,{folder,src:src as string})
-  }
-  // Resolve overrides before decoding textures, so HD replacements do not also
-  // download and decode every superseded generation of the same monster.
-  const monsterImages=new Map<string,Promise<HTMLImageElement>>()
-  await Promise.all([...resolvedSprites].map(async([key,{folder,value}])=>{
-    const v=value as {h:number;ppu:number;fps:number;pixelArt:boolean;durationsMs:number[];facingLeft:boolean;frames:{src:string;rect:number[]}[]}
-    const src=folder+'/'+v.frames[0]!.src
-    if(!monsterImages.has(src))monsterImages.set(src,loadImage(src))
-    art.sprites[key]={img:await monsterImages.get(src)!,frames:v.frames.map(f=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:240/256,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
-  }))
-  await Promise.all([...resolvedImages].map(async([key,{folder,src}])=>{art.images[key]=await loadImage(folder+'/'+src)}))
+  art.ready=true
 }
 
 const timingCache=new WeakMap<FrameSet,{source:number[];ends:number[];total:number}>()

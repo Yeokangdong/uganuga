@@ -39,7 +39,6 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
     </div>
     <div class="timer" :class="{warning:hud.timeLeft<=20}" role="timer" aria-label="남은 시간" :style="{backgroundImage:`url(${art.images['ui.timer_panel']?.src})`}"><CartoonText :text="String(Math.max(0,hud.timeLeft)).padStart(2,'0')"/></div>
     <div v-if="!hud.boss&&!hud.paused" class="pattern-rule" :title="hud.patternHint"><strong>{{hud.patternName}}</strong><span v-if="help">{{hud.patternHint}}</span></div>
-    <div v-if="hud.boss" class="boss" aria-label="보스 체력"><span>{{hud.boss.name}}</span><span class="boss-meter"><i :style="{width:100*hud.boss.hp/hud.boss.max+'%'}"/></span></div>
     <div v-if="hud.banner && !hud.paused" class="banner" :key="hud.banner">
       <span>{{hud.banner}}</span>
       <small v-if="hud.bannerSub"><span>{{hud.bannerSub}}</span></small>

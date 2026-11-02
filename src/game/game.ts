@@ -10,11 +10,11 @@ import {drawStagePattern,updateStagePattern} from './patternRuntime'
 import {advanceCrossings,drawCrossings} from './traversal'
 import { Boss } from './boss'
 import {
-  ContactAnimal, Enemy, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
+  ContactAnimal, Enemy, Spider, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
   WEAPON_NAME, moveBody, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
-import { drawArt, frameAt, progressFrame, walkFrame, image, has } from './art'
+import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt } from './art'
 import { sfx, type Sfx } from './audio'
 import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
 
@@ -242,7 +242,19 @@ export class Game {
     this.sfx.playMusic('stage',this.stage.theme.n)
   }
 
+  private stageLoading=false
+  private stageLoadFailed=false
   private nextStage(): void {
+    if(this.stageLoading)return
+    this.stageLoading=true
+    this.stageLoadFailed=false
+    void loadStageArt(this.stageIdx+2).then(()=>{
+      if(this.stopped)return
+      this.finishNextStage()
+    }).catch(()=>{this.stageLoadFailed=true}).finally(()=>{this.stageLoading=false})
+  }
+
+  private finishNextStage(): void {
     if(this.stageIdx>=STAGES.length-1)return
     this.stageIdx++
     this.stage = STAGES[this.stageIdx]
@@ -279,7 +291,7 @@ export class Game {
       let n = 0
       while (this.acc + 1e-10 >= STEP && n < 6) {
         this.captureRenderState()
-        this.update(STEP)
+        if(!this.stageLoading)this.update(STEP)
         this.acc = Math.max(0, this.acc - STEP)
         n++
       }
@@ -543,6 +555,11 @@ export class Game {
     for(const p of this.players) if(!p.out) {
       p.x=64-p.w/2;p.y=this.level.floorBelow(64,100)-p.h;p.vx=0;p.vy=0;p.climbing=false;p.onGround=true;p.facing=1;p.swingT=0
       p.checkpoint();p.invuln=Math.max(p.invuln,.8)
+    }
+    if(!room){
+      const spider=new Spider(this.level,11*TILE,7*TILE)
+      if(this.stage.id===1)spider.speed=.65
+      this.enemies.push(spider)
     }
     this.spawn();this.sfx.thud();this.showBanner(this.stage.sub+' · 동굴',1.1)
   }
@@ -951,6 +968,13 @@ export class Game {
 
     ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0)
     ctx.imageSmoothingEnabled = true
+    if(this.stageLoading||this.stageLoadFailed){
+      ctx.fillStyle='#24170f';ctx.fillRect(0,0,VIEW_W,VIEW_H)
+      const logo=image('title.logo')
+      if(logo)ctx.drawImage(logo,VIEW_W/2-100,VIEW_H/2-55,200,80)
+      ctx.fillStyle='#f2bb62';ctx.fillRect(VIEW_W/2-60,VIEW_H/2+40,120,5)
+      return
+    }
     if(this.journeyT!==null){
       const journey=JOURNEYS[this.stageIdx]
       if(journey)drawJourney(ctx,journey,this.journeyT)
@@ -962,6 +986,18 @@ export class Game {
     } else this.bg.draw(ctx, this.camX, this.time,this.camY,this.level.height-VIEW_H)
     const ls = this.level.scale
     ctx.drawImage(this.level.canvas, cx * ls, cy * ls, VIEW_W * ls, VIEW_H * ls, 0, 0, VIEW_W, VIEW_H)
+    if(this.level.def.cave){
+      for(const x of [3*TILE,19*TILE]){
+        const y=7*TILE,px=x-cx,py=y-cy
+        ctx.save()
+        const glow=ctx.createRadialGradient(px,py-8,2,px,py-8,58)
+        glow.addColorStop(0,'rgba(255,182,64,.45)');glow.addColorStop(1,'rgba(255,130,30,0)')
+        ctx.fillStyle=glow;ctx.fillRect(px-58,py-66,116,116)
+        ctx.strokeStyle='#73503b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(px-4,py+10);ctx.lineTo(px,py-2);ctx.stroke()
+        drawArt(ctx,'fire.flame',frameAt('fire.flame',this.time+x),px,py,false)
+        ctx.restore()
+      }
+    }
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)
