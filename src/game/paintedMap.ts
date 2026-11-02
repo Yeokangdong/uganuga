@@ -17,7 +17,7 @@ const upperObjects:ElevatedObject[][]=[
   ['stone','bone','local'],['local','vine','local'],['local','vine','ruin'],
   ['stone','bone','local'],['crystal','ruin','local'],['stone','vine','coral'],
   ['local','local','local'],['ruin','stone','local'],['stone','ruin','crystal'],
-  ['stone','vine','local'],['local','vine','local'],['ice','crystal','local'],
+  ['stone','vine','local'],['local','vine','local'],['local','local','local'],
   ['basalt','bone','local'],['coral','ruin','local'],['local','crystal','ruin'],
   ['stone','ruin','bone'],['vine','local','ruin'],
 ]
@@ -45,7 +45,8 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
     g.restore();return
   }
   const h=Math.max(72,bottom-top+14)
-  const w=theme.structure==='ice'||theme.structure==='snow'?h*im.width/im.height
+  const w=theme.structure==='snow'?Math.min(42,h*im.width/im.height)
+    :theme.structure==='ice'?h*im.width/im.height
     :theme.organic?Math.min(132,h*im.width/im.height):Math.min(48,h*im.width/im.height)
   const center=Math.max(left+w*.25,Math.min(right-w*.25,x))
   g.save()
@@ -95,7 +96,7 @@ export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:n
   }
   // Preserve the ledge thickness and its two end caps. Repeat only its middle,
   // otherwise a long platform becomes a row of disconnected miniature ledges.
-  const unit=64
+  const unit=stage===15?44:64
   const depth=im.height*unit/im.width,edge=Math.min(8,width/2)
   const sourceEdge=im.width/8
   g.drawImage(im,0,0,sourceEdge,im.height,x,y,edge,depth)

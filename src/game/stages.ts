@@ -113,6 +113,8 @@ export interface BossCfg {
 }
 
 export interface Theme {
+  /** Music selection is independent of the legacy combat/terrain bank. */
+  music?: 'jungle' | 'volcano' | 'glacier'
   /** Unique scenery ID, independent of terrain assets. */
   background: number
   /** ?쇰윭?ㅽ듃 ??踰덊샇: '' = ?ㅽ뀒?댁?1, '2', '3' */
@@ -398,7 +400,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   map=planned.map
   return {
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
-    theme:{...themes[set]!,background:index+1},roles:localRoles,caveEntrance:cast.door,
+    theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
     encounters:planned.encounters,
     boss:{...bosses[set]!,key:cast.boss,name:cast.bossName,hp:24+index*2+progress,w:66+(index%5)*4,h:56+(index%4)*3,chargeSpeed:175+index*4},
     weapon:set===1?'fire':'bone',icy:index===2,final:last,

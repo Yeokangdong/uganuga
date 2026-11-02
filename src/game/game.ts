@@ -240,7 +240,7 @@ export class Game {
     this.introT = this.directStage&&this.stageIdx>0?0:this.openingDuration+this.dreamCount * 2.5 + 2.1
     this.banner = null
     this.pushHud()
-    this.sfx.playMusic('stage',this.stage.theme.n)
+    this.sfx.playMusic('stage',this.stage.theme.music)
   }
 
   private stageLoading=false
@@ -287,7 +287,7 @@ export class Game {
   }
 
   start(): void {
-    this.sfx.playMusic('stage',this.stage.theme.n)
+    this.sfx.playMusic('stage',this.stage.theme.music)
     this.last = performance.now()
     const loop = (ts: number) => {
       if (this.stopped) return

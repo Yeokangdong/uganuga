@@ -193,7 +193,7 @@ export class Sfx {
   playMusic(song: Song,theme=''): void {
     this.requestedMusic={song,theme}
     if(!this.musicEnabled){this.stopMusic();return}
-    const key=song==='boss'?'boss':theme==='2'?'volcano':theme==='3'?'glacier':'jungle'
+    const key=song==='boss'?'boss':theme==='2'||theme==='volcano'?'volcano':theme==='3'||theme==='glacier'?'glacier':'jungle'
     if(!this.ctx||(this.song===song&&this.musicKey===key))return
     this.stopMusic()
     this.song=song;this.musicKey=key;this.step=0
