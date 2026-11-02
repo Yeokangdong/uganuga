@@ -353,42 +353,11 @@ export class Level {
       }
     }
     if(!this.def.cave){
-      const biomeSign=image(`ui.biome_sign_${this.def.id}`)
-      const sign=image(`ui.stage_sign_${this.def.id}`),x=3*TILE
+      const biomeSign=image(`ui.biome_sign_${this.def.id}`),x=3*TILE
       if(biomeSign){
         const w=70,h=w*biomeSign.height/biomeSign.width
         const floor=this.floorBelow(x+w/2,0),y=floor-h+1.5
         g.drawImage(biomeSign,x,y,w,h)
-        // Crisp engraved lettering shares the slab; supports and weathering are painted together.
-        const dark=[2,10,12,16,19].includes(this.def.id)
-        g.save();g.textAlign='center';g.textBaseline='alphabetic'
-        g.font='bold 10px Georgia, serif'
-        // Decorations and supports change the slab's position in each image.
-        const slabCenters=[.35,.35,.35,.35,.35,.36,.38,.44,.40,.40,.40,.39,.41,.39,.43,.37,.43,.43,.37,.43]
-        const label=`STAGE ${this.def.id}`,tx=x+w/2
-        const metrics=g.measureText(label)
-        const ty=y+h*(slabCenters[this.def.id-1]??.38)+(metrics.actualBoundingBoxAscent-metrics.actualBoundingBoxDescent)/2
-        const maxWidth=w*.72,scale=Math.min(1,maxWidth/metrics.width)
-        g.translate(tx,ty);g.scale(scale,1)
-        g.fillStyle=dark?'#151517':'#ead9ae';g.fillText(label,0,.45)
-        g.fillStyle=dark?'#f1deae':'#44372f';g.fillText(label,0,0)
-        g.restore()
-      }else if(sign){
-        const w=70,h=w*sign.height/sign.width,floor=this.floorBelow(x+w/2,0)
-        const supports=this.def.id<=3?image(`ui.sign_supports_${this.def.id}`)??image('ui.sign_supports'):null
-        if(supports){
-          const sw=51,sh=sw*supports.height/supports.width
-          const base=floor+2 // Bury the stone bases into the grass/snow surface.
-          g.drawImage(supports,x+(w-sw)/2,base-sh,sw,sh)
-          g.drawImage(sign,x,base-h-sh*.62,w,h)
-        }else g.drawImage(sign,x,floor-h,w,h)
-      }else{
-        const floor=this.floorBelow(x+35,0)
-        g.fillStyle='#65442f';g.fillRect(x+12,floor-46,4,46);g.fillRect(x+54,floor-46,4,46)
-        g.fillStyle='#b28350';g.strokeStyle='#503726';g.lineWidth=2
-        g.beginPath();g.roundRect(x,floor-58,70,29,4);g.fill();g.stroke()
-        g.font='bold 12px sans-serif';g.textAlign='center';g.fillStyle='#fff0c5'
-        g.fillText(`STAGE ${this.def.id}`,x+35,floor-39)
       }
     }
     return cv

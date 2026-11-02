@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "images": {
+    "stage.bg1": "stage-01-jungle.webp",
+    "stage.bg2": "stage-02-volcano.webp",
+    "stage.bg3": "stage-03-glacier.webp",
+    "stage.bg4": "stage-04-desert.webp",
+    "stage.bg5": "stage-05-swamp.webp",
+    "stage.bg6": "stage-06-bamboo.webp",
+    "stage.bg7": "stage-07-canyon.webp",
+    "stage.bg8": "stage-08-crystal.webp",
+    "stage.bg9": "stage-09-coast.webp",
+    "stage.bg10": "stage-10-mushroom.webp",
+    "stage.bg11": "stage-11-ruins.webp",
+    "stage.bg12": "stage-12-storm.webp",
+    "stage.bg13": "stage-13-waterfalls.webp",
+    "stage.bg14": "stage-14-autumn.webp",
+    "stage.bg15": "stage-15-aurora.webp",
+    "stage.bg16": "stage-16-ashlands.webp",
+    "stage.bg17": "stage-17-coral.webp",
+    "stage.bg18": "stage-18-sky-islands.webp",
+    "stage.bg19": "stage-19-star-desert.webp",
+    "stage.bg20": "stage-20-dawn-garden.webp"
+  }
+}
