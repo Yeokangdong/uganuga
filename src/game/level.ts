@@ -171,7 +171,7 @@ export class Level {
   }
 
   swimmableAt(px:number,py:number):boolean {
-    return this.waterAt(px,py)&&(!!this.def.aquatic||this.def.theme.n!=='2')
+    return !!this.def.aquatic&&this.waterAt(px,py)
   }
 
   /** 열에서 가장 아래쪽의 설 수 있는 바깥 지면 y (부활·스폰용). 없으면 null */

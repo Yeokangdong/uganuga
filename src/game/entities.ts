@@ -1,6 +1,4 @@
 import { ugaSwingFrame } from './art'
-import {patternMovement} from './stagePatterns'
-import {carryCrossing,landCrossing,releaseCrossing,rideVine} from './traversal'
 import {WEAPON_NAME,WEAPON_STAT,isWeapon,rollWeaponDrop,type Weapon} from './weapons'
 export {WEAPON_NAME,WEAPON_STAT,type Weapon} from './weapons'
 import type { Game } from './game'
@@ -245,9 +243,9 @@ export class Player implements Body {
 
   private safeX = 40
   private safeY = 146
-  checkpoint():void {releaseCrossing(this);this.safeX=this.x;this.safeY=this.y;this.jumpBufferT=0;this.groundGraceT=0}
+  checkpoint():void {this.ropeAngle=null;this.safeX=this.x;this.safeY=this.y;this.jumpBufferT=0;this.groundGraceT=0}
   spawnAt(g: Game, keepWeapon = false): void {
-    releaseCrossing(this)
+    this.ropeAngle=null
     const lv = g.level
     const desiredX = this.dead ? this.safeX : 40
     const desiredY = this.dead ? this.safeY : lv.height - TILE * 3 - this.h
@@ -292,7 +290,6 @@ export class Player implements Body {
     }
     const lv = g.level
     this.invuln -= dt
-    const terrain=patternMovement(lv.def,g.time??0,this)
     const wasSwimming=this.swimming
     this.swimming=lv.swimmableAt(this.cx,this.y+this.h*.55)
     this.submerged=lv.swimmableAt(this.cx,this.y+3)
@@ -313,7 +310,7 @@ export class Player implements Body {
     if(this.swimming)this.climbing=false
     if(wasSwimming&&!this.swimming&&inp.up)this.vy=Math.min(this.vy,-JUMP_VEL*.65)
     if(this.knockbackT>0){
-      releaseCrossing(this)
+      this.ropeAngle=null
       this.knockbackT=Math.max(0,this.knockbackT-dt)
       this.jumpBufferT=0;this.groundGraceT=0
       this.vx=approach(this.vx,0,150*dt)
@@ -323,8 +320,6 @@ export class Player implements Body {
       if(this.y>lv.height+24)this.die(g, true)
       return
     }
-    if(rideVine(this,g,dt,inp)){this.clampToCamera(g);return}
-    carryCrossing(this,lv)
     this.jumpBufferT = inp.jumpPressed ? 0.10 : Math.max(0, this.jumpBufferT - dt)
     this.groundGraceT = this.onGround ? 0.065 : Math.max(0, this.groundGraceT - dt)
 
@@ -377,11 +372,10 @@ export class Player implements Body {
     let target = 0
     if (inp.left) target -= RUN_SPEED
     if (inp.right) target += RUN_SPEED
-    target=target*terrain.speed+terrain.wind
     if(this.gliding||this.inUpdraft)target*=1.2
     if (target !== 0) this.facing = Math.sign(target)
     if (this.swingT > 0 && this.onGround) target *= 0.35
-    const icy = (lv.def.icy||terrain.slip) && this.onGround
+    const icy = lv.def.icy && this.onGround
     const accel = this.onGround ? (icy ? 260 : target === 0 ? 2200 : 1800) : 850
     this.knockbackT = Math.max(0, this.knockbackT - dt)
     if (this.knockbackT <= 0) this.vx = approach(this.vx, target, accel * dt)
@@ -395,22 +389,16 @@ export class Player implements Body {
       this.groundGraceT = 0
       this.onGround = false
       this.jumpAge = 0
-      this.vy = -JUMP_VEL*terrain.jump
+      this.vy = -JUMP_VEL
       g.sfx.jump()
     }
     this.vy = this.inUpdraft ? approach(this.vy,-155,720*dt)
       : this.gliding ? Math.min(this.vy+GRAVITY*.2*dt,64)
-      : Math.min(this.vy+GRAVITY*terrain.gravity*dt,terrain.fallCap)
+      : Math.min(this.vy+GRAVITY*dt,MAX_FALL)
     this.dropT -= dt
     const wasGrounded = this.onGround
-    const previousFeet=this.y+this.h
     moveBody(this, lv, dt, this.dropT > 0)
-    landCrossing(this,lv,previousFeet,inp.down||this.dropT>0)
     if (!wasGrounded && this.onGround) this.landingT = .14
-    if(!wasGrounded&&this.onGround&&!inp.down){
-      const spring=patternMovement(lv.def,g.time??0,this).bounce
-      if(spring){this.vy=-spring;this.onGround=false;this.jumpAge=0;g.sfx.jump()}
-    }
     if (this.onGround && !g.enemies.some(e=>e.invulnerable && overlap(this,e))) { this.safeX=this.x; this.safeY=this.y }
     this.clampToCamera(g)
     }
@@ -455,7 +443,7 @@ export class Player implements Body {
     this.x=approach(this.x,this.climbCenterX,110*dt)
     // Two hand/foot transfers cover four rungs (7 world pixels per rung).
     const cadence=.88+.12*Math.cos(this.climbDistance/28*Math.PI*4)
-    const climbSpeed=CLIMB_SPEED*patternMovement(lv.def,g.time??0,this).climb
+    const climbSpeed=CLIMB_SPEED
     const target=inp.up?-climbSpeed*cadence:inp.down?climbSpeed*cadence:0
     this.climbVelocity=approach(this.climbVelocity,target,CLIMB_SPEED*8*dt)
     this.vy=this.climbVelocity
@@ -570,7 +558,7 @@ export class Player implements Body {
 
   hurt(g: Game, dmg: number, fromX: number): void {
     if (!this.alive || this.invuln > 0) return
-    releaseCrossing(this)
+    this.ropeAngle=null
     this.hp -= dmg
     const bossContact = g.boss && fromX === g.boss.cx && overlap(this, g.boss.hitbox)
     this.invuln = 0.8
@@ -599,7 +587,7 @@ export class Player implements Body {
 
   die(g: Game, immediate = false): void {
     if (this.dead) return
-    releaseCrossing(this)
+    this.ropeAngle=null
     this.dead = true
     this.weapon = 'axe'
     this.hp = 0

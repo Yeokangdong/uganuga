@@ -5,9 +5,6 @@ import { MAX_OXYGEN, SCALE, STEP, TILE, VIEW_H, VIEW_W, overlap } from './consta
 import { Input } from './input'
 import { Level, T } from './level'
 import { Background } from './background'
-import {STAGE_PATTERNS} from './stagePatterns'
-import {drawStagePattern,updateStagePattern} from './patternRuntime'
-import {advanceCrossings,drawCrossings} from './traversal'
 import { Boss } from './boss'
 import {
   ContactAnimal, Enemy, Spider, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
@@ -46,8 +43,6 @@ export interface HudPlayer {
 export interface HudState {
   journey:boolean
   trail:string|null
-  patternName:string
-  patternHint:string
   aerial:boolean
   aquatic:boolean
   food: number
@@ -132,7 +127,6 @@ export class Game {
   time = 0
   food = 0
   readonly foodMax = 60
-  private patternRest=new Map<Player,number>()
   timeLeft = TIME_LIMIT
   private ambushes: Ambush[] = []
   private doors: Door[] = []
@@ -201,7 +195,6 @@ export class Game {
     this.journeyPreview=false
     this.trailSeen=false
     this.trailT=0
-    this.patternRest.clear()
     this.camX = 0
     this.camY = this.level.height - VIEW_H
     this.enemies = []
@@ -440,7 +433,6 @@ export class Game {
     this.time += dt
     this.updateTimer(realDt)
     if (this.tryDoor()) return
-    advanceCrossings(this,dt)
     this.players.forEach((p, i) => {
       p.spawnFireT = Math.max(0, p.spawnFireT - (realDt - dt))
       p.invuln = Math.max(0, p.invuln - (realDt - dt))
@@ -467,7 +459,6 @@ export class Game {
     for (const f of this.effects) f.update(dt)
 
     this.collide()
-    updateStagePattern(this,realDt,this.patternRest)
 
     removeDead(this.enemies)
     removeDead(this.projectiles)
@@ -905,8 +896,6 @@ export class Game {
       trail:this.journeyT!==null?JOURNEYS[this.stageIdx]?.reason??null:this.trailT>0?JOURNEYS[this.stageIdx]?.clue??null:this.arrivalT>0&&this.stageIdx>0?`${STAGES[this.stageIdx-1]!.sub}에서 이어진 길 · 킹콩의 발자국을 따라가자.`:null,
       aquatic:!!this.level.def.aquatic,
       aerial:!!this.level.def.aerial,
-      patternName:this.level.def.cave?'동굴 탐험':STAGE_PATTERNS[this.stageIdx]![0],
-      patternHint:this.level.def.cave?'보물을 찾고 왼쪽 입구로 돌아가세요.':STAGE_PATTERNS[this.stageIdx]![1],
       food: this.food / this.foodMax,
       foodFullFrame: 1 + Math.floor(this.time * 8) % 3,
       opening:this.introT>0&&this.introElapsed<this.openingDuration?(this.introElapsed<1.7?'누가 공주가 도토리를 든 다람쥐를 쫓아갑니다':this.introElapsed<OPENING_GRAB_START?'다람쥐를 쫓던 공주 앞에 킹콩이 나타납니다':this.introElapsed<OPENING_PLEA_START?'킹콩이 누가 공주를 납치합니다':this.introElapsed<OPENING_DIALOGUE_START?'누가 공주: 우가! 도와줘! 무서워!':this.introElapsed<OPENING_ESCAPE_START?'킹콩: 누가 예쁘다… 내 색시로 삼을 거다!':this.introElapsed<OPENING_HERO_LINE_START?'킹콩이 공주를 데리고 달아납니다':'우가: 누가! 기다려! 내가 꼭 구해줄게!'):null,
@@ -1012,8 +1001,6 @@ export class Game {
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)
-    drawStagePattern(this,ctx,cx,cy)
-    drawCrossings(this,ctx,cx,cy)
     this.drawDoors(ctx, cx, cy)
     if(!this.saved)drawPursuitExit(ctx,this.stage.id,this.level.arenaX,x=>this.level.floorBelow(x,0),cx,cy)
     if(this.scrat&&!this.saved&&this.mode==='play'){

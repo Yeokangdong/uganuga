@@ -31,24 +31,18 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
           <span class="weapon" :aria-label="p.weapon" :title="p.weapon"><img v-if="weaponIcon(p.weaponKey)" :src="weaponIcon(p.weaponKey)" alt="" class="weapon-icon"/><CartoonText :text="weaponLabel(p.weaponKey)"/></span>
         </div>
       </div>
-      <div v-if="!p.dead && (hud.aquatic || p.swimming || p.oxygen<p.maxOxygen)" class="breath" :class="{low:p.oxygen<=5,recovering:!p.submerged}">
-        <span>숨</span><span class="breath-meter" role="meter" aria-label="남은 숨" :aria-valuenow="Math.ceil(p.oxygen)" aria-valuemin="0" :aria-valuemax="p.maxOxygen"><i :style="{width:(p.oxygen/p.maxOxygen*100)+'%'}"/></span><strong>{{Math.ceil(p.oxygen)}}s</strong>
-        <small>{{p.oxygen<=5&&p.submerged?'수면이나 공기 주머니로!':p.submerged?'잠수 중':'숨 회복'}}</small>
-      </div>
-      <div v-if="hud.aerial&&!p.dead" class="breath flight" role="status">{{p.flight==='wind'?'↑ 상승기류를 타는 중':p.flight==='glide'?'활공 중 · ↑를 놓으면 내려갑니다':'↑ 점프 · 길게 눌러 활공'}}</div>
     </div>
     <div class="timer" :class="{warning:hud.timeLeft<=20}" role="timer" aria-label="남은 시간" :style="{backgroundImage:`url(${art.images['ui.timer_panel']?.src})`}"><CartoonText :text="String(Math.max(0,hud.timeLeft)).padStart(2,'0')"/></div>
     <div v-if="hud.banner && !hud.paused" class="banner" :key="hud.banner">
       <span>{{hud.banner}}</span>
       <small v-if="hud.bannerSub"><span>{{hud.bannerSub}}</span></small>
     </div>
-    <div v-if="help && !hud.paused && !hud.boss" class="help">{{hud.aquatic?'방향키 헤엄치기 · 수면 / 공기 주머니에서 숨 회복 · Space 공격':hud.aerial?'← → 이동 · ↑ 점프 / 길게 눌러 활공 · 빛나는 상승기류로 섬 사이 건너기 · Space 공격':'← → 이동 · ↑ 점프 / 사다리 · ↓ 동굴 / 내려가기 · Space 공격 · P 일시정지'}}</div>
+    <div v-if="help && !hud.paused && !hud.boss" class="help">← → 이동 · ↑ 점프 / 사다리 · ↓ 동굴 / 내려가기 · Space 공격 · P 일시정지</div>
     <span v-if="hud.muted" class="mute">음소거</span>
     <div v-if="hud.paused" class="pause">
       <div class="pause-card"><h2>잠깐 쉬어가기</h2>
         <p>빛나는 몽둥이에 다가가면 바로 장착합니다.<br>나무 · 돌 · 뼈 · 불 몽둥이는 위력과 공격 속도가 다릅니다.</p>
-        <p class="pattern-description"><strong>{{hud.patternName}}</strong><br>{{hud.patternHint}}</p>
-        <p>{{hud.aquatic?'방향키로 상하좌우 헤엄치기 · ↑ 수면으로 올라오기':hud.aerial?'← → 공중 이동　↑ 점프 · 길게 누르면 천천히 활공':'← → 이동　↑ 점프·사다리　↓ 동굴·내려가기'}}</p><p v-if="hud.aerial">화살표가 떠오르는 상승기류를 타고 높은 섬으로 이동하세요.<br>섬에 착지하면 재시작 위치가 저장됩니다. 구름 아래로 추락하지 않게 조심하세요.</p><p v-if="hud.aquatic">숨은 20초입니다. 수면이나 공기 주머니에서 회복하세요.<br>숨이 모두 줄면 체력이 조금씩 감소합니다.</p><p>Space 공격 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모아 깃발로 이동하세요. 지나온 길로 돌아갈 수 있습니다.</p>
+        <p>← → 이동　↑ 점프·사다리　↓ 동굴·내려가기</p><p>Space 공격 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모아 깃발로 이동하세요. 지나온 길로 돌아갈 수 있습니다.</p>
         <button @click="$emit('resume')" aria-label="계속하기">계속하기 <kbd>Esc</kbd></button>
         <button @click="$emit('quit')" aria-label="시작 화면">시작 화면 <kbd>Q</kbd></button>
       </div>
