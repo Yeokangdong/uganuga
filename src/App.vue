@@ -10,7 +10,6 @@ import { STAGES } from './game/stages'
 
 type Screen = 'title' | 'game' | 'result'
 
-const base=import.meta.env.BASE_URL
 const loading = ref(true)
 const loadError=ref(false)
 onMounted(async()=>{try{await loadArt()}catch(error){console.error('Game art loading failed:',error);loadError.value=true}finally{loading.value=false}})
@@ -47,7 +46,7 @@ function onEnd(kind: EndKind, scores: number[], stage: number) {
 <template>
   <div class="viewport">
     <div class="frame">
-      <div v-if="loading" class="loading" role="status"><img :src="`${base}assets/ready.webp`" alt="?? ?" style="width:180px;max-width:50%"><div class="loading-bar"><i /></div></div>
+      <div v-if="loading" class="loading" role="status">모험을 준비하고 있어요<div class="loading-bar"><i /></div></div>
       <div v-if="loadError" class="loading" role="alert">그림을 불러오지 못했습니다.<button @click="reload">다시 불러오기</button></div>
       <TitleScreen v-if="!loading && !loadError && screen === 'title'" @start="start" />
       <GameView

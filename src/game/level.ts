@@ -1,8 +1,7 @@
-import { drawPaintedText } from './art'
 import { SCALE, TILE } from './constants'
 import { has, image } from './art'
 import { ROWS, type StageDef, type EnemyCfg } from './stages'
-import { rockWall, rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, type ElevatedObject } from './paintedMap'
+import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, type ElevatedObject } from './paintedMap'
 import { terrainTheme } from './terrainThemes'
 import { cloudFloor } from './cloudTerrain'
 import type {Weapon} from './weapons'
@@ -212,7 +211,7 @@ export class Level {
   private prerender():HTMLCanvasElement {
     const cv=document.createElement('canvas');cv.width=this.width*this.scale;cv.height=this.height*this.scale
     const g=cv.getContext('2d')!;g.scale(this.scale,this.scale);g.imageSmoothingEnabled=true
-    const theme=this.def.id,material=terrainTheme(theme)
+    const theme=this.def.theme.background,material=terrainTheme(theme)
     const textures=new Map<number,CanvasPattern>()
     const draw=(i:number,x:number,y:number,w:number,h:number,_cap=false)=>{
       let pattern=textures.get(i)
@@ -293,17 +292,7 @@ export class Level {
       while(bottom<this.rows&&this.isSolidTile(this.tile(middle,bottom)))bottom++
       cloudFloor(g,start*TILE,r*TILE,(c-start)*TILE,(bottom-r)*TILE)
     }
-    // Paint solid runs together, so shared tile edges have no individual shadows.
-    if(!this.def.cave&&image(`terrain11.${this.def.id}`))for(let r=0;r<this.rows;r++)for(let c=0;c<this.cols;){
-      if(!this.isSolidTile(this.tile(c,r))||this.isSolidTile(this.tile(c,r-1))){c++;continue}
-      const start=c
-      while(c<this.cols&&this.isSolidTile(this.tile(c,r))&&!this.isSolidTile(this.tile(c,r-1)))c++
-      let depth=1
-      while(r+depth<this.rows&&Array.from({length:c-start},(_,i)=>this.isSolidTile(this.tile(start+i,r+depth))).every(Boolean))depth++
-      rockWall(g,this.def.id,start*TILE,r*TILE,(c-start)*TILE,depth*TILE,true)
-    }
     for(let r=0;r<this.rows;r++)for(let c=0;c<this.cols;c++){
-      if(!this.def.cave&&image(`terrain11.${this.def.id}`))continue
       if(this.def.aerial)continue
       const t=this.tile(c,r),x=c*TILE,y=r*TILE
       if(this.isSolidTile(t)){
@@ -346,7 +335,7 @@ export class Level {
       const support=supports[deck.support]
       if(!support){terrainDeck(g,deck.x,deck.y,theme,deck.width);continue}
       if(support.object!=='local'&&image('world.elevated.'+support.object))continue
-      terrainDeck(g,deck.x,deck.y,theme,deck.width,support.object,deck.bottom)
+      terrainDeck(g,deck.x,deck.y,theme,deck.width,support.object)
     }
     // Actual ladder span, shared with physics; one narrow shaft per connected run.
     for(let r=0;r<this.rows;r++)for(let c=0;c<this.cols;c++){
@@ -370,6 +359,20 @@ export class Level {
         const w=70,h=w*biomeSign.height/biomeSign.width
         const floor=this.floorBelow(x+w/2,0),y=floor-h+1.5
         g.drawImage(biomeSign,x,y,w,h)
+        // Crisp engraved lettering shares the slab; supports and weathering are painted together.
+        const dark=[2,10,12,16,19].includes(this.def.id)
+        g.save();g.textAlign='center';g.textBaseline='alphabetic'
+        g.font='bold 10px Georgia, serif'
+        // Decorations and supports change the slab's position in each image.
+        const slabCenters=[.35,.35,.35,.35,.35,.36,.38,.44,.40,.40,.40,.39,.41,.39,.43,.37,.43,.43,.37,.43]
+        const label=`STAGE ${this.def.id}`,tx=x+w/2
+        const metrics=g.measureText(label)
+        const ty=y+h*(slabCenters[this.def.id-1]??.38)+(metrics.actualBoundingBoxAscent-metrics.actualBoundingBoxDescent)/2
+        const maxWidth=w*.72,scale=Math.min(1,maxWidth/metrics.width)
+        g.translate(tx,ty);g.scale(scale,1)
+        g.fillStyle=dark?'#151517':'#ead9ae';g.fillText(label,0,.45)
+        g.fillStyle=dark?'#f1deae':'#44372f';g.fillText(label,0,0)
+        g.restore()
       }else if(sign){
         const w=70,h=w*sign.height/sign.width,floor=this.floorBelow(x+w/2,0)
         const supports=this.def.id<=3?image(`ui.sign_supports_${this.def.id}`)??image('ui.sign_supports'):null
@@ -385,10 +388,9 @@ export class Level {
         g.fillStyle='#b28350';g.strokeStyle='#503726';g.lineWidth=2
         g.beginPath();g.roundRect(x,floor-58,70,29,4);g.fill();g.stroke()
         g.font='bold 12px sans-serif';g.textAlign='center';g.fillStyle='#fff0c5'
-        drawPaintedText(g,`STAGE ${this.def.id}`,x+35,floor-39,parseFloat(g.font)||8)
+        g.fillText(`STAGE ${this.def.id}`,x+35,floor-39)
       }
     }
     return cv
   }
 }
-

@@ -1,4 +1,3 @@
-import { drawPaintedText } from './art'
 import type {Game} from './game'
 import type {Player} from './entities'
 import type {PlayerInput} from './input'
@@ -163,7 +162,7 @@ export function drawCrossings(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:n
         ctx.font='bold 6px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.lineWidth=2
         ctx.strokeStyle='#314525';ctx.fillStyle='#fff1c9'
         const text=rider?'← 흔들기 → · ↑ 뛰기':'↑ 덩굴 잡기',y=(rider?.y??e.y)-12
-        drawPaintedText(ctx,text,rider?.cx??e.x,y,parseFloat(ctx.font)||8)
+        ctx.strokeText(text,rider?.cx??e.x,y);ctx.fillText(text,rider?.cx??e.x,y)
       }
     }else{
       if(n.broken>0){ctx.restore();continue}

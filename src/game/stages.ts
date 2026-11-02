@@ -1,4 +1,3 @@
-/** Hand-authored routes: one cell = 16 world pixels; no mirrored/repeated chunks. */
 import type { ProjKind } from './entities'
 import { WORLD_CAST } from './world-cast'
 import {planEncounters} from './encounterPlan'
@@ -161,7 +160,6 @@ export interface StageDef {
 export function makeCaveRoom(base: StageDef, seed: number, random:()=>number=Math.random): StageDef {
   const slots=seed%2===0?[8,13,18]:[9,14,18]
   const marks:Mark[]=slots.slice(0,caveRewardCount(random)).map(col=>[col,11,'?'])
-  marks.push([11,8,'S'],[16,11,'X'])
   const map=route({w:22,ground:[[0,21,12]],marks}).map((r,y)=>y<3?'R'.repeat(22): y<12?'R'+r.slice(1,-1)+'R':r)
   return {...base,aquatic:undefined,aerial:undefined,encounters:[],map,arenaCol:21,cave:true,kind:'explore',final:false,icy:false}
 }
@@ -240,50 +238,50 @@ function withBossArena(map:MapLayout):MapLayout {
 }
 /** Species have their own silhouettes, timings and tactics, not recolored aliases. */
 export const BESTIARY:Record<string,EnemyCfg>={
-  sprout:{...SMALL,name:'Sprout',behavior:'patrol'},
-  ptero:{...FLY,name:'Pterosaur',behavior:'swoop'},
-  ember:{...FIRE,name:'Ember',behavior:'sentry'},
-  lavaRunner:{...LIZARD,name:'Lava runner',behavior:'skirmish'},
-  bat:{...BAT,name:'Bat',behavior:'swoop'},
-  frost:{...SPEAR,name:'Frost hunter',behavior:'sentry',proj:'iceball'},
-  saber:{...SABER,name:'Sabertooth',behavior:'skirmish'},
-  iceWing:{...BAT,key:'dino3_2',name:'Local',behavior:'hover'},
-  bear:{...HEAVY,key:'bear',name:'Bear',behavior:'charge',speed:26},
-  boar:{...RUNNER,key:'boar',name:'Boar',behavior:'charge'},
-  spider:{cls:'melee',key:'spider',name:'Spider',hp:2,score:150,speed:24,w:17,h:12,behavior:'ambush'},
-  scarab:{cls:'charger',key:'scarab',name:'Scarab',hp:4,score:220,speed:22,w:23,h:18,behavior:'charge'},
-  scorpion:{cls:'melee',key:'sandScorpion',name:'Scorpion',hp:3,score:180,speed:26,w:24,h:19,behavior:'ambush'},
-  frog:{cls:'runner',key:'marshFrog',name:'Frog',hp:2,score:160,speed:42,w:20,h:16,behavior:'hopper'},
-  crab:{cls:'runner',key:'coralCrab',name:'Coral crab',hp:3,score:180,speed:35,w:22,h:17,behavior:'skirmish'},
-  mushroom:{cls:'melee',key:'sporeling',name:'Mushroom',hp:2,score:150,speed:18,w:18,h:22,behavior:'hopper'},
-  golem:{cls:'charger',key:'stoneGuard',name:'Golem',hp:5,score:300,speed:18,w:25,h:27,behavior:'charge'},
-  mantis:{cls:'runner',key:'bambooMantis',name:'Mantis',hp:3,score:200,speed:42,w:23,h:22,behavior:'ambush'},
-  owl:{cls:'flyer',key:'moonOwl',name:'Owl',hp:2,score:180,speed:30,w:21,h:19,behavior:'swoop'},
-  tortoise:{cls:'melee',key:'emberTortoise',name:'Ember tortoise',hp:4,score:240,speed:15,w:23,h:17,behavior:'patrol'},
-  ray:{cls:'flyer',key:'cloudRay',name:'Ray',hp:3,score:220,speed:28,w:29,h:17,behavior:'hover'}
+  sprout:{...SMALL,name:'초록 아기 티라노',behavior:'patrol'},
+  ptero:{...FLY,name:'정글 익룡',behavior:'swoop'},
+  ember:{...FIRE,name:'불꽃 도마뱀',behavior:'sentry'},
+  lavaRunner:{...LIZARD,name:'용암 질주룡',behavior:'skirmish'},
+  bat:{...BAT,name:'화산 박쥐',behavior:'swoop'},
+  frost:{...SPEAR,name:'서리 공룡',behavior:'sentry',proj:'iceball'},
+  saber:{...SABER,name:'빙하 검치호',behavior:'skirmish'},
+  iceWing:{...BAT,key:'dino3_2',name:'얼음 익룡',behavior:'hover'},
+  bear:{...HEAVY,key:'bear',name:'동굴곰',behavior:'charge',speed:26},
+  boar:{...RUNNER,key:'boar',name:'붉은 멧돼지',behavior:'charge'},
+  spider:{cls:'melee',key:'spider',name:'덤불거미',hp:2,score:150,speed:24,w:17,h:12,behavior:'ambush'},
+  scarab:{cls:'charger',key:'scarab',name:'갑옷딱정벌레',hp:4,score:220,speed:22,w:23,h:18,behavior:'charge'},
+  scorpion:{cls:'melee',key:'sandScorpion',name:'모래전갈',hp:3,score:180,speed:26,w:24,h:19,behavior:'ambush'},
+  frog:{cls:'runner',key:'marshFrog',name:'늪개구리',hp:2,score:160,speed:42,w:20,h:16,behavior:'hopper'},
+  crab:{cls:'runner',key:'coralCrab',name:'산호집게게',hp:3,score:180,speed:35,w:22,h:17,behavior:'skirmish'},
+  mushroom:{cls:'melee',key:'sporeling',name:'포자버섯',hp:2,score:150,speed:18,w:18,h:22,behavior:'hopper'},
+  golem:{cls:'charger',key:'stoneGuard',name:'돌수호자',hp:5,score:300,speed:18,w:25,h:27,behavior:'charge'},
+  mantis:{cls:'runner',key:'bambooMantis',name:'대나무사마귀',hp:3,score:200,speed:42,w:23,h:22,behavior:'ambush'},
+  owl:{cls:'flyer',key:'moonOwl',name:'달빛부엉이',hp:2,score:180,speed:30,w:21,h:19,behavior:'swoop'},
+  tortoise:{cls:'melee',key:'emberTortoise',name:'불씨등거북',hp:4,score:240,speed:15,w:23,h:17,behavior:'patrol'},
+  ray:{cls:'flyer',key:'cloudRay',name:'구름가오리',hp:3,score:220,speed:28,w:29,h:17,behavior:'hover'}
 }
 interface Habitat {ground:string[];canopy:string[];air:string[];formation:string}
 export const HABITATS:Habitat[]=[
-  {ground:['sprout','scarab','boar','bear'],canopy:['spider','sprout'],air:['ptero'],formation:'Local'},
-  {ground:['ember','tortoise','lavaRunner','scarab'],canopy:['ember','tortoise'],air:['bat'],formation:'Local'},
-  {ground:['frost','saber','bear','scarab'],canopy:['frost','saber'],air:['iceWing','owl'],formation:'Local'},
-  {ground:['scorpion','scarab','tortoise','golem'],canopy:['scorpion','scarab'],air:['bat'],formation:'Local'},
-  {ground:['frog','mushroom','spider','scarab'],canopy:['frog','spider'],air:['ptero'],formation:'Local'},
-  {ground:['mantis','scarab','boar','frog'],canopy:['mantis','spider'],air:['owl','ptero'],formation:'Local'},
-  {ground:['scorpion','golem','lavaRunner','scarab'],canopy:['scorpion','golem'],air:['ptero','bat'],formation:'Local'},
-  {ground:['golem','frost','scarab','mushroom'],canopy:['frost','mushroom'],air:['iceWing','ray'],formation:'Local'},
-  {ground:['crab','frog','scarab','boar'],canopy:['crab','frog'],air:['ptero','ray'],formation:'Local'},
-  {ground:['mushroom','spider','frog','mantis'],canopy:['mushroom','spider'],air:['owl','bat'],formation:'Local'},
-  {ground:['golem','scarab','scorpion','mantis'],canopy:['golem','mantis'],air:['owl','bat'],formation:'Local'},
-  {ground:['boar','golem','saber','scarab'],canopy:['scarab','golem'],air:['ray','ptero'],formation:'Local'},
-  {ground:['frog','crab','mantis','sprout'],canopy:['frog','mantis'],air:['ray','ptero'],formation:'Local'},
-  {ground:['boar','bear','scarab','mushroom'],canopy:['mantis','mushroom'],air:['owl'],formation:'Local'},
-  {ground:['saber','frost','golem','scarab'],canopy:['frost','golem'],air:['owl','iceWing','ray'],formation:'Local'},
-  {ground:['tortoise','ember','golem','scorpion','lavaRunner'],canopy:['ember','tortoise'],air:['bat'],formation:'Local'},
-  {ground:['crab','frog','scarab','mantis'],canopy:['crab','mantis'],air:['ray','ptero'],formation:'Local'},
-  {ground:['golem','mantis','frost','scarab'],canopy:['mantis','frost'],air:['ray','iceWing','owl'],formation:'Local'},
-  {ground:['scorpion','scarab','golem','tortoise'],canopy:['scorpion','golem'],air:['owl','bat','ray'],formation:'Local'},
-  {ground:['mantis','golem','scarab','boar','mushroom'],canopy:['mantis','mushroom','golem'],air:['owl','ray'],formation:'Local'},
+  {ground:['sprout','scarab','boar','bear'],canopy:['spider','sprout'],air:['ptero'],formation:'정글 길목과 나뭇가지 순찰'},
+  {ground:['ember','tortoise','lavaRunner','scarab'],canopy:['ember','tortoise'],air:['bat'],formation:'용암길의 거북 방벽과 화염 보초'},
+  {ground:['frost','saber','bear','scarab'],canopy:['frost','saber'],air:['iceWing','owl'],formation:'설원 추격대와 얼음 보초'},
+  {ground:['scorpion','scarab','tortoise','golem'],canopy:['scorpion','scarab'],air:['bat'],formation:'모래전갈 매복과 딱정벌레 쌍 순찰'},
+  {ground:['frog','mushroom','spider','scarab'],canopy:['frog','spider'],air:['ptero'],formation:'물가 개구리의 엇박 도약'},
+  {ground:['mantis','scarab','boar','frog'],canopy:['mantis','spider'],air:['owl','ptero'],formation:'대나무 상하단 사마귀 협공'},
+  {ground:['scorpion','golem','lavaRunner','scarab'],canopy:['scorpion','golem'],air:['ptero','bat'],formation:'협곡 수호자와 공중 급강하'},
+  {ground:['golem','frost','scarab','mushroom'],canopy:['frost','mushroom'],air:['iceWing','ray'],formation:'수정 수호자 뒤의 원거리 보초'},
+  {ground:['crab','frog','scarab','boar'],canopy:['crab','frog'],air:['ptero','ray'],formation:'해안 집게게 무리와 저공 활공'},
+  {ground:['mushroom','spider','frog','mantis'],canopy:['mushroom','spider'],air:['owl','bat'],formation:'버섯 도약대와 야행성 사냥꾼'},
+  {ground:['golem','scarab','scorpion','mantis'],canopy:['golem','mantis'],air:['owl','bat'],formation:'유적의 돌수호자와 매복 경비'},
+  {ground:['boar','golem','saber','scarab'],canopy:['scarab','golem'],air:['ray','ptero'],formation:'고원의 교대 돌진과 가오리 편대'},
+  {ground:['frog','crab','mantis','sprout'],canopy:['frog','mantis'],air:['ray','ptero'],formation:'폭포 발판의 개구리 도약전'},
+  {ground:['boar','bear','scarab','mushroom'],canopy:['mantis','mushroom'],air:['owl'],formation:'단풍 숲의 멧돼지와 곰 돌진'},
+  {ground:['saber','frost','golem','scarab'],canopy:['frost','golem'],air:['owl','iceWing','ray'],formation:'오로라 아래 검치호와 야간 비행대'},
+  {ground:['tortoise','ember','golem','scorpion','lavaRunner'],canopy:['ember','tortoise'],air:['bat'],formation:'화산재의 중장갑 방벽과 불꽃 보초'},
+  {ground:['crab','frog','scarab','mantis'],canopy:['crab','mantis'],air:['ray','ptero'],formation:'산호게 쌍 순찰과 해풍 비행대'},
+  {ground:['golem','mantis','frost','scarab'],canopy:['mantis','frost'],air:['ray','iceWing','owl'],formation:'하늘섬의 높이별 비행 편대'},
+  {ground:['scorpion','scarab','golem','tortoise'],canopy:['scorpion','golem'],air:['owl','bat','ray'],formation:'별빛 사막의 전갈 매복과 야간 급습'},
+  {ground:['mantis','golem','scarab','boar','mushroom'],canopy:['mantis','mushroom','golem'],air:['owl','ray'],formation:'새벽 정원의 마지막 혼성 경비대'}
 ]
 
 /** New routes keep jump gaps short and connect every raised deck with ladders. */
@@ -334,71 +332,47 @@ function extendExpedition(map:MapLayout,index:number):MapLayout {
     ladders:[...(map.ladders??[]),...ladders.map(([col,top,bottom]):Span=>[col+w,top,bottom])],
   })
 }
-export const STAGE_NAMES = ['원시 정글', '불타는 화산', '얼어붙은 빙하', '황금 모래사막', '안개 늪', '대나무 숲', '붉은 협곡', '반짝이는 수정 계곡', '고요한 해안', '커다란 버섯 숲', '고대 왕국의 유적', '천둥 고원', '거대한 폭포', '가을 단풍 숲', '공주의 정원']
+export const STAGE_NAMES = [
+  '원시 정글','불타는 화산','얼어붙은 빙하','황금 모래사막','안개 늪지',
+  '대나무 숲','붉은 협곡','반짝이는 수정 계곡','노을 해안','달빛 버섯 숲',
+  '고대 돌기둥 유적','천둥 고원','거대한 폭포','가을 단풍 숲','오로라 설원',
+  '검은 화산재 황무지','산호 바닷속 유적','하늘섬','별빛 사막','공주의 새벽 정원'
+]
 const terrainSets=[0,1,2,1,0,0,1,2,0,0,1,1,0,0,2,1,0,2,1,0]
-/** Fifteen distinct silhouettes, with increasingly dense optional upper routes. */
-function variedExpedition(index:number):MapLayout {
-  const formations:[number,number,number,number][]= []
-  const w=240+index*8,ground:Span[]=[],islands:Island[]=[],ladders:Span[]=[],gaps:[number,number][]=[],water:[number,number][]=[],logs:Span[]=[],marks:Mark[]=[]
-  const floorAt=(c:number)=>c<26||c>w-24?21:20+Math.floor((c+index*13)/(12+index%5))%3
-  for(let c=0;c<w;c++)ground.push([c,c,floorAt(c)])
-  const count=2+Math.floor(index/3)
-  for(let k=0;k<count;k++){
-    const x=(index===0?30:14+index%7)+Math.floor(k*(w-65)/count)+(index*7+k*3)%9
-    const shape=(index+k*3)%8,lowRow=16+(index+k)%2,upperRow=8+(index+k)%4
-    const bands:[number,number][]=shape===0?[[4,18],[4,17],[8,16],[4,17]]:
-      shape===1?[[5,lowRow],[14,lowRow]]:shape===2?[[7,18],[5,16],[7,18]]:
-      shape===3?[[5,17],[5,15],[9,17]]:shape===4?[[24,17]]:
-      shape===5?[[6,18],[12,16],[6,18]]:shape===6?[[6,17],[12,16],[6,17]]:[[22,15]]
-    const low=island(x,1,...bands);islands.push(low)
-    ladders.push(link(x+2,low,floorAt(x+2)),link(x+low.top.length-3,low,floorAt(x+low.top.length-3)))
-    if(index>0){
-      const high=island(x+6,1,[index%2+7,upperRow],[5,upperRow+1]);islands.push(high)
-      ladders.push(link(x+8,high,low),link(x+15,high,low))
-      if(shape===1)formations.push([x+10,x+13,upperRow,lowRow])
-      if(shape===3)formations.push([x+10,x+12,upperRow,lowRow])
-      if(shape===6)formations.push([x+6,x+6,upperRow,lowRow],[x+17,x+17,upperRow+1,lowRow])
-    }
-    if(index>2&&shape===7)logs.push([x+2,x+19,10])
-    if(index>0&&k%2===0){const gap=x+low.top.length+3;((index+k)%3===0?water:gaps).push([gap,gap+1+(index>9?1:0)])}
-    marks.push([x+4,low.top[4]!-1,'E'],[x+12,6,'F'])
-  }
-  marks.push([9,20,'E'])
-  const result=route({w,h:ROWS,ground,islands,ladders,gaps,water,logs,marks})
-  const grid=result.map(row=>row.split(''))
-  for(const [left,right,top,bottom]of formations)for(let c=left;c<=right;c++)for(let r=top;r<=bottom;r++)if(['.','='].includes(grid[r]![c]!))grid[r]![c]='#'
-  return Object.assign(grid.map(row=>row.join('')),{ladders:result.ladders})
-}
-/** Cave floors include ground and ladder-connected upper ledges. */
+/** Distribute 2–4 caves along exploration routes, never inside the opening screen. */
 export function placeCaveEntrances(source:MapLayout,stage:number):MapLayout {
   const grid=source.map(row=>row.replace(/D/g,'.').split(''))
   const width=grid[0]!.length,candidates:{col:number;floor:number}[]=[]
-  for(let col=16;col<width-14;col++)for(let floor=6;floor<grid.length;floor++){
-    if(!Array.from({length:5},(_,i)=>col-2+i).every(c=>['#','R','='].includes(grid[floor]?.[c]??'')))continue
+  for(let col=32;col<width-14;col++){
+    const floor=grid.findIndex((row,r)=>row[col]==='#'&&grid[r-1]?.[col]==='.')
+    if(floor<5)continue
+    if(!Array.from({length:9},(_,i)=>col-4+i).every(c=>grid[floor]?.[c]==='#'&&!['#','R'].includes(grid[floor-1]?.[c]??'#')))continue
     if(!Array.from({length:4},(_,i)=>grid[floor-1-i]?.[col]==='.').every(Boolean))continue
+    if((source.ladders??[]).some(([x,top,bottom])=>Math.abs(x-col)<4&&floor>=top&&floor<=bottom+3))continue
     candidates.push({col,floor})
   }
-  const chosen:typeof candidates=[],count=1+stage%2
+  const count=2+stage%3,chosen:typeof candidates=[]
   for(let i=0;i<count;i++){
-    const target=18+(width-45)*(((stage*7+i*5)%15)/14),height=[21,16,9][(stage+i)%3]!
-    const best=candidates.filter(c=>chosen.every(o=>Math.abs(c.col-o.col)>28))
-      .sort((a,b)=>(Math.abs(a.col-target)+Math.abs(a.floor-height)*10)-(Math.abs(b.col-target)+Math.abs(b.floor-height)*10))[0]
-    if(best){chosen.push(best);grid[best.floor-1]![best.col]='D'}
+    const target=32+(width-56)*(i+1)/(count+1)+((stage*7+i*11)%13-6)
+    const available=candidates.filter(c=>chosen.every(other=>Math.abs(c.col-other.col)>=24))
+    const best=available.sort((a,b)=>Math.abs(a.col-target)-Math.abs(b.col-target))[0]
+    if(!best)break
+    chosen.push(best);grid[best.floor-1]![best.col]='D'
   }
   return Object.assign(grid.map(row=>row.join('')),{ladders:source.ladders??[]})
 }
 export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
-  const last=index===STAGE_NAMES.length-1,source=last?19:index,set=terrainSets[source]!
+  const set=terrainSets[index]!,last=index===STAGE_NAMES.length-1
   const sea=index===16?makeUnderwaterMap():undefined
   const sky=index===17?makeSkyMap():undefined
   let map=sea?.map??sky?.map??(last?home:index<3?areas[index]!:expedition(index))
   // The final garden also has its local flying species and a guardian clearing.
   if(!map.some(row=>row.includes('F')))map=Object.assign(map.map((row,y)=>y===13?row.slice(0,45)+'F'+row.slice(46):row),{ladders:map.ladders})
   if(!map.some(row=>row.includes('D')))map=Object.assign(map.map((row,y)=>y===20?row.slice(0,10)+'D'+row.slice(11):row),{ladders:map.ladders})
-  if(!sea&&!sky)map=index<15?variedExpedition(index):extendExpedition(map,index)
+  if(!sea&&!sky)map=extendExpedition(map,index)
   map=placeCaveEntrances(map,index+1)
   const progress=Math.floor(index/4)
-  const cast=WORLD_CAST[source]!,habitat=HABITATS[source]!
+  const cast=WORLD_CAST[index]!,habitat=HABITATS[index]!
   const localRoles: StageDef['roles']={
     E:{...BESTIARY[habitat.ground[0]!]!,fallbackKey:BESTIARY[habitat.ground[0]!]!.key,key:cast.normal[0],name:cast.names[0]},
     M:{...BESTIARY[habitat.ground[1]!]!,fallbackKey:BESTIARY[habitat.ground[1]!]!.key,key:cast.normal[1],name:cast.names[1]},
@@ -409,11 +383,10 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   map=planned.map
   return {
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
-    theme:{...themes[set]!,background:source+1},roles:localRoles,caveEntrance:cast.door,
+    theme:{...themes[set]!,background:index+1},roles:localRoles,caveEntrance:cast.door,
     encounters:planned.encounters,
     boss:{...bosses[set]!,key:cast.boss,name:cast.bossName,hp:24+index*2+progress,w:66+(index%5)*4,h:56+(index%4)*3,chargeSpeed:175+index*4},
     weapon:set===1?'fire':'bone',icy:index===2,final:last,
     map:withBossArena(map),arenaCol:map[0]!.length
   }
 })
-

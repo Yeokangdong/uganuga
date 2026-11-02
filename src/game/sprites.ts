@@ -388,6 +388,7 @@ const ITEM_PAL: Palette = {
 
 export interface SpriteBank {
   p1: PlayerSprites
+  p2: PlayerSprites
   cave1: Sprite
   cave2: Sprite
   raptor1: Sprite
@@ -407,6 +408,7 @@ export function sprites(): SpriteBank {
   if (bank) return bank
   bank = {
     p1: makePlayerSprites('#ff7a1a', '#b84a00'),
+    p2: makePlayerSprites('#b46cff', '#6e2fb0'),
     cave1: makeSprite([...CAVE_TOP, ...CAVE_LEGS1], CAVE_PAL),
     cave2: makeSprite([...CAVE_TOP, ...CAVE_LEGS2], CAVE_PAL),
     raptor1: makeSprite([...RAPTOR_TOP, ...RAPTOR_LEGS1], RAPTOR_PAL),

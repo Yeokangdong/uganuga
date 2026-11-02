@@ -172,7 +172,7 @@ export class Fx {
 
 // ????????????????????????? ?뚮젅?댁뼱 ?????????????????????????
 
-type SwingKind = 'swing' | 'up' | 'air' | 'smash'
+type SwingKind = 'swing' | 'up' | 'air' | 'smash' | 'throw'
 
 export class Player implements Body {
   gliding=false
@@ -230,7 +230,7 @@ export class Player implements Body {
   spr: PlayerSprites
 
   constructor(public idx: number, public name: string, public color: string) {
-    this.spr = sprites().p1
+    this.spr = idx === 0 ? sprites().p1 : sprites().p2
   }
 
   get alive(): boolean {
@@ -240,7 +240,7 @@ export class Player implements Body {
     return this.x + this.w / 2
   }
   get key(): string {
-    return 'p1'
+    return this.idx === 0 ? 'p1' : 'p2'
   }
 
   private safeX = 40
@@ -415,6 +415,7 @@ export class Player implements Body {
     }
 
     // ?? 怨듦꺽: ?먯뿉 ???뚮룄?쇰줈 ?뚮━湲???
+    if(inp.throwPressed&&this.swingT<=0&&!g.projectiles.some(p=>p.kind==='club'&&p.owner===this&&!p.dead))this.startSwing(g,'throw')
     if (inp.attackPressed && this.swingT <= 0) {
       this.charge = 0
       this.chargeReady = false
@@ -489,7 +490,7 @@ export class Player implements Body {
   private startSwing(g: Game, kind: SwingKind): void {
     const st = WEAPON_STAT[this.weapon]
     this.swingKind = kind
-    this.swingDur = kind === 'smash' ? 0.5 : st.time
+    this.swingDur = kind === 'smash' ? 0.5 : kind==='throw'?.4:st.time
     this.swingT = this.swingDur
     this.swingHit.clear()
     this.smashDone = false
@@ -499,7 +500,7 @@ export class Player implements Body {
 
   /** 吏湲?怨듦꺽 ?먯젙 ?ш컖??(?놁쑝硫?null) */
   hitbox(): Rect | null {
-    if (this.swingT <= 0) return null
+    if (this.swingT <= 0 || this.swingKind==='throw') return null
     const p = this.swingDur - this.swingT
     const st = WEAPON_STAT[this.weapon]
     if (this.swingKind === 'smash') {
@@ -523,6 +524,10 @@ export class Player implements Body {
     if (this.swingT <= 0) return
     const p = this.swingDur - this.swingT
     this.swingT -= dt
+    if(this.swingKind==='throw'&&p>=this.swingDur*.5&&!this.smashDone){
+      this.smashDone=true
+      g.projectiles.push(new Projectile('club',this.cx+this.facing*12*CHARACTER_SCALE,this.y+12*CHARACTER_SCALE,this.facing*220,-45,this))
+    }
     const hb = this.hitbox()
     if (this.swingKind === 'smash' && p >= 0.2 && !this.smashDone) {
       this.smashDone = true
@@ -642,7 +647,7 @@ export class Player implements Body {
     }
     if(this.knockbackT>0){const key=pick(`${k}.hurt`);return {key,frame:this.poseFrame(key,false)}}
     if(this.swingT>0){
-      const action=this.swingKind==='up'?'attackUp':this.swingKind==='air'||this.swingKind==='smash'?'attackDown':'attack'
+      const action=this.swingKind==='throw'?'throw':this.swingKind==='up'?'attackUp':this.swingKind==='air'||this.swingKind==='smash'?'attackDown':'attack'
       const key=pick(`${k}.${action}`,`${k}.attack`)
       return {key,frame:progressFrame(key,(this.swingDur-this.swingT)/this.swingDur)}
     }
@@ -672,10 +677,10 @@ export class Player implements Body {
       ctx.beginPath(); ctx.ellipse(bx, by + 1, this.w * .6, 2.1, 0, 0, Math.PI * 2); ctx.fill()
       ctx.restore()
     }
-    if(this.dead&&has(`${this.key}.angel`)){
+    if(this.dead&&has('p1.angel')){
       const age=2.2-this.respawnT,rise=Math.max(0,age-.2)
       const alpha=Math.min(1,Math.max(0,this.respawnT/.4))
-      drawArt(ctx,`${this.key}.angel`,frameAt(`${this.key}.angel`,age),Math.round(this.angelX-cx+Math.sin(rise*4)*2),Math.round(this.angelY-cy-rise*36-rise*rise*8),false,{alpha})
+      drawArt(ctx,'p1.angel',frameAt('p1.angel',age),Math.round(this.angelX-cx+Math.sin(rise*4)*2),Math.round(this.angelY-cy-rise*36-rise*rise*8),false,{alpha})
       return
     }
     if (has(`${this.key}.idle`)) {
@@ -712,7 +717,7 @@ export class Player implements Body {
   }
 
   private drawHeldWeapon(ctx:CanvasRenderingContext2D,bx:number,by:number):void {
-    if(this.dead||this.climbing||this.ropeAngle!==null||this.weapon==='axe')return
+    if(this.dead||this.climbing||this.ropeAngle!==null||this.weapon==='axe'||this.swingKind==='throw'&&this.swingT>0&&this.swingT<this.swingDur*.5)return
     const attacking=this.swingT>0
     const up=attacking&&this.swingKind==='up'
     const down=attacking&&(this.swingKind==='air'||this.swingKind==='smash')
@@ -1303,7 +1308,7 @@ export class ContactAnimal extends Enemy {
       // Explicit warning is independent of sprite art and readable at game scale.
       ctx.save();ctx.fillStyle='#ffe199';ctx.strokeStyle='#744127';ctx.lineWidth=.8
       ctx.beginPath();ctx.arc(this.cx-cx,this.y-cy-8,4.5,0,Math.PI*2);ctx.fill();ctx.stroke()
-      ctx.fillStyle='#63301f';ctx.font='bold 7px sans-serif';ctx.textAlign='center';drawPaintedText(ctx,'!',this.cx-cx,this.y-cy-5.5,parseFloat(ctx.font)||8);ctx.restore()
+      ctx.fillStyle='#63301f';ctx.font='bold 7px sans-serif';ctx.textAlign='center';ctx.fillText('!',this.cx-cx,this.y-cy-5.5);ctx.restore()
     }
   }
 }
@@ -1616,9 +1621,6 @@ export class Spider extends Enemy {
   update(g: Game, dt: number): void {
     if (this.updateDying(g, dt)) return
     this.t += dt * this.speed
-    this.anim += dt
-    this.flash = Math.max(0,this.flash-dt)
-    if(this.stunT>0)return
     // ?꾩뿉???좉퉸 ?ъ뿀?ㅺ? ???대젮?ㅺ퀬 泥쒖쿇???щ씪媛?
     const ph = this.t % (Math.PI * 2)
     const k = ph < 0.8 ? 0 : 0.5 - 0.5 * Math.cos(((ph - 0.8) / (Math.PI * 2 - 0.8)) * Math.PI * 2)
@@ -1677,9 +1679,8 @@ export class FireTrap extends Enemy {
   baseH = 14
   intensity = 0
 
-  constructor(x: number, floorY: number, public gentle = false) {
+  constructor(x: number, floorY: number) {
     super(FIRE_CFG, x - 5, floorY - 14)
-    if(gentle){this.baseH=7;this.t=0}
     this.w=10;this.h=this.baseH;this.y=floorY-this.h
     this.invulnerable = true
   }
@@ -1687,19 +1688,18 @@ export class FireTrap extends Enemy {
   update(_g: Game, dt: number): void {
     this.anim += dt
     this.t += dt
-    const period=this.gentle?4.8:3.2
-    const cyc = this.t % period
-    const ramp=Math.max(0,Math.min(1,(cyc-(period-1))/.22,(period-cyc)/.22))
+    const cyc = this.t % 3.2
+    const ramp=Math.max(0,Math.min(1,(cyc-2.2)/.22,(3.2-cyc)/.22))
     this.intensity=ramp*ramp*(3-2*ramp)
     this.big=this.intensity>.5
     const bottom=this.y+this.h
-    this.h=this.baseH+(this.gentle?8:16)*this.intensity
+    this.h=this.baseH+16*this.intensity
     this.y=bottom-this.h
   }
 
   draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
     const bottom=this.y+this.h-cy,low='fire.flame',high='fire.pillar'
-    if(this.intensity<1)drawArt(ctx,low,frameAt(low,this.anim),this.cx-cx,bottom,false,{alpha:1-this.intensity,scale:this.baseH/14})
+    if(this.intensity<1)drawArt(ctx,low,frameAt(low,this.anim),this.cx-cx,bottom,false,{alpha:1-this.intensity})
     if(this.intensity>0)drawArt(ctx,high,frameAt(high,this.anim),this.cx-cx,bottom,false,{alpha:this.intensity,scale:this.h/30})
   }
 }

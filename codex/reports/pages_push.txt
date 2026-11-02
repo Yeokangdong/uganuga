@@ -1,0 +1,41 @@
+
+> ugauga@0.1.0 build
+> vue-tsc -b && vite build
+
+[36mvite v7.3.7 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 51 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:  0.40 kB[22m
+[2mdist/[22m[35massets/index-Jt3NI94j.css  [39m[1m[2m 13.94 kB[22m[1m[22m[2m │ gzip:  3.88 kB[22m
+[2mdist/[22m[36massets/index-DMatLtwm.js   [39m[1m[2m239.86 kB[22m[1m[22m[2m │ gzip: 88.16 kB[22m
+[32m✓ built in 1.89s[39m
+
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :        22        21         1         0         0         0
+   Files :       822       822         0         0         0         0
+   Bytes :  208.50 m  208.50 m         0         0         0         0
+   Times :   0:00:01   0:00:01                       0:00:00   0:00:00
+
+
+   Speed :           194,172,778 Bytes/sec.
+   Speed :            11,110.655 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:51:52
+
+Initialized empty Git repository in D:/99.Work/ugauga/_pages/.git/
+warning: in the working copy of 'assets/index-DMatLtwm.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'assets/index-Jt3NI94j.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'favicon.svg', LF will be replaced by CRLF the next time Git touches it
+error: No such remote: 'origin'
+remote: 
+remote: Create a pull request for 'gh-pages' on GitHub by visiting:        
+remote:      https://github.com/Yeokangdong/uganuga/pull/new/gh-pages        
+remote: 
+To https://github.com/Yeokangdong/uganuga.git
+ * [new branch]      gh-pages -> gh-pages
+branch 'gh-pages' set up to track 'origin/gh-pages'.
+DONE

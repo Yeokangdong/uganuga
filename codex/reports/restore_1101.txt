@@ -1,0 +1,103 @@
+
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         3         3         0         0         0         0
+   Files :        36        36         0         0         0         0
+   Bytes :   313.0 k   313.0 k         0         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           9,428,911 Bytes/sec.
+   Speed :             539.527 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         1         1         0         0         0         0
+   Files :        21        21         0         0         0         0
+   Bytes :    1.47 m    1.47 m         0         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           81,280,000 Bytes/sec.
+   Speed :            4,650.879 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         1         0         1         0         0         0
+   Files :        21        20         1         0         0         0
+   Bytes :   615.6 k   614.7 k       874         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           41,969,733 Bytes/sec.
+   Speed :            2,401.527 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+
+	  *EXTRA File 		       0	D:\99.Work\ugauga\_pages\.nojekyll
+	  *EXTRA File 		     663	D:\99.Work\ugauga\_pages\index.html
+	  *EXTRA File 		  239857	D:\99.Work\ugauga\_pages\assets\index-DMatLtwm.js
+	  *EXTRA File 		   13940	D:\99.Work\ugauga\_pages\assets\index-Jt3NI94j.css
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :        22         0        22         0         0         1
+   Files :       819        20       799         0         0         4
+   Bytes :  207.39 m   614.7 k  206.79 m         0         0   248.4 k
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           41,969,733 Bytes/sec.
+   Speed :            2,401.527 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         2         0         2         0         0        20
+   Files :         5         5         0         0         0        69
+   Bytes :   246.0 k   246.0 k         0         0         0    1.78 m
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           27,990,444 Bytes/sec.
+   Speed :            1,601.626 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+
+	  *EXTRA File 		  239857	D:\99.Work\ugauga\dist\assets\index-DMatLtwm.js
+	  *EXTRA File 		   13940	D:\99.Work\ugauga\dist\assets\index-Jt3NI94j.css
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :        23         0        23         0         0         0
+   Files :       822        25       797         0         0         2
+   Bytes :  207.63 m   860.8 k  206.79 m         0         0   247.8 k
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :           35,258,400 Bytes/sec.
+   Speed :            2,017.502 MegaBytes/min.
+   Ended : 2026년 11월 2일 월요일 오후 2:57:06
+
+warning: in the working copy of 'favicon.svg', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'assets/index-CuRkgna0.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'assets/index-Dn3nBF8f.css', LF will be replaced by CRLF the next time Git touches it
+To https://github.com/Yeokangdong/uganuga.git
+   81eb112..e43e76c  gh-pages -> gh-pages
+branch 'gh-pages' set up to track 'origin/gh-pages'.
+DONE

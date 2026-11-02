@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { Game, type EndKind, type HudState } from '../game/game'
 import GameHud from './GameHud.vue'
-import { loadStageArt } from '../game/art'
+import { loadArt } from '../game/art'
 
 const props = defineProps<{ players: number; startStage: number; directStage: boolean }>()
 const emit = defineEmits<{ end: [kind: EndKind, scores: number[], stage: number]; quit: [] }>()
@@ -20,7 +20,7 @@ function autoPause(){if(game&&!game.paused&&(game.mode==='play'||game.mode==='bo
 function onVisibility(){if(document.hidden)autoPause()}
 let disposed = false
 onMounted(async () => {
-  await loadStageArt(Math.max(0, props.startStage || 0))
+  await loadArt()
   if (disposed || !canvas.value) return
   // 개발용: 주소 뒤에 ?stage=2 를 붙이면 해당 스테이지부터
   const startStage = props.startStage

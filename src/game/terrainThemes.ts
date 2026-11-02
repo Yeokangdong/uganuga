@@ -21,4 +21,4 @@ export const TERRAIN_THEMES: {id:number;name:string;structure:StructureKind;orga
   [19,'별빛 사막','moonstone',false,false,'#706685','#b9b2cb'],
   [20,'공주의 새벽 정원','garden',false,false,'#a2a18a','#e6cdbd'],
 ].map(([id,name,structure,organic,floating,base,edge])=>({id:id as number,name:name as string,structure:structure as StructureKind,organic:organic as boolean,floating:floating as boolean,base:base as string,edge:edge as string}))
-export const terrainTheme=(stage:number)=>TERRAIN_THEMES[Math.max(0,Math.min(19,stage===15?19:stage-1))]!
+export const terrainTheme=(stage:number)=>TERRAIN_THEMES[Math.max(0,Math.min(19,stage-1))]!

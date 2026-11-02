@@ -1,4 +1,4 @@
-import { image, terrainManifest } from './art'
+import { image } from './art'
 import { terrainTheme } from './terrainThemes'
 
 const part=(stage:number,name:string)=>{
@@ -9,53 +9,6 @@ const part=(stage:number,name:string)=>{
   if(legacy[name])return image(`world.${legacy[name]}${n}`)
   if(name==='support'&&terrainTheme(stage).organic)return image('world.rootedTree')
   return undefined
-}
-
-/** Atlas cells are cropped before assembly; 3px overlap hides filtered edges. */
-export function rockWall(g:CanvasRenderingContext2D,stage:number,x:number,y:number,width:number,height:number,top=true):boolean {
-  const atlas=image(`terrain11.${stage}`);if(!atlas||!terrainManifest)return false
-  const variant=terrainManifest.stageVariants.find((v:any)=>v.stage===stage)
-  const theme=variant?.baseTheme??['jungle','volcano','glacier'][(stage-1)%3]
-  const tiles=terrainManifest.themes[theme].tiles
-  g.save();g.beginPath();g.rect(x,y,width,height);g.clip()
-  if(variant)g.filter=`hue-rotate(${variant.hueShiftDegrees}deg) saturate(${variant.saturation}) brightness(${variant.brightness})`
-  // A continuous backing prevents transparent edge texels exposing dark seams.
-  g.fillStyle=terrainTheme(stage).base;g.fillRect(x,y,width,height)
-  // Stable irregular crops retain the authored rock grain without mirrored eye motifs.
-  const paint=(key:string,atY:number,depth:number)=>{
-    const [sx,sy,sw,sh]=tiles[key].frame
-    let seed=(stage*73856093 ^ Math.round(x)*19349663 ^ Math.round(atY)*83492791)>>>0
-    const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
-    for(let dy=0;dy<depth;){
-      const rowH=Math.min(depth-dy,key==='side'?27+random()*21:9)
-      for(let dx=0;dx<width;){
-        const w=Math.min(width-dx,43+random()*57),cropW=sw*(.35+random()*.3),cropH=sh*(.22+random()*.28)
-        const ox=random()*(sw-cropW),oy=random()*(sh-cropH)
-        g.drawImage(atlas,sx+ox,sy+oy,cropW,cropH,x+dx,atY+dy,w+1,rowH+1)
-        dx+=w
-      }
-      dy+=rowH
-    }
-  }
-  paint('side',y,height)
-  if(top)paint('top-middle',y,Math.min(9,height))
-  g.restore();return true
-}
-export function rockCave(g:CanvasRenderingContext2D,stage:number,x:number,floor:number,worldCol=Math.floor(x/16)):boolean {
-  const atlas=image(`terrain11.${stage}`);if(!atlas)return false
-  const variant=terrainManifest.stageVariants.find((v:any)=>v.stage===stage)
-  g.save()
-  if(variant)g.filter=`hue-rotate(${variant.hueShiftDegrees}deg) saturate(${variant.saturation}) brightness(${variant.brightness})`
-  const shape=worldCol%3
-  g.translate(x,floor);g.scale([.9,1.12,1][shape]!,[1,1.16,.88][shape]!);g.translate(-x,-floor)
-  // The cave is embedded in a continuous rock face, with its bottom on the entry floor.
-  rockWall(g,stage,x-34,floor-53,68,53)
-  g.drawImage(atlas,608,464,320,224,x-32,floor-45,64,45)
-  g.fillStyle='#10121b';g.strokeStyle='#d7b883';g.lineWidth=2.5
-  g.beginPath();g.moveTo(x-14,floor);g.lineTo(x-14,floor-20)
-  g.bezierCurveTo(x-14,floor-43,x+14,floor-43,x+14,floor-20)
-  g.lineTo(x+14,floor);g.closePath();g.fill();g.stroke()
-  g.restore();return true
 }
 
 export type ElevatedObject='local'|'vine'|'stone'|'basalt'|'ice'|'ruin'|'mushroom'|'bone'|'coral'|'crystal'
@@ -69,14 +22,12 @@ const upperObjects:ElevatedObject[][]=[
   ['stone','ruin','bone'],['vine','local','ruin'],
 ]
 export function elevatedObject(stage:number,col:number):ElevatedObject {
-  if(stage<=15)return 'local'
   const choices=upperObjects[stage-1]??upperObjects[0]!
   return choices[Math.floor(col/48)%choices.length]!
 }
 
 /** The support is local scenery behind the collision geometry, clipped to its bank. */
 export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bottom:number,stage:number,left:number,right:number,object:ElevatedObject='local'):void {
-  if(stage<=15&&image(`terrain11.${stage}`))return
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   // Complete alternate structures are drawn once by terrainDeck, including
   // their own lower supports. Never paint a second squeezed full silhouette.
@@ -105,21 +56,6 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
 
 /** Paint only below the actual one-way platform top: no fake raised landing edge. */
 export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:number,width:number,object:ElevatedObject='local',bottom?:number):void {
-  if(image(`terrain11.${stage}`)&&terrainManifest){
-    const atlas=image(`terrain11.${stage}`)!,variant=terrainManifest.stageVariants.find((v:any)=>v.stage===stage)
-    const tiles=terrainManifest.themes[variant?.baseTheme??'jungle'].tiles
-    g.save();g.beginPath();g.roundRect(x,y,width,24,[0,0,10,10]);g.clip()
-    rockWall(g,stage,x,y,width,24)
-    const edge=Math.min(12,width/2)
-    if(variant)g.filter=`hue-rotate(${variant.hueShiftDegrees}deg) saturate(${variant.saturation}) brightness(${variant.brightness})`
-    for(const [key,dx]of [['top-left',x],['top-right',x+width-edge]] as const){
-      const [sx,sy,sw,sh]=tiles[key].frame
-      g.drawImage(atlas,sx,sy,sw,sh,dx,y,edge,24)
-    }
-    const [sx,sy,sw,sh]=tiles.side.frame
-    g.globalAlpha=.65;g.drawImage(atlas,sx+sw*.15,sy+sh*.65,sw*.7,sh*.25,x+edge,y+17,Math.max(1,width-edge*2),7)
-    g.restore();return
-  }
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   if(objectArt){
     // Keep the authored crown's proportions. Only the lower stem/pillars extend
@@ -169,15 +105,6 @@ export function surface(g:CanvasRenderingContext2D,stage:number,x:number,y:numbe
 }
 
 export function ladder(g:CanvasRenderingContext2D,stage:number,x:number,top:number,end:number):void {
-  const atlas=image(`terrain11.${stage}`)
-  if(atlas){
-    const variant=terrainManifest.stageVariants.find((v:any)=>v.stage===stage)
-    const tiles=terrainManifest.themes[variant?.baseTheme??'jungle'].tiles
-    const [sx,sy,sw,sh]=tiles.ladder.frame,width=14,unit=sh*width/sw
-    g.save()
-    for(let y=top;y<end;y+=unit){const h=Math.min(unit,end-y);g.drawImage(atlas,sx,sy,sw,sh*h/unit,x-width/2,y,width,h)}
-    g.restore();return
-  }
   const im=part(stage,'ladder')
   if(!im)return
   const width=12,span=end-top

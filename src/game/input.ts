@@ -9,23 +9,35 @@ export interface PlayerInput {
   attackReleased: boolean
   jumpPressed: boolean
   downPressed: boolean
+  throwPressed?: boolean
 }
 
-type Action = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump'
+type Action = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump' | 'throw'
 type KeyMap = Record<Action, string[]>
 
 // 1P: 방향키 이동, ↑ 점프, 스페이스 공격
-const P1_SOLO: KeyMap = {
+const P1_2P: KeyMap = {
   left: ['ArrowLeft'],
   right: ['ArrowRight'],
   up: ['ArrowUp'],
   down: ['ArrowDown'],
   attack: ['Space'],
   jump: ['ArrowUp'],
+  throw: ['KeyX'],
 }
+// 2P: A/D 이동, W 점프, F 공격
+const P2_2P: KeyMap = {
+  left: ['KeyA'],
+  right: ['KeyD'],
+  up: ['KeyW'],
+  down: ['KeyS'],
+  attack: ['KeyF'],
+  jump: ['KeyW'],
+  throw: ['KeyG'],
+}
+const P1_SOLO: KeyMap = P1_2P
 
-
-const BLOCK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Slash'])
+const BLOCK = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', 'Slash', 'KeyX'])
 
 function empty(): PlayerInput {
   return {
@@ -40,8 +52,8 @@ export class Input {
   private maps: KeyMap[]
   private states: PlayerInput[]
 
-  constructor() {
-    this.maps = [P1_SOLO]
+  constructor(numPlayers: number) {
+    this.maps = numPlayers === 1 ? [P1_SOLO] : [P1_2P, P2_2P]
     this.states = this.maps.map(() => empty())
     window.addEventListener('keydown', this.onDown)
     window.addEventListener('keyup', this.onUp)
@@ -95,6 +107,7 @@ export class Input {
       s.attackReleased = !s.attack && prev.attack
       s.jumpPressed = (s.jump && !prev.jump) || tapped('jump')
       s.downPressed = (s.down && !prev.down) || tapped('down')
+      s.throwPressed=tapped('throw')
       this.states[i] = s
     })
   }

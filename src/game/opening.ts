@@ -1,4 +1,3 @@
-import { drawPaintedText } from './art'
 import { drawArt, frameAt, image, progressFrame, walkFrame } from './art'
 import { VIEW_H, VIEW_W } from './constants'
 
@@ -32,7 +31,7 @@ function drawSpeech(g:CanvasRenderingContext2D,age:number,speaker:string,lines:[
   g.fillStyle=accent;g.strokeStyle='#67432e';g.lineWidth=.8
   g.beginPath();g.roundRect(12,-4,tabWidth,11,5);g.fill();g.stroke()
   g.font='bold 6.2px "Malgun Gothic",sans-serif';g.textAlign='center';g.textBaseline='middle'
-  g.fillStyle='#fff5d8';drawPaintedText(g,speaker,12+tabWidth/2,1.5,parseFloat(g.font)||8)
+  g.fillStyle='#fff5d8';g.fillText(speaker,12+tabWidth/2,1.5)
   g.save();g.translate(147,7);g.rotate(-.45)
   g.fillStyle='#fff4d3';g.strokeStyle='#84613c';g.lineWidth=.7
   g.beginPath();g.moveTo(-4,-1.4);g.bezierCurveTo(-8,-5,-10,-1,-7,1)
@@ -42,8 +41,8 @@ function drawSpeech(g:CanvasRenderingContext2D,age:number,speaker:string,lines:[
   g.fillStyle='#7b914c';g.strokeStyle='#536637';g.lineWidth=.7
   g.beginPath();g.moveTo(149,43);g.quadraticCurveTo(151,34,158,35);g.quadraticCurveTo(159,42,149,43)
   g.moveTo(149,43);g.quadraticCurveTo(144,36,140,39);g.quadraticCurveTo(141,45,149,43);g.fill();g.stroke()
-  g.fillStyle='#70513a';g.font='bold 8px "Malgun Gothic",sans-serif';drawPaintedText(g,lines[0],78,19,parseFloat(g.font)||8)
-  g.fillStyle='#4e3023';g.font='bold 9px "Malgun Gothic",sans-serif';drawPaintedText(g,lines[1],78,34,parseFloat(g.font)||8)
+  g.fillStyle='#70513a';g.font='bold 8px "Malgun Gothic",sans-serif';g.fillText(lines[0],78,19)
+  g.fillStyle='#4e3023';g.font='bold 9px "Malgun Gothic",sans-serif';g.fillText(lines[1],78,34)
   g.restore()
 }
 
@@ -111,7 +110,7 @@ export function drawOpening(g:CanvasRenderingContext2D,t:number):void {
       g.quadraticCurveTo(21,9,21,3);g.lineTo(21,-3);g.quadraticCurveTo(21,-9,15,-9)
       g.closePath();g.fill();g.stroke();g.fillStyle='#613e2c'
       g.font='bold 7.5px "Malgun Gothic",sans-serif';g.textAlign='center';g.textBaseline='middle'
-      drawPaintedText(g,'스크렛!',0,0,parseFloat(g.font)||8);g.restore()
+      g.fillText('스크렛!',0,0);g.restore()
     }
     if(t>=1.7){
       const x=VIEW_W+40-(VIEW_W+40-232)*(t-1.7)/1.5
@@ -135,8 +134,8 @@ export function drawOpening(g:CanvasRenderingContext2D,t:number):void {
   g.textAlign='center';g.lineJoin='round';g.lineWidth=1.5;g.strokeStyle='#4c3526';g.fillStyle='#fff1c9'
   g.font='bold 9px "Malgun Gothic",sans-serif'
   const text=t<1.7?'도토리를 든 다람쥐를 쫓아가던 누가…':t<OPENING_GRAB_START?'그 앞에 킹콩이 나타났다!':t<OPENING_ESCAPE_START?'킹콩이 누가 공주를 데려간다!':'누가, 기다려! 내가 구해줄게!'
-  drawPaintedText(g,text,VIEW_W/2,31,parseFloat(g.font)||8)
-  g.font='6px "Malgun Gothic",sans-serif';drawPaintedText(g,'클릭하면 건너뛰기',VIEW_W/2,VIEW_H-8,parseFloat(g.font)||8)
+  g.strokeText(text,VIEW_W/2,31);g.fillText(text,VIEW_W/2,31)
+  g.font='6px "Malgun Gothic",sans-serif';g.fillText('클릭하면 건너뛰기',VIEW_W/2,VIEW_H-8)
   const fade=Math.max(0,(t-(OPENING_DURATION-.45))/.45)
   if(fade){g.fillStyle=`rgba(0,0,0,${Math.min(1,fade)})`;g.fillRect(0,0,VIEW_W,VIEW_H)}
   g.restore()

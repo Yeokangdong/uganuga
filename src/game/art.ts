@@ -47,72 +47,98 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-// Resolve pack overrides before fetching textures, and fetch only this region's cast.
-import { STAGES } from './stages'
-let runtimeCopies:Record<string,string>={}
-const imageCache=new Map<string,Promise<HTMLImageElement>>()
-const cached=(src:string)=>{let p=imageCache.get(src);if(!p){p=loadImage(runtimeCopies[src]??src);imageCache.set(src,p)}return p}
-let catalog:Promise<void>|undefined
-const spriteCatalog=new Map<string,{folder:string;value:any}>()
-const imageCatalog=new Map<string,string>()
-const loadedStages=new Map<number,Promise<void>>()
-export let terrainManifest:any
-async function readCatalog(){
-  runtimeCopies=await (await fetch(BASE+'runtime-v115/manifest.json')).json()
-  const legacy=await (await fetch(BASE+'art.json')).json()
-  for(const [key,src]of Object.entries(legacy.images))if(key.startsWith('ui.'))imageCatalog.set(key,src as string)
-  for(const folder of ['painted-v6','terrain-v10','stage-backgrounds-v1','stage-signs-v1','elevated-objects-v1','monsters-v7','world-v8','monsters-v9','underwater-v1','fierce-monsters-v1','hq-monsters-v1','weapons-v1']){
-    const r=await fetch(BASE+folder+'/manifest.json');if(!r.ok||!r.headers.get('content-type')?.includes('json'))continue
-    const pack=await r.json()
-    for(const [key,value]of Object.entries(pack.sprites??{}))spriteCatalog.set(key,{folder,value})
-    for(const [key,src]of Object.entries(pack.images??{}))imageCatalog.set(key,folder+'/'+src)
-  }
-  const signs=await (await fetch(BASE+'stage-signs-v1/manifest.json')).json()
-  for(const [key,src]of Object.entries(signs.images))imageCatalog.set(key,'stage-signs-v1/'+src)
-  const words=await (await fetch(BASE+'words-v2/manifest.json')).json()
-  for(const [text,src]of Object.entries(words)){if(text==='\ubd80\uac00'||text==='2P')continue;const key='ui.words2.'+src;paintedWords[text]=key;imageCatalog.set(key,'words-v2/'+src)}
-  Object.assign(paintedWords,{CLUB:paintedWords['???'],STONE:paintedWords['?'],FIRE:paintedWords['?'],BONE:paintedWords['?']})
-  terrainManifest=await (await fetch(BASE+'terrain-v11/manifest.json')).json()
-  imageCatalog.set('title.logo','runtime_logo_crisp.webp')
-  imageCatalog.set('traversal.vineSupport','traversal-v2/support.webp')
-  imageCatalog.set('traversal.vine','traversal-v2/vine.webp')
-}
-export function loadArt():Promise<void>{return loadStageArt(0)}
-export function loadStageArt(index:number):Promise<void>{
-  const previous=loadedStages.get(index);if(previous)return previous
-  const pending=(async()=>{
-    await (catalog??=readCatalog())
-    const stage=STAGES[index]!,id=stage.id
-    const prefixes=new Set(['p1','princess','kingkong','scrat','squirrel','spider','nuga','cave','spawn','fire','piranha',stage.boss.key,stage.caveEntrance,
-      ...Object.values(stage.roles).flatMap(r=>[r.key,r.fallbackKey]),...(stage.encounters??[]).flatMap(e=>[e.cfg.key,e.cfg.fallbackKey])])
-    const relevant=(key:string)=>{
-      if(/buga|word_2p|^p2[.]/.test(key))return false;
-      const match=key.match(/^(?:terrain\.|stage\.bg|ui\.(?:stage_sign_|biome_sign_|sign_supports_))(\d+)/)
-      if(match)return Number(match[1])===(key.startsWith('stage.bg')?stage.theme.background:id)
-      if(key.startsWith('v2.bg'))return key===`v2.bg${(id-1)%3+1}`
-      if(key.startsWith('world.elevated.')||key==='world.rootedTree'||key.startsWith('terrain.'))return false
-      if(/^world\.(rock|surface|ladder)\d+$/.test(key))return key.endsWith(String((id-1)%3))
-      if(/^stage\d+/.test(key))return key.startsWith(`stage${String(id).padStart(2,'0')}_`)
-      if(/^(?:boss|dino)\d*/.test(key))return prefixes.has(key.split('.')[0]!)
-      if(key.startsWith('sky.')||key.startsWith('underwater.'))return false
-      return true
-    }
-    await Promise.all([...spriteCatalog].filter(([key])=>prefixes.has(key.split('.')[0]!)||/^(weapon|effect|item|fx|food|proj)/.test(key)).map(async([key,{folder,value:v}])=>{
-      if(art.sprites[key])return
-      const img=await cached(folder+'/'+v.frames[0].src)
-      art.sprites[key]={img,frames:v.frames.map((f:any)=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:1,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
-    }))
-    await Promise.all([...imageCatalog].filter(([key])=>relevant(key)).map(async([key,src])=>{if(!art.images[key])art.images[key]=await cached(src)}))
-    const variant=terrainManifest.stageVariants.find((v:any)=>v.stage===id)
-    const theme=variant?.baseTheme??['jungle','volcano','glacier'][(id-1)%3]
-    art.images[`terrain11.${id}`]=await cached('terrain-v11/'+terrainManifest.themes[theme].image)
-    const alias=(prefix:string,to:string,from:string)=>{art.sprites[prefix+'.'+to]??=art.sprites[prefix+'.'+from]!}
-    alias('p1','boneIdle','idle')
-    for(const prefix of prefixes)if(prefix)for(const [to,from]of Object.entries({run:'walk',swing:'attack',throw:'attack',charge:'walk',dive:'attack',dead:'collapse',roar:'attack'}))alias(prefix,to,from)
-    const fall=art.sprites['spider.dead'];if(fall)art.sprites['spider.recover']={...fall,frames:[...fall.frames].reverse(),durationsMs:fall.durationsMs?[...fall.durationsMs].reverse():undefined}
+let loading: Promise<void> | null = null
+
+export function loadArt():Promise<void> {
+  // Re-entering the game in development must pick up a newly packed manifest.
+  if(loading&&art.ready&&import.meta.env.DEV)return loadAnimationPack()
+  if(loading)return loading
+  loading=(async()=>{
+    art.images['title.logo']=await loadImage('runtime_logo_crisp.webp')
+    await loadAnimationPack()
     art.ready=true
   })()
-  loadedStages.set(index,pending);pending.catch(()=>loadedStages.delete(index));return pending
+  return loading
+}
+
+async function loadAnimationPack():Promise<void> {
+  const response=await fetch(BASE+'painted-v6/manifest.json')
+  if(!response.ok)throw new Error('painted-v6/manifest.json')
+  const pack=await response.json()
+  if(pack.total!==Object.values(pack.sprites).reduce((n:number,s:any)=>n+s.frames.length,0))throw new Error('Animation frame count mismatch')
+  const cache=new Map<string,Promise<HTMLImageElement>>()
+  await Promise.all(Object.entries(pack.sprites).map(async([key,value])=>{
+    const v=value as {h:number;ppu:number;fps:number;pixelArt?:boolean;durationsMs?:number[];facingLeft:boolean;frames:{src:string;rect:number[]}[]}
+    const src=v.frames[0]!.src
+    if(!cache.has(src))cache.set(src,loadImage('painted-v6/'+src))
+    art.sprites[key]={img:await cache.get(src)!,frames:v.frames.map(f=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:1,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+  }))
+  await Promise.all(Object.entries(pack.images as Record<string,string>).map(async([key,src])=>{art.images[key]=await loadImage('painted-v6/'+src)}))
+  const terrainResponse=await fetch(BASE+'terrain-v10/manifest.json')
+  if(terrainResponse.ok&&terrainResponse.headers.get('content-type')?.includes('json')){
+    const terrain=await terrainResponse.json() as {images:Record<string,string>}
+    await Promise.all(Object.entries(terrain.images).map(async([key,src])=>{art.images[key]=await loadImage('terrain-v10/'+src)}))
+  }
+  const backgroundsResponse=await fetch(BASE+'stage-backgrounds-v1/manifest.json')
+  if(!backgroundsResponse.ok)throw new Error('stage-backgrounds-v1/manifest.json')
+  const backgrounds=await backgroundsResponse.json() as {images:Record<string,string>}
+  await Promise.all(Object.entries(backgrounds.images).map(async([key,src])=>{
+    art.images[key]=await loadImage('stage-backgrounds-v1/'+src)
+  }))
+  const signsResponse=await fetch(BASE+'stage-signs-v1/manifest.json')
+  art.images['sky.cloudFloor']=await loadImage('sky-v1/cloud-floor.webp')
+  art.images['sky.background']=await loadImage('sky-v1/cloud-background.webp')
+  art.images['traversal.vineSupport']=await loadImage('traversal-v2/support.webp')
+  art.images['traversal.vine']=await loadImage('traversal-v2/vine.webp')
+  if(!signsResponse.ok)throw new Error('stage-signs-v1/manifest.json')
+  const signs=await signsResponse.json() as {images:Record<string,string>}
+  await Promise.all(Object.entries(signs.images).map(async([key,src])=>{
+    art.images[key]=await loadImage('stage-signs-v1/'+src)
+  }))
+  const elevatedResponse=await fetch(BASE+'elevated-objects-v1/manifest.json')
+  if(elevatedResponse.ok&&elevatedResponse.headers.get('content-type')?.includes('json')){
+    const elevated=await elevatedResponse.json() as {images:Record<string,string>}
+    await Promise.all(Object.entries(elevated.images).map(async([key,src])=>{
+      art.images[key]=await loadImage('elevated-objects-v1/'+src)
+    }))
+  }
+  const alias=(prefix:string,to:string,from:string)=>{if(!art.sprites[prefix+'.'+to]&&art.sprites[prefix+'.'+from])art.sprites[prefix+'.'+to]=art.sprites[prefix+'.'+from]!}
+  alias('p1','boneIdle','idle')
+  for(const prefix of ['dino1_0','dino1_1','bear','boar']){
+    for(const [to,from]of Object.entries({run:'walk',swing:'attack',throw:'attack',jump:'walk',charge:'walk',dive:'attack',dead:'collapse'}))alias(prefix,to,from)
+  }
+  for(const [to,from]of Object.entries({idle:'fly',walk:'fly',run:'fly',jump:'fly',attack:'dive',windup:'dive',swing:'dive',throw:'dive',dead:'collapse'}))alias('dino1_2',to,from)
+  for(let n=2;n<=3;n++)for(let row=0;row<3;row++)for(const[key,value]of Object.entries(art.sprites))if(key.startsWith(`dino1_${row}.`))art.sprites[key.replace('dino1_',`dino${n}_`)]=value
+  for(const key of ['boss','boss2','boss3']){alias(key,'roar','attack');alias(key,'collapse','dead');alias(key,'run','charge')}
+  for(const [to,from]of Object.entries({collapse:'dead',windup:'attack',swing:'attack',charge:'attack'}))alias('spider',to,from)
+  const spiderFall=art.sprites['spider.dead']
+  if(spiderFall)art.sprites['spider.recover']={...spiderFall,frames:[...spiderFall.frames].reverse(),durationsMs:spiderFall.durationsMs?[...spiderFall.durationsMs].reverse():undefined}
+  // Load after legacy aliases so volcanic and glacial monsters keep their own art.
+  const resolvedSprites=new Map<string,{folder:string;value:any}>()
+  const resolvedImages=new Map<string,{folder:string;src:string}>()
+  for(const folder of ['monsters-v7','world-v8','monsters-v9','underwater-v1','fierce-monsters-v1','hq-monsters-v1','weapons-v1']){
+  const monsterResponse=await fetch(BASE+folder+'/manifest.json')
+  // An in-progress optional art pack must not prevent the title/game loading.
+  // Vite returns the HTML app shell for missing public files with status 200.
+  if(!monsterResponse.ok||!monsterResponse.headers.get('content-type')?.includes('json')){
+    if(folder==='world-v8'||folder==='fierce-monsters-v1'||folder==='hq-monsters-v1')continue
+    throw new Error(folder+'/manifest.json')
+  }
+  const monsters=await monsterResponse.json()
+  if(monsters.total!==Object.values(monsters.sprites).reduce((n:number,s:any)=>n+s.frames.length,0))throw new Error('Monster frame count mismatch')
+  for(const [key,value]of Object.entries(monsters.sprites))resolvedSprites.set(key,{folder,value})
+  for(const [key,src]of Object.entries(monsters.images??{}))resolvedImages.set(key,{folder,src:src as string})
+  }
+  // Resolve overrides before decoding textures, so HD replacements do not also
+  // download and decode every superseded generation of the same monster.
+  const monsterImages=new Map<string,Promise<HTMLImageElement>>()
+  await Promise.all([...resolvedSprites].map(async([key,{folder,value}])=>{
+    const v=value as {h:number;ppu:number;fps:number;pixelArt:boolean;durationsMs:number[];facingLeft:boolean;frames:{src:string;rect:number[]}[]}
+    const src=folder+'/'+v.frames[0]!.src
+    if(!monsterImages.has(src))monsterImages.set(src,loadImage(src))
+    art.sprites[key]={img:await monsterImages.get(src)!,frames:v.frames.map(f=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:240/256,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+  }))
+  await Promise.all([...resolvedImages].map(async([key,{folder,src}])=>{art.images[key]=await loadImage(folder+'/'+src)}))
 }
 
 const timingCache=new WeakMap<FrameSet,{source:number[];ends:number[];total:number}>()
@@ -175,7 +201,7 @@ export function drawArt(
   if (!s) return false
   const f = s.frames[Math.max(0, frame) % s.frames.length]
   const [fx, fy, fw, fh] = f
-  const k = (o.scale ?? 1) * (/^p[12]\./.test(key) ? 1.95 : 1)
+  const k = o.scale ?? 1
   const h = s.ppu ? fh * s.ppu * k : s.h * k
   const w = s.ppu ? fw * s.ppu * k : (fw / fh) * h
   const ax = f.length >= 6 ? f[4] : s.ax
@@ -206,11 +232,9 @@ export function image(key: string): HTMLImageElement | null {
   return art.images[key] ?? null
 }
 
-const paintedWords: Record<string, string> = {"점수": "ui.word_score", "시간": "ui.word_time", "목숨": "ui.word_lives", "1P": "ui.word_1p", "우가": "ui.word_uga", "클릭 시 시작": "ui.word_click_to_start", "보스 등장!": "ui.word_boss_appears", "스테이지 클리어!": "ui.word_stage_clear", "게임 오버": "ui.word_game_over", "일시 정지": "ui.word_paused", "모두 클리어!": "ui.word_all_clear", "최고 점수": "ui.word_high_score", "팅!": "ui.word_ting", "폭군룡 쿵쾅이": "ui.word_tyrant_king", "용암룡 들이박": "ui.word_lava_dragon", "빙하룡 만년설": "ui.word_woolly_mammoth"}
+const paintedWords: Record<string, string> = {"점수": "ui.word_score", "시간": "ui.word_time", "목숨": "ui.word_lives", "1P": "ui.word_1p", "2P": "ui.word_2p", "우가": "ui.word_uga", "부가": "ui.word_buga", "클릭 시 시작": "ui.word_click_to_start", "보스 등장!": "ui.word_boss_appears", "스테이지 클리어!": "ui.word_stage_clear", "게임 오버": "ui.word_game_over", "일시 정지": "ui.word_paused", "모두 클리어!": "ui.word_all_clear", "최고 점수": "ui.word_high_score", "팅!": "ui.word_ting", "폭군룡 쿵쾅이": "ui.word_tyrant_king", "용암룡 들이박": "ui.word_lava_dragon", "빙하룡 만년설": "ui.word_woolly_mammoth"}
 
 Object.assign(paintedWords, {
-  'SCORE':'ui.word_score','LIFE':'ui.word_lives','HP':'ui.word_lives','FOOD':'ui.word_food',
-  'BONE':'ui.word_bone','CLUB':'ui.word_bone','STONE':'ui.word_axe','FIRE':'ui.word_firestick',
   '나무몽둥이':'ui.word_bone',
   '배고프다!': 'ui.word_hungry', '동굴': 'ui.word_cave',
   '꽝': 'ui.word_miss', '꽝!': 'ui.word_miss', '!': 'ui.word_miss',
@@ -224,18 +248,13 @@ function paintedKeys(text: string): string[] {
   const key = textArtKey(text)
   if (key) return [key]
   if (text.startsWith('TIME BONUS ')) return ['ui.word_time', ...paintedKeys(text.slice(11))]
-  const digits=[...text].flatMap(c => c === 's' || c === '초' ? ['ui.word_sec'] : /[0-9+x:]/.test(c) ? [`ui.digit_${c}`] : [])
-  if(digits.length)return digits
-  if(/공주|누가/.test(text))return ['ui.word_uga','ui.word_all_clear']
-  if(/공격|Space|이동|점프|A.D/.test(text))return ['ui.word_1p','ui.word_uga','ui.word_bone']
-  if(/동굴|보물/.test(text))return ['ui.word_cave','ui.word_bone']
-  return ['ui.word_uga','ui.ready']
+  return [...text].flatMap(c => c === 's' || c === '초' ? ['ui.word_sec'] : /[0-9+x:]/.test(c) ? [`ui.digit_${c}`] : [])
 }
 
 export function textArtKey(text: string): string | undefined {
   if (text.startsWith('ui.')) return text
   if (paintedWords[text]) return paintedWords[text]
-  if (/^STAGE [1-7]$/.test(text)) return `ui.stage_sign_${text.match(/[1-7]/)![0]}`
+  if (/^STAGE [123]$/.test(text)) return `ui.stage_sign_${text.match(/[123]/)![0]}`
   if (/BOSS|\uBCF4\uC2A4/.test(text)) return 'ui.word_boss_appears'
   if (text === 'ALL CLEAR!') return 'ui.word_all_clear'
   if (/CLEAR|\uD074\uB9AC\uC5B4/.test(text)) return 'ui.word_stage_clear'
@@ -259,12 +278,10 @@ export const PaintedText = defineComponent({
 })
 
 export function drawPaintedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, height: number): void {
-  const images=paintedKeys(text).map(key=>art.images[key]).filter((im):im is HTMLImageElement=>!!im)
-  const natural=images.reduce((sum,im)=>sum+height*im.width/im.height,0)
-  const scale=Math.min(1,360/Math.max(1,natural)),h=height*scale
-  let left=x-natural*scale/2
-  for(const im of images){const w=h*im.width/im.height;ctx.drawImage(im,left,y-h,w,h);left+=w}
-
+  ctx.save();ctx.font=`bold ${height}px "Trebuchet MS", "Malgun Gothic", sans-serif`
+  ctx.textAlign='center';ctx.textBaseline='bottom';ctx.lineJoin='round'
+  ctx.strokeStyle='#39291f';ctx.lineWidth=Math.max(1,height*.15);ctx.strokeText(text,x,y)
+  ctx.fillStyle='#fff0c5';ctx.fillText(text,x,y);ctx.restore()
 }
 
 // One cycle spans a body-relative stride; distance comes from resolved movement.
@@ -278,8 +295,6 @@ export function walkFrame(key: string, distance: number): number {
     : key.startsWith('boss2.') ? 54 : /(^boss|_boss\.)/.test(key) ? 60
     : key.startsWith('spider.') ? 20 : 28
   const cycle=(key.endsWith('.climb')?distance:Math.max(0,distance))/(key.endsWith('.climb')?28:stride*CHARACTER_SCALE)
-  // Source indices: near-leg contact, passing, far-leg contact, passing.
-  if(/^p[12]\.walk$/.test(key))return [0,2,4,6][Math.floor((cycle-Math.floor(cycle))*4)]!
   return progressFrame(key,cycle-Math.floor(cycle))
 }
 

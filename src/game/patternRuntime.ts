@@ -1,4 +1,3 @@
-import { drawPaintedText } from './art'
 import type {Game} from './game'
 import type {Player} from './entities'
 import {overlap,VIEW_W,VIEW_H} from './constants'
@@ -53,7 +52,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
     }
     ctx.globalAlpha=1;ctx.font='bold 7px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.lineWidth=2;ctx.strokeStyle='#26353c';ctx.fillStyle=color
     const label=hazardStage?(hazard.phase==='warn'?'! 곧 위험':hazard.phase==='active'?'위험':'타이밍 대기'):({5:'늪 · 점프로 통과',6:'도약 발판 ↑',8:time%6<3?'공명 중 ↑':'공명 대기',10:'버섯 점프 ↑',13:'폭포 물줄기',20:'회복 꽃길'} as Record<number,string>)[id]!
-    drawPaintedText(ctx,label,x+w/2,y-13,parseFloat(ctx.font)||8)
+    ctx.strokeText(label,x+w/2,y-13);ctx.fillText(label,x+w/2,y-13)
   }
   if([4,7,14].includes(id)&&(id!==4||time%9>3)){
     ctx.globalAlpha=.45;ctx.strokeStyle=id===4?'#edc98b':id===14?'#e9b75e':'#d9efff';ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=.7

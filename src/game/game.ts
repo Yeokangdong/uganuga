@@ -1,6 +1,3 @@
-import { rockCave } from './paintedMap'
-import { loadStageArt } from './art'
-import { drawPaintedText } from './art'
 import { Piranha } from './piranha'
 import { rollCaveReward, addCaveLife } from './caveRewards'
 import { drawOpening, OPENING_DURATION, OPENING_GRAB_START, OPENING_ESCAPE_START, OPENING_PLEA_START, OPENING_DIALOGUE_START, OPENING_HERO_LINE_START } from './opening'
@@ -13,7 +10,7 @@ import {drawStagePattern,updateStagePattern} from './patternRuntime'
 import {advanceCrossings,drawCrossings} from './traversal'
 import { Boss } from './boss'
 import {
-  ContactAnimal, Enemy, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, Spider, SpikeTrap,
+  ContactAnimal, Enemy, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
   WEAPON_NAME, moveBody, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
@@ -113,7 +110,6 @@ interface Ambush {
 }
 
 export class Game {
-  private stageLoading=false
   ctx: CanvasRenderingContext2D
   stageIdx: number
   stage: StageDef
@@ -181,7 +177,7 @@ export class Game {
   private dark: HTMLCanvasElement
   private darkCtx: CanvasRenderingContext2D
 
-  constructor(canvas: HTMLCanvasElement, _numPlayers: number, private cb: GameCallbacks, startStage = 0, private directStage = false) {
+  constructor(canvas: HTMLCanvasElement, numPlayers: number, private cb: GameCallbacks, startStage = 0, private directStage = false) {
     canvas.width = VIEW_W * SCALE
     canvas.height = VIEW_H * SCALE
     this.ctx = canvas.getContext('2d')!
@@ -189,12 +185,13 @@ export class Game {
     this.dark.width = VIEW_W * SCALE
     this.dark.height = VIEW_H * SCALE
     this.darkCtx = this.dark.getContext('2d')!
-    this.input = new Input()
+    this.input = new Input(numPlayers)
     this.stageIdx = Math.max(0, Math.min(STAGES.length - 1, startStage))
     this.stage = STAGES[this.stageIdx]
     this.level = new Level(this.stage)
-    this.players.push(new Player(0, '우가', '#ff9a3a'))
-    this.dreamCount = this.stageIdx===0&&!this.directStage?1:0
+    const defs: [string, string][] = [['우가', '#ff9a3a'], ['부가', '#c48cff']]
+    for (let i = 0; i < numPlayers; i++) this.players.push(new Player(i, defs[i][0], defs[i][1]))
+    this.dreamCount = this.stageIdx===0&&!this.directStage?numPlayers:0
     this.beginStage()
   }
 
@@ -246,17 +243,8 @@ export class Game {
     this.sfx.playMusic('stage',this.stage.theme.n)
   }
 
-  private async nextStage(): Promise<void> {
+  private nextStage(): void {
     if(this.stageIdx>=STAGES.length-1)return
-    if(this.stageLoading)return
-    this.stageLoading=true
-    this.paused=true
-    const ctx=this.ctx
-    ctx.fillStyle='#24170f';ctx.fillRect(0,0,VIEW_W,VIEW_H)
-    drawPaintedText(ctx,'READY',VIEW_W/2,VIEW_H/2,24)
-    try{await loadStageArt(this.stageIdx+1)}catch(error){console.error(error);this.paused=false;this.stageLoading=false;return}
-    this.paused=false
-    this.stageLoading=false
     this.stageIdx++
     this.stage = STAGES[this.stageIdx]
     this.level = new Level(this.stage)
@@ -577,7 +565,7 @@ export class Game {
     if(this.saved){drawArt(ctx,entrance,0,64-cx,this.level.floorBelow(64,100)-cy,false);return}
     for(const d of this.doors){
       if(d.x<cx-64||d.x>cx+VIEW_W+64)continue
-      if(!rockCave(ctx,this.stage.id,d.x-cx,d.floor-cy,Math.floor(d.x/TILE)))drawArt(ctx,entrance,0,d.x-cx,d.floor-cy,false,{alpha:d.used?.8:1})
+      drawArt(ctx,entrance,0,d.x-cx,d.floor-cy,false,{alpha:d.used?.8:1})
       if(this.players.some(p=>p.alive&&Math.abs(d.x-p.cx)<18&&Math.abs(d.floor-p.y-p.h)<6)){
         ctx.fillStyle='#ffe8a3';ctx.beginPath();ctx.moveTo(d.x-cx-3,d.floor-cy-61);ctx.lineTo(d.x-cx+3,d.floor-cy-61);ctx.lineTo(d.x-cx,d.floor-cy-56);ctx.closePath();ctx.fill()
       }
@@ -668,18 +656,13 @@ export class Game {
           if(has('piranha.jump'))this.enemies.push(new Piranha(x,x+(s.width??1)*TILE,cy))
           break
         case 'S':
-          if(lv.def.cave){
-            const spider=new Spider(lv,x+8,cy)
-            spider.speed=this.stage.id===1?.65:1.2
-            spider.t=0
-            this.enemies.push(spider)
-          }else this.enemies.push(new ContactAnimal({cls:'melee',key:'spider',hp:2,score:200,speed:22,w:14,h:12},x,floor-12))
+          this.enemies.push(new ContactAnimal({cls:'melee',key:'spider',hp:2,score:200,speed:22,w:14,h:12},x,floor-12))
           break
         case '^':
           this.enemies.push(new SpikeTrap(x+8,floor))
           break
         case 'X':
-          this.enemies.push(new FireTrap(x + 8, floor,lv.def.cave&&this.stage.id===1))
+          this.enemies.push(new FireTrap(x + 8, floor))
           break
         case 'f':
           // Fruit is a cave reward, never a pre-placed map decoration.
@@ -695,10 +678,9 @@ export class Game {
           break
         case 'D':
           {
-            const center=x+8,row=Math.floor(floor/TILE)
-            const supported=[-2,-1,0,1,2].every(dx=>[T.Solid,T.Rock,T.Platform].includes(this.level.tile(s.col+dx,row) as 1|2|3))
-            if(supported&&!this.level.solidAt(center,floor-24))
-              this.doors.push({x:center,floor,used:false,id:this.doors.length})
+            const center=x+8,flat=Array.from({length:15},(_,i)=>center-56+i*8).every(px=>this.level.solidAt(px,floor+1)&&!this.level.solidAt(px,floor-1))
+            const ground=this.level.tile(Math.floor(center/TILE),Math.floor(floor/TILE))===T.Solid
+            if(flat&&ground&&!this.level.solidAt(center,floor-24))this.doors.push({x:center,floor,used:false,id:this.doors.length})
           }
           break
       }
@@ -963,7 +945,6 @@ export class Game {
 
   private render(): void {
     const ctx = this.ctx
-    if(this.stageLoading){ctx.fillStyle='#24170f';ctx.fillRect(0,0,VIEW_W,VIEW_H);drawPaintedText(ctx,'READY',VIEW_W/2,VIEW_H/2,24);return}
     const sx = this.shakeMag > 0 ? (Math.random() - 0.5) * this.shakeMag * 2 : 0
     const sy = this.shakeMag > 0 ? (Math.random() - 0.5) * this.shakeMag * 2 : 0
     const cx = this.camX - sx
@@ -988,17 +969,6 @@ export class Game {
     drawStagePattern(this,ctx,cx,cy)
     drawCrossings(this,ctx,cx,cy)
     this.drawDoors(ctx, cx, cy)
-    if(this.level.def.cave)for(const col of [4,14]){
-      const x=col*TILE+8,y=8*TILE
-      ctx.save()
-      const glow=ctx.createRadialGradient(x-cx,y-cy-10,1,x-cx,y-cy-10,38)
-      glow.addColorStop(0,'rgba(255,181,65,.3)');glow.addColorStop(1,'rgba(255,130,30,0)')
-      ctx.fillStyle=glow;ctx.fillRect(x-cx-38,y-cy-48,76,76)
-      ctx.strokeStyle='#4d3023';ctx.lineWidth=4
-      ctx.beginPath();ctx.moveTo(x-cx-4,y-cy+5);ctx.lineTo(x-cx,y-cy-7);ctx.stroke()
-      drawArt(ctx,'fire.flame',frameAt('fire.flame',this.time),x-cx,y-cy-5,false,{scale:.7})
-      ctx.restore()
-    }
     if(!this.saved)drawPursuitExit(ctx,this.stage.id,this.level.arenaX,x=>this.level.floorBelow(x,0),cx,cy)
     if(this.scrat&&!this.saved&&this.mode==='play'){
       const s=this.scrat,key=s.state==='pet'?'squirrel.pet':s.state==='startled'?'squirrel.startled':'squirrel.run'
@@ -1072,10 +1042,10 @@ export class Game {
     const t = elapsed - dreams
     if(t<1.5){
       if(this.stageIdx===0)for(const p of this.players){
-        if(!p.out)drawArt(ctx,`${p.key}.respawn`,progressFrame(`${p.key}.respawn`,Math.max(0,(t-.7)/.8)),p.cx-this.camX,p.y+p.h-this.camY,false)
+        if(!p.out)drawArt(ctx,'p1.respawn',progressFrame('p1.respawn',Math.max(0,(t-.7)/.8)),p.cx-this.camX,p.y+p.h-this.camY,false)
       }
       ctx.save();ctx.font='bold 24px "Trebuchet MS", sans-serif';ctx.textAlign='center';ctx.lineJoin='round'
-      ctx.lineWidth=3;ctx.strokeStyle='#573a25';ctx.fillStyle='#fff0bc';drawPaintedText(ctx,'READY!',VIEW_W/2,66,parseFloat(ctx.font)||8);ctx.restore()
+      ctx.lineWidth=3;ctx.strokeStyle='#573a25';ctx.fillStyle='#fff0bc';ctx.strokeText('READY!',VIEW_W/2,66);ctx.fillText('READY!',VIEW_W/2,66);ctx.restore()
     }
 
   }
@@ -1098,7 +1068,7 @@ export class Game {
         ctx.beginPath();ctx.moveTo(px-3,py+4);ctx.lineTo(px,py);ctx.lineTo(px+3,py+4);ctx.moveTo(px,py);ctx.lineTo(px,py+14);ctx.stroke()
       }
       ctx.globalAlpha=1;ctx.font='bold 8px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.lineWidth=2;ctx.strokeStyle='#31586b';ctx.fillStyle='#edffff'
-      drawPaintedText(ctx,'↑ 상승기류',x+w/2,y+10,parseFloat(ctx.font)||8)
+      ctx.strokeText('↑ 상승기류',x+w/2,y+10);ctx.fillText('↑ 상승기류',x+w/2,y+10)
     }
     ctx.restore()
   }
@@ -1115,7 +1085,7 @@ export class Game {
       ctx.strokeStyle='#b6ece2';ctx.lineWidth=1
       ctx.beginPath();ctx.moveTo(x,y+h);ctx.quadraticCurveTo(x+w/2,y+h+Math.sin(this.time*2+p.col)*2,x+w,y+h);ctx.stroke()
       ctx.font='bold 9px "Malgun Gothic",sans-serif';ctx.textAlign='center';ctx.fillStyle='#edffd6';ctx.strokeStyle='#193c43';ctx.lineWidth=2
-      drawPaintedText(ctx,'공기',x+w/2,y+14,parseFloat(ctx.font)||8)
+      ctx.strokeText('공기',x+w/2,y+14);ctx.fillText('공기',x+w/2,y+14)
     }
     ctx.restore()
   }
@@ -1171,7 +1141,6 @@ export class Game {
       d.fill()
     }
     for (const p of this.players) if (!p.out) light(p.cx, p.y + p.h / 2, p.weapon === 'fire' ? 58 : 40)
-    if(lv.def.cave)for(const col of [4,14])light(col*TILE+8,8*TILE-10,52+Math.sin(this.time*9)*2,.95)
     for (const e of this.enemies) {
       if (e instanceof FireTrap) light(e.cx, e.y + e.h / 2, 30+16*e.intensity, 0.9)
       else light(e.cx, e.y + e.h / 2, Math.max(e.w, e.h) * 0.8 + 8, 0.75)

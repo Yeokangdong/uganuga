@@ -1,4 +1,3 @@
-import { drawPaintedText } from './art'
 import { drawArt, frameAt, walkFrame } from './art'
 import { Background } from './background'
 import { VIEW_H, VIEW_W } from './constants'
@@ -29,7 +28,7 @@ const routes:[string,string,string,Passage][]=[
   ['구름 아래 모래 길','구름 사이로 사막이 보인다. 킹콩은 바위 능선을 따라 내려갔다. 우가도 바람을 타고 모래 길에 내려선다.','구름 아래 사막으로 내려가는 길에 누가의 장식이 걸려 있다.','descent'],
   ['모래 너머 새벽 정원','밤새 발자국을 따라 모래 언덕을 넘었다. 샘물이 흐르는 정원에서 누가의 목소리가 들린다. 드디어 따라잡았다!','샘물 옆에서 누가의 목소리가 들려. 바로 저 정원이야!','river'],
 ]
-export const JOURNEYS:Journey[]=routes.slice(0,14).map(([landmark,reason,clue,passage],i)=>({from:i+1,to:i+2,landmark:i===13?'새벽 정원 입구':landmark,reason:i===13?'단풍 숲 너머 정원에서 누가의 목소리가 들린다.':reason,clue:i===13?'정원에서 공주의 목소리가 들려!':clue,passage}))
+export const JOURNEYS:Journey[]=routes.map(([landmark,reason,clue,passage],i)=>({from:i+1,to:i+2,landmark,reason,clue,passage}))
 const fromBackground=new Background(),toBackground=new Background()
 const smooth=(v:number)=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)}
 
@@ -63,7 +62,7 @@ export function drawPursuitExit(g:CanvasRenderingContext2D,stage:number,arenaX:n
   g.beginPath();g.moveTo(x-24,y+2);g.lineTo(x-21,y-8);g.lineTo(x-5,y-12);g.lineTo(x+8,y-10);g.lineTo(x+23,y-4);g.lineTo(x+8,y+1);g.closePath();g.fill();g.stroke()
   g.strokeStyle=material.edge;g.lineWidth=1.3;g.beginPath();g.moveTo(x-14,y-5);g.lineTo(x+10,y-5);g.moveTo(x+5,y-9);g.lineTo(x+10,y-5);g.lineTo(x+5,y-2);g.stroke()
   g.font='bold 6px "Malgun Gothic",sans-serif';g.textAlign='center';g.lineWidth=2;g.strokeStyle='#30271f';g.fillStyle='#fff1c9'
-  drawPaintedText(g,route.landmark,x,y-17,parseFloat(g.font)||8)
+  g.strokeText(route.landmark,x,y-17);g.fillText(route.landmark,x,y-17)
   g.restore()
 }
 
@@ -120,14 +119,14 @@ export function drawJourney(g:CanvasRenderingContext2D,route:Journey,elapsed:num
   bone(g,202,floor-2)
   g.fillStyle='rgba(32,24,19,.84)';g.beginPath();g.roundRect(12,12,VIEW_W-24,28,7);g.fill()
   g.textAlign='center';g.fillStyle='#fff0ca';g.font='bold 9px "Malgun Gothic",sans-serif'
-  drawPaintedText(g,`${STAGES[route.from-1]!.sub}  →  ${STAGES[route.to-1]!.sub}`,VIEW_W/2,25,parseFloat(g.font)||8)
-  g.font='6px "Malgun Gothic",sans-serif';g.fillStyle='#d8c6a4';drawPaintedText(g,route.landmark,VIEW_W/2,35,parseFloat(g.font)||8)
+  g.fillText(`${STAGES[route.from-1]!.sub}  →  ${STAGES[route.to-1]!.sub}`,VIEW_W/2,25)
+  g.font='6px "Malgun Gothic",sans-serif';g.fillStyle='#d8c6a4';g.fillText(route.landmark,VIEW_W/2,35)
   g.fillStyle='rgba(255,245,217,.95)';g.strokeStyle='#795a3a';g.lineWidth=1
   g.beginPath();g.roundRect(12,166,VIEW_W-24,37,6);g.fill();g.stroke()
   g.font='bold 7px "Malgun Gothic",sans-serif';g.fillStyle='#563d2b'
   const caption=lines(g,route.reason,VIEW_W-48)
-  caption.slice(0,3).forEach((line,i)=>drawPaintedText(g,line,VIEW_W/2,179+i*9,parseFloat(g.font)||8))
-  g.fillStyle='#fff0c9';g.font='5px "Malgun Gothic",sans-serif';drawPaintedText(g,'클릭 · Enter로 계속',VIEW_W/2,VIEW_H-4,parseFloat(g.font)||8)
+  caption.slice(0,3).forEach((line,i)=>g.fillText(line,VIEW_W/2,179+i*9))
+  g.fillStyle='#fff0c9';g.font='5px "Malgun Gothic",sans-serif';g.fillText('클릭 · Enter로 계속',VIEW_W/2,VIEW_H-4)
   const fade=Math.max(1-t/.3,(t-(JOURNEY_DURATION-.3))/.3,0)
   if(fade>0){g.fillStyle=`rgba(16,13,11,${Math.min(1,fade)})`;g.fillRect(0,0,VIEW_W,VIEW_H)}
   g.restore()

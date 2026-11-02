@@ -1,0 +1,13 @@
+178f551 우가누가 첫 커밋 (15판 구성)
+count: 0
+size: 0 bytes
+in-pack: 1333
+packs: 2
+size-pack: 316.66 MiB
+prune-packable: 0
+garbage: 0
+size-garbage: 0 bytes
+To https://github.com/Yeokangdong/uganuga.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+DONE

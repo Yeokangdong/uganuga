@@ -29,7 +29,7 @@ while ($true) {
     [IO.File]::WriteAllText($file, "$rules`r`n`r`n$task", (New-Object Text.UTF8Encoding($false)))
     Remove-Item -Force $j.FullName
     $log = Join-Path $dirs.logs "$name.log"
-    $cmd = "codex exec -c model_reasoning_effort=$EFFORT -s workspace-write --skip-git-repo-check -C ""$root"" - < ""$file"" > ""$log"" 2>&1 & move /y ""$file"" ""$($dirs.done)\"" >nul"
+    $cmd = "codex exec -c model_reasoning_effort=$EFFORT -s danger-full-access --skip-git-repo-check -C ""$root"" - < ""$file"" > ""$log"" 2>&1 & move /y ""$file"" ""$($dirs.done)\"" >nul"
     Start-Process -FilePath cmd.exe -ArgumentList "/s /c ""$cmd""" -WindowStyle Hidden -WorkingDirectory $root
     Add-Content -Path "$cx\dispatcher-log.txt" -Value "$(Get-Date -Format 'HH:mm:ss') 시작: $name" -Encoding UTF8
     $running++

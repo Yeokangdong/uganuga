@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CartoonText from './CartoonText.vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { art, loadArt } from '../game/art'
 
@@ -85,9 +84,9 @@ onBeforeUnmount(() => {
     </div>
 
     <div class="bottom">
-      <p class="sub story-goal"><CartoonText text="누가 공주를 구하러 떠나는 우가의 모험"/></p>
+      <p class="sub story-goal">누가 공주를 구하러 떠나는 우가의 모험</p>
     </div>
-    <p class="hi"><CartoonText text="최고 점수"/><CartoonText :text="hiText"/></p>
+    <p class="hi">최고 점수 {{hiText}}</p>
   </div>
 </template>
 
