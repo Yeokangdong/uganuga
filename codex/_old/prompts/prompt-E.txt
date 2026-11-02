@@ -1,0 +1,2 @@
+D:\99.Work\ugauga\codex\CODEX_CAVE_UI_BRIEF.md 를 읽고 거기 적힌 그림 2장과 ui_layout.json 을 만들어 지정 경로에 저장해 (이미 있으면 건너뛰기). 시트는 한 장에 한 번에 그려. 투명 배경은 진짜 알파 투명으로(D:\99.Work\ugauga\codex\tools\save-generated.ps1 사용 가능). 다른 파일은 만들거나 덮어쓰지 마. 보조 스크립트·메모는 D:\99.Work\ugauga\codex\tools 에.
+끝날 때마다 D:\99.Work\ugauga\codex\progress.txt 에 파일명 덧붙이고, 끝나면 D:\99.Work\ugauga\codex\DONE_E.txt 를 만들어. 질문하지 말고 끝까지 진행해.

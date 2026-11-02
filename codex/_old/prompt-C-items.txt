@@ -1,0 +1,3 @@
+D:\99.Work\ugauga\art-src\CODEX_SHEET_BRIEF.md 의 5) sheets\items_sheet.png, 6) sheets\props_sheet.png 와 CODEX_ART_BRIEF.md 9번 tiles\ground.png, tiles\grass.png, tiles\log.png 만 그려서 저장해 (이미 있는 파일은 건너뛰기).
+그림체는 CODEX_ART_BRIEF.md 1번과 Samhan_Girls 참고 이미지, 그리고 이미 그린 sheets\uga_sheet.png 를 참조 이미지로 넣어 맞춰. 투명 배경 파일은 진짜 알파 투명으로 저장(art-src\save-generated.ps1 사용 가능). 다른 파일은 절대 만들거나 덮어쓰지 마.
+끝날 때마다 art-src\progress.txt 에 파일명 덧붙이고, 전부 끝나면 art-src\DONE_C.txt 를 만들어. 질문하지 말고 끝까지 진행해.

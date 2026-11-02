@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+*.log
+codex/logs/
+codex/running/
+art-src/_old/

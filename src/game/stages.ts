@@ -1,0 +1,419 @@
+/** Hand-authored routes: one cell = 16 world pixels; no mirrored/repeated chunks. */
+import type { ProjKind } from './entities'
+import { WORLD_CAST } from './world-cast'
+import {planEncounters} from './encounterPlan'
+import { caveRewardCount } from './caveRewards'
+export const ROWS = 24
+
+type Span = [number, number, number]
+export type MapLayout=string[]&{ladders?:Span[]}
+type Mark = [number, number, string]
+interface Island {x:number;top:number[];depth:number}
+interface Route { w: number; h?:number; islands?:Island[]; ground?: Span[]; gaps?: [number, number][]; cutouts?: Span[]; water?: [number, number][]; shelves?: Span[]; ladders?: Span[]; logs?: Span[]; marks?: Mark[] }
+const contour=(...bands:[number,number][])=>bands.flatMap(([length,row])=>Array<number>(length).fill(row))
+const island=(x:number,depth:number,...bands:[number,number][]):Island=>({x,depth,top:contour(...bands)})
+const link=(col:number,upper:Island,lower:Island|number):Span=>[col,upper.top[col-upper.x]!,typeof lower==='number'?lower:lower.top[col-lower.x]!]
+function route(a: Route): MapLayout {
+  const height=a.h??14
+  const g = Array.from({length: height}, () => Array<string>(a.w).fill('.'))
+  const ground = a.ground ?? [[0, a.w - 1, 11]]
+  for (const [l,r,y] of ground) for(let c=l;c<=r;c++) for(let row=y;row<height;row++) g[row][c]='#'
+  for(const body of a.islands??[])for(let j=0;j<body.top.length;j++){
+    const c=body.x+j,top=body.top[j]!
+    // Elevated routes are thin timber decks. Their underside is open space,
+    // never a floating volume of earth with invisible solid walls.
+    if(g[top]?.[c]==='.')g[top][c]='='
+  }
+  for (const [l,r] of a.gaps ?? []) for(let c=l;c<=r;c++) for(let y=0;y<height;y++) g[y][c]='.'
+  for(const[l,r,top]of a.cutouts??[])for(let c=l;c<=r;c++)for(let y=top;y<height;y++)g[y][c]='.'
+  for (const [l,r] of a.water ?? []) for(let c=l;c<=r;c++) {
+    const top=g.findIndex(row=>row[c]==='#');for(let y=top<0?height-3:top;y<height;y++)g[y][c]='w'
+  }
+  for (const [l,r,y] of a.shelves ?? []) {
+    for(let c=l;c<=r;c++) { for(let row=y+1;row<height && g[row][c]!=='#' && g[row][c]!=='w';row++) if(g[row][c]==='.') g[row][c]='c'; g[y][c]='R' }
+  }
+  for (const [l,r,y] of a.logs ?? []) for(let c=l;c<=r;c++) g[y][c]='='
+  for (const [c,y,k] of a.marks ?? []) {if(k==='m'||k==='f')continue;if(k!=='F'&&!g.some((line,r)=>r>y&&['#','R','=','w'].includes(line[c]!)))continue;let row=y;while(row>0&&g[row][c]!=='.'&&g[row][c]!=='c')row--;g[row][c]=k}
+  return Object.assign(g.map(r=>r.join('')),{ladders:a.ladders??[]})
+}
+// Three traversable heights; each outcrop has its own stepped crest and tapered belly.
+const j1=island(12,4,[2,17],[2,16],[2,15],[8,14],[7,13],[8,14],[2,15],[2,16],[2,17])
+const j2=island(24,3,[2,9],[2,8],[8,7],[2,8],[2,9])
+const j3=island(62,5,[4,17],[4,16],[8,15],[6,14],[6,15],[4,16],[4,17])
+const j4=island(73,3,[2,10],[2,9],[10,8],[2,9],[2,10])
+const j5=island(118,4,[3,17],[3,16],[4,15],[8,14],[6,13],[5,14],[3,15],[3,16])
+const j6=island(130,3,[2,9],[2,8],[8,7],[3,8],[2,9])
+const jungle=route({w:196,h:ROWS,ground:[[0,24,21],[25,38,20],[39,55,21],[56,67,22],[68,101,21],[102,111,20],[112,143,21],[144,167,22],[168,195,21]],
+ islands:[j1,j2,j3,j4,j5,j6],cutouts:[[24,41,19],[32,37,12],[74,91,19],[82,88,12],[130,148,19],[138,144,12]],gaps:[[53,54],[109,110]],water:[[155,156],[163,164]],
+ ladders:[link(20,j1,21),link(30,j2,j1),link(38,j2,j1),link(70,j3,21),link(80,j4,j3),link(89,j4,j3),link(126,j5,21),link(136,j6,j5),link(145,j6,j5)],
+ logs:[[49,52,18],[98,101,17]],marks:[[9,20,'E'],[17,13,'M'],[28,6,'E'],[34,6,'f'],[38,12,'E'],[60,21,'U'],[74,13,'M'],[83,7,'E'],[88,7,'k'],[104,19,'E'],[123,14,'U'],[134,6,'M'],[141,6,'f'],[13,20,'D'],[159,13,'F'],[173,20,'M']]})
+
+const v1=island(8,4,[3,18],[3,17],[4,16],[8,15],[6,14],[6,15],[3,16])
+const v2=island(20,4,[2,10],[3,9],[6,8],[4,7],[3,8],[2,9])
+const v3=island(60,5,[3,17],[4,16],[7,15],[9,14],[6,15],[4,16])
+const v4=island(72,3,[2,9],[2,8],[5,7],[6,8],[2,9])
+const v5=island(119,4,[2,18],[2,17],[3,16],[9,15],[6,14],[7,15],[3,16],[3,17])
+const v6=island(131,3,[3,10],[3,9],[6,8],[3,9],[3,10])
+const volcano=route({w:204,h:ROWS,ground:[[0,20,21],[21,35,22],[36,51,21],[52,68,20],[69,102,21],[103,121,22],[122,149,21],[150,169,22],[170,203,21]],
+ islands:[v1,v2,v3,v4,v5,v6],cutouts:[[21,37,19],[29,37,12],[72,90,19],[81,86,12],[132,150,19],[141,146,12]],gaps:[[46,47],[115,116]],water:[[39,40],[98,99],[156,157]],
+ ladders:[link(17,v1,21),link(27,v2,v1),link(38,v2,v1),link(68,v3,20),link(79,v4,v3),link(87,v4,v3),link(128,v5,21),link(139,v6,v5),link(147,v6,v5)],
+ logs:[[42,45,18],[105,109,18]],marks:[[6,20,'E'],[14,16,'U'],[25,8,'E'],[32,6,'k'],[57,19,'M'],[77,6,'E'],[84,7,'f'],[106,21,'X'],[121,20,'E'],[138,7,'M'],[145,8,'k'],[164,21,'M'],[11,20,'D']]})
+
+const i1=island(12,4,[4,17],[3,16],[6,15],[7,14],[6,15],[4,16])
+const i2=island(23,3,[3,10],[2,9],[7,8],[3,9],[2,10])
+const i3=island(63,4,[2,18],[3,17],[4,16],[8,15],[6,14],[7,15],[3,16])
+const i4=island(77,3,[2,10],[3,9],[8,8],[3,9],[2,10])
+const i5=island(123,5,[4,17],[4,16],[7,15],[8,14],[6,15],[4,16])
+const i6=island(136,3,[2,9],[2,8],[7,7],[3,8],[2,9])
+const glacier=route({w:208,h:ROWS,ground:[[0,27,21],[28,42,20],[43,56,21],[57,78,22],[79,108,21],[109,124,20],[125,150,21],[151,174,22],[175,207,21]],
+ islands:[i1,i2,i3,i4,i5,i6],cutouts:[[25,38,19],[32,37,12],[76,92,19],[87,92,12],[136,151,19],[142,149,12]],gaps:[[49,50],[117,118]],water:[[103,104],[166,167]],
+ ladders:[link(21,i1,21),link(30,i2,i1),link(38,i2,i1),link(72,i3,22),link(85,i4,i3),link(93,i4,i3),link(132,i5,21),link(140,i6,i5),link(150,i6,i5)],
+ logs:[[44,48,18],[111,115,17]],marks:[[8,20,'E'],[18,15,'U'],[29,7,'E'],[35,7,'f'],[60,21,'M'],[74,14,'E'],[82,7,'E'],[90,7,'k'],[111,19,'U'],[129,15,'M'],[142,6,'M'],[146,6,'f'],[15,20,'D'],[172,16,'F'],[183,20,'E']]})
+
+const h1=island(10,4,[3,17],[3,16],[7,15],[8,14],[4,15],[3,16])
+const h2=island(21,3,[2,9],[3,8],[7,7],[3,8],[2,9])
+const h3=island(62,5,[3,18],[4,17],[5,16],[8,15],[6,14],[4,15],[3,16])
+const h4=island(77,3,[3,10],[3,9],[7,8],[3,9],[2,10])
+const home=route({w:126,h:ROWS,ground:[[0,32,21],[33,47,22],[48,73,21],[74,88,20],[89,103,21],[104,125,21]],
+ islands:[h1,h2,h3,h4],cutouts:[[22,35,19],[30,35,12],[75,92,19],[87,92,12]],gaps:[[43,44],[98,99]],water:[[112,113]],
+ ladders:[link(18,h1,21),link(28,h2,h1),link(36,h2,h1),link(71,h3,21),link(85,h4,h3),link(93,h4,h3)],logs:[[39,42,18],[94,97,17]],
+ marks:[[7,20,'E'],[16,15,'M'],[26,6,'E'],[33,7,'f'],[66,16,'U'],[81,7,'M'],[88,7,'k'],[92,20,'E'],[106,20,'M']]})
+export type EnemyClass = 'melee' | 'thrower' | 'runner' | 'flyer' | 'charger'
+export type EnemyBehavior = 'patrol' | 'skirmish' | 'hopper' | 'ambush' | 'charge' | 'swoop' | 'hover' | 'sentry'
+
+export interface EnemyCfg {
+  reward?:'weapon'|'treasure'
+  fallbackKey?: string
+  name?: string
+  behavior?: EnemyBehavior
+  patrolRadius?: number
+  cls: EnemyClass
+  /** ?쇰윭?ㅽ듃 ???묐몢??(?? 'caveman' ??caveman.walk) */
+  key: string
+  hp: number
+  score: number
+  speed: number
+  w: number
+  h: number
+  /** ?섏????곸쓽 ?ъ궗泥?*/
+  proj?: ProjKind
+}
+
+export interface BossCfg {
+  key: string
+  name: string
+  hp: number
+  w: number
+  h: number
+  /** 湲곗? ?쒖떆 ?믪씠 (?쇰윭?ㅽ듃 ?놁쓣 ???꾪듃 蹂댁뒪 ?ш린) */
+  chargeSpeed: number
+  spit: ProjKind
+  drop: ProjKind
+  /** ?⑦꽩 媛以묒튂 */
+  moves: { charge: number; spit: number; jump: number; roar: number }
+}
+
+export interface Theme {
+  /** Unique scenery ID, independent of terrain assets. */
+  background: number
+  /** ?쇰윭?ㅽ듃 ??踰덊샇: '' = ?ㅽ뀒?댁?1, '2', '3' */
+  n: '' | '2' | '3'
+  /** ?쇰윭?ㅽ듃媛 ?꾩쭅 ?놁쓣 ???ㅽ뀒?댁?1 洹몃┝ ?꾩뿉 ??쓣 ??*/
+  tint: string | null
+  /** 臾?w) ??*/
+  water: string
+  props: [string, number][]
+}
+
+export interface EncounterDef {
+  col:number
+  row:number
+  cfg:EnemyCfg
+  group:string
+  facing:1|-1
+}
+
+export interface StageDef {
+  aerial?: {updrafts:{col:number;row:number;w:number;h:number}[]}
+  aquatic?: {surfaceRow:number;startCol:number;endCol:number;airPockets:{col:number;row:number;w:number;h:number}[]}
+  encounters?:EncounterDef[]
+  id: number
+  title: string
+  sub: string
+  map: MapLayout
+  arenaCol: number
+  theme: Theme
+  roles: Partial<Record<'E' | 'M' | 'U' | 'F', EnemyCfg>>
+  boss: BossCfg
+  caveEntrance: string
+  /** 臾닿린 ?꾩씠??(b ?쒖떆 / ?숆뎬 蹂대Ъ) */
+  weapon: 'bone' | 'fire'
+  kind?: 'explore'
+  final?: boolean
+  /** ?쇱쓬 諛붾떏: 誘몃걚?ъ? */
+  icy?: boolean
+  /** ?숆뎬 諛?(蹂꾨룄 ?붾㈃) */
+  cave?: boolean
+}
+
+
+/** A local-material reward room. Rolls once on entry; revisits keep collected items. */
+export function makeCaveRoom(base: StageDef, seed: number, random:()=>number=Math.random): StageDef {
+  const slots=seed%2===0?[8,13,18]:[9,14,18]
+  const marks:Mark[]=slots.slice(0,caveRewardCount(random)).map(col=>[col,11,'?'])
+  marks.push([11,8,'S'],[16,11,'X'])
+  const map=route({w:22,ground:[[0,21,12]],marks}).map((r,y)=>y<3?'R'.repeat(22): y<12?'R'+r.slice(1,-1)+'R':r)
+  return {...base,aquatic:undefined,aerial:undefined,encounters:[],map,arenaCol:21,cave:true,kind:'explore',final:false,icy:false}
+}
+
+/** Open sky under every island; wind columns connect the different altitudes. */
+export function makeSkyMap():{map:MapLayout;aerial:NonNullable<StageDef['aerial']>} {
+  const width=216,height=32
+  const grid=Array.from({length:height},()=>Array<string>(width).fill('.'))
+  const islands:[number,number,number][]=[
+    [0,22,23],[27,41,21],[47,61,24],[67,83,19],[89,103,22],
+    [109,125,17],[131,147,20],[153,169,23],[175,191,25],[197,215,29],
+  ]
+  const updrafts:NonNullable<StageDef['aerial']>['updrafts']=[]
+  islands.forEach(([left,right,top],i)=>{
+    for(let c=left;c<=right;c++){
+      const depth=2+Math.min(2,c-left,right-c)
+      for(let r=top;r<Math.min(height,top+depth);r++)grid[r]![c]='#'
+    }
+    if(i){
+      const prev=islands[i-1]!,row=Math.min(top,prev[2])-5
+      updrafts.push({col:prev[1]-1,row,w:left-prev[1]+3,h:height-row})
+    }
+    if(i>0&&i<9){
+      const kinds=['E','M','U']
+      grid[top-1]![left+8]=kinds[(i-1)%3]!
+      if(i%2===0)grid[top-5]![left+4]='F'
+    }
+  })
+  grid[22]![10]='D'
+  grid[22]![17]='E'
+  grid[28]![207]='M'
+  return {map:Object.assign(grid.map(row=>row.join('')),{ladders:[] as Span[]}),aerial:{updrafts}}
+}
+
+/** A continuous lagoon with dry shores, a deep seabed and reachable air bells. */
+export function makeUnderwaterMap(): {map:MapLayout;aquatic:NonNullable<StageDef['aquatic']>} {
+  const w=200,h=32,startCol=18,endCol=175,surfaceRow=9
+  const grid=Array.from({length:h},()=>Array<string>(w).fill('.'))
+  for(let c=0;c<w;c++)for(let r=(c<startCol||c>endCol?9:29);r<h;r++)grid[r]![c]='#'
+  for(const [c,top,width] of [[38,26,5],[68,24,6],[97,26,5],[127,25,6],[155,26,5]])
+    for(let x=c!;x<c!+width!;x++)for(let r=top!;r<29;r++)grid[r]![x]='R'
+  const airPockets=[34,62,90,118,146].map((col,i)=>({col,row:i%2===0?13:18,w:8,h:4}))
+  for(const pocket of airPockets){
+    for(let c=pocket.col-1;c<=pocket.col+pocket.w;c++)grid[pocket.row-1]![c]='R'
+    for(let r=pocket.row;r<pocket.row+pocket.h;r++)for(const c of [pocket.col-1,pocket.col+pocket.w])grid[r]![c]='R'
+  }
+  const marks:Mark[]=[[10,8,'D'],[14,8,'E'],[30,28,'E'],[50,28,'M'],[61,28,'U'],[54,20,'F'],
+    [77,28,'E'],[88,28,'M'],[108,28,'U'],[105,19,'F'],[138,28,'E'],[145,28,'M'],[164,28,'U'],[159,20,'F'],[185,8,'M']]
+  for(const [c,r,k]of marks)grid[r]![c]=k
+  return {map:Object.assign(grid.map(row=>row.join('')),{ladders:[] as Span[]}),aquatic:{surfaceRow,startCol,endCol,airPockets}}
+}
+const SMALL: EnemyCfg = {cls:'melee',key:'dino1_0',hp:3,score:100,speed:42,w:14,h:20}
+const RUNNER: EnemyCfg = {cls:'runner',key:'dino1_1',hp:2,score:150,speed:70,w:20,h:17}
+const FLY: EnemyCfg = {cls:'flyer',key:'dino1_2',hp:2,score:150,speed:46,w:18,h:14}
+const FIRE: EnemyCfg = {cls:'thrower',key:'dino2_0',hp:3,score:150,speed:30,w:14,h:20,proj:'lavarock'}
+const LIZARD: EnemyCfg = {cls:'runner',key:'dino2_1',hp:2,score:150,speed:76,w:20,h:17}
+const BAT: EnemyCfg = {cls:'flyer',key:'dino2_2',hp:2,score:150,speed:50,w:18,h:14}
+const SPEAR: EnemyCfg = {cls:'thrower',key:'dino3_0',hp:3,score:150,speed:30,w:14,h:20,proj:'spear'}
+const SABER: EnemyCfg = {cls:'runner',key:'dino3_1',hp:3,score:200,speed:80,w:22,h:17}
+const HEAVY: EnemyCfg = {cls:'charger',key:'dino3_1',hp:4,score:250,speed:26,w:24,h:20}
+const themes: Theme[] = [
+ {background:1,n:'',tint:null,water:'#2f8fd8',props:[['prop.palm',.05],['prop.bush',.09],['prop.fern',.14]]},
+ {background:2,n:'2',tint:null,water:'#ff5a1a',props:[['prop2.tree',.04],['prop2.vent',.07],['prop2.rock',.12]]},
+ {background:3,n:'3',tint:null,water:'#7fd0ff',props:[['prop3.pine',.05],['prop3.crystal',.09],['prop3.bush',.13]]}
+]
+const bosses: BossCfg[] = [
+ {key:'boss',name:'폭군룡 쿵쾅이',hp:24,w:70,h:62,chargeSpeed:175,spit:'fireball',drop:'rock',moves:{charge:1,spit:1,jump:1,roar:1}},
+ {key:'boss2',name:'용암룡 들이박',hp:45,w:76,h:58,chargeSpeed:195,spit:'lavablob',drop:'lavarock',moves:{charge:2,spit:1,jump:1,roar:.5}},
+ {key:'boss3',name:'빙하룡 만년설',hp:36,w:82,h:68,chargeSpeed:185,spit:'iceball',drop:'icicle',moves:{charge:1.3,spit:1,jump:1,roar:.5}}
+]
+const areas = [jungle,volcano,glacier]
+/** Continue the route into a flat clearing without changing maps or stage IDs. */
+function withBossArena(map:MapLayout):MapLayout {
+  const last=map[0]!.length-1,floor=map.findIndex(row=>row[last]==='#')
+  return Object.assign(map.map((row,r)=>row+(r>=floor?'#':'.').repeat(24)),{ladders:map.ladders??[]})
+}
+/** Species have their own silhouettes, timings and tactics, not recolored aliases. */
+export const BESTIARY:Record<string,EnemyCfg>={
+  sprout:{...SMALL,name:'Sprout',behavior:'patrol'},
+  ptero:{...FLY,name:'Pterosaur',behavior:'swoop'},
+  ember:{...FIRE,name:'Ember',behavior:'sentry'},
+  lavaRunner:{...LIZARD,name:'Lava runner',behavior:'skirmish'},
+  bat:{...BAT,name:'Bat',behavior:'swoop'},
+  frost:{...SPEAR,name:'Frost hunter',behavior:'sentry',proj:'iceball'},
+  saber:{...SABER,name:'Sabertooth',behavior:'skirmish'},
+  iceWing:{...BAT,key:'dino3_2',name:'Local',behavior:'hover'},
+  bear:{...HEAVY,key:'bear',name:'Bear',behavior:'charge',speed:26},
+  boar:{...RUNNER,key:'boar',name:'Boar',behavior:'charge'},
+  spider:{cls:'melee',key:'spider',name:'Spider',hp:2,score:150,speed:24,w:17,h:12,behavior:'ambush'},
+  scarab:{cls:'charger',key:'scarab',name:'Scarab',hp:4,score:220,speed:22,w:23,h:18,behavior:'charge'},
+  scorpion:{cls:'melee',key:'sandScorpion',name:'Scorpion',hp:3,score:180,speed:26,w:24,h:19,behavior:'ambush'},
+  frog:{cls:'runner',key:'marshFrog',name:'Frog',hp:2,score:160,speed:42,w:20,h:16,behavior:'hopper'},
+  crab:{cls:'runner',key:'coralCrab',name:'Coral crab',hp:3,score:180,speed:35,w:22,h:17,behavior:'skirmish'},
+  mushroom:{cls:'melee',key:'sporeling',name:'Mushroom',hp:2,score:150,speed:18,w:18,h:22,behavior:'hopper'},
+  golem:{cls:'charger',key:'stoneGuard',name:'Golem',hp:5,score:300,speed:18,w:25,h:27,behavior:'charge'},
+  mantis:{cls:'runner',key:'bambooMantis',name:'Mantis',hp:3,score:200,speed:42,w:23,h:22,behavior:'ambush'},
+  owl:{cls:'flyer',key:'moonOwl',name:'Owl',hp:2,score:180,speed:30,w:21,h:19,behavior:'swoop'},
+  tortoise:{cls:'melee',key:'emberTortoise',name:'Ember tortoise',hp:4,score:240,speed:15,w:23,h:17,behavior:'patrol'},
+  ray:{cls:'flyer',key:'cloudRay',name:'Ray',hp:3,score:220,speed:28,w:29,h:17,behavior:'hover'}
+}
+interface Habitat {ground:string[];canopy:string[];air:string[];formation:string}
+export const HABITATS:Habitat[]=[
+  {ground:['sprout','scarab','boar','bear'],canopy:['spider','sprout'],air:['ptero'],formation:'Local'},
+  {ground:['ember','tortoise','lavaRunner','scarab'],canopy:['ember','tortoise'],air:['bat'],formation:'Local'},
+  {ground:['frost','saber','bear','scarab'],canopy:['frost','saber'],air:['iceWing','owl'],formation:'Local'},
+  {ground:['scorpion','scarab','tortoise','golem'],canopy:['scorpion','scarab'],air:['bat'],formation:'Local'},
+  {ground:['frog','mushroom','spider','scarab'],canopy:['frog','spider'],air:['ptero'],formation:'Local'},
+  {ground:['mantis','scarab','boar','frog'],canopy:['mantis','spider'],air:['owl','ptero'],formation:'Local'},
+  {ground:['scorpion','golem','lavaRunner','scarab'],canopy:['scorpion','golem'],air:['ptero','bat'],formation:'Local'},
+  {ground:['golem','frost','scarab','mushroom'],canopy:['frost','mushroom'],air:['iceWing','ray'],formation:'Local'},
+  {ground:['crab','frog','scarab','boar'],canopy:['crab','frog'],air:['ptero','ray'],formation:'Local'},
+  {ground:['mushroom','spider','frog','mantis'],canopy:['mushroom','spider'],air:['owl','bat'],formation:'Local'},
+  {ground:['golem','scarab','scorpion','mantis'],canopy:['golem','mantis'],air:['owl','bat'],formation:'Local'},
+  {ground:['boar','golem','saber','scarab'],canopy:['scarab','golem'],air:['ray','ptero'],formation:'Local'},
+  {ground:['frog','crab','mantis','sprout'],canopy:['frog','mantis'],air:['ray','ptero'],formation:'Local'},
+  {ground:['boar','bear','scarab','mushroom'],canopy:['mantis','mushroom'],air:['owl'],formation:'Local'},
+  {ground:['saber','frost','golem','scarab'],canopy:['frost','golem'],air:['owl','iceWing','ray'],formation:'Local'},
+  {ground:['tortoise','ember','golem','scorpion','lavaRunner'],canopy:['ember','tortoise'],air:['bat'],formation:'Local'},
+  {ground:['crab','frog','scarab','mantis'],canopy:['crab','mantis'],air:['ray','ptero'],formation:'Local'},
+  {ground:['golem','mantis','frost','scarab'],canopy:['mantis','frost'],air:['ray','iceWing','owl'],formation:'Local'},
+  {ground:['scorpion','scarab','golem','tortoise'],canopy:['scorpion','golem'],air:['owl','bat','ray'],formation:'Local'},
+  {ground:['mantis','golem','scarab','boar','mushroom'],canopy:['mantis','mushroom','golem'],air:['owl','ray'],formation:'Local'},
+]
+
+/** New routes keep jump gaps short and connect every raised deck with ladders. */
+function expedition(index:number):MapLayout {
+  const w=176+(index%5)*8
+  const ground:Span[]=[],islands:Island[]=[],ladders:Span[]=[],marks:Mark[]=[]
+  for(let x=0;x<w;x+=16)ground.push([x,Math.min(w-1,x+15),21+((Math.floor(x/16)+index)%3===0?1:0)])
+  for(let section=0;section<3;section++){
+    const x=16+section*48+(index%3)*2
+    const low=island(x,3,[4,17],[12,16],[4,17])
+    const high=island(x+6,3,[3,11],[8,10],[3,11])
+    islands.push(low,high)
+    ladders.push(link(x+3,low,22),link(x+9,high,low),link(x+17,high,low))
+    marks.push([x+6,15,'E'],[x+12,9,'M'],[x+25,20,'U'])
+  }
+  // Center the entrance within the first 16-tile terrace so its full width is supported.
+  marks.push([8,20,'E'],[10,20,'D'],[w-20,20,'M'],[w-28,14,'F'])
+  const gap=44+(index%4)*2,pool=136+(index%3)*3
+  return route({w,h:ROWS,ground,islands,ladders,marks,gaps:[[gap,gap+1]],water:[[pool,pool+1]],logs:[[gap-2,gap+3,18]]})
+}
+/** A second exploration leg, not a stretched or copied first half. */
+function extendExpedition(map:MapLayout,index:number):MapLayout {
+  const w=map[0]!.length
+  const ground:Span[]=[],islands:Island[]=[],ladders:Span[]=[],marks:Mark[]=[],cutouts:Span[]=[]
+  const sections=w<150?2:3
+  const entryFloor=map.findIndex(row=>row[w-1]==='#')
+  for(let x=0;x<w;x+=8){
+    const top=x===0?entryFloor:x>=w-8?21:21+((Math.floor(x/8)+index)%4===0?1:0)
+    ground.push([x,Math.min(w-1,x+7),top])
+  }
+  for(let section=0;section<sections;section++){
+    const x=8+Math.floor(section*w/sections)+(index+section)%3
+    const crest=15+(index+section)%2
+    const low=island(x,1,[3,18],[4,17],[6,16],[6,crest],[6,16],[3,17],[2,18])
+    const high=island(x+8,1,[3,11],[3,10],[5,9+(index+section)%2],[3,10])
+    islands.push(low,high)
+    const floorAt=(col:number)=>ground.find(([l,r])=>col>=l&&col<=r)![2]
+    ladders.push(link(x+2,low,floorAt(x+2)),link(x+11,high,low),
+      link(x+20,high,low),link(x+27,low,floorAt(x+27)))
+    // The broken lower trail leads up into the canopy and back down on its far side.
+    cutouts.push([x+9,x+22,19],[x+14,x+18,14])
+    marks.push([x+6,16,'E'],[x+16,8,'M'],[x+25,15,'U'])
+  }
+  const pool=w-7
+  marks.push([4,entryFloor-1,'E'],[w-15,20,'M'],[Math.floor(w*.6),6,'F'])
+  const extra=route({w,h:map.length,ground,islands,ladders,cutouts,water:[[pool,pool+1]],marks})
+  return Object.assign(map.map((row,y)=>row+extra[y]),{
+    ladders:[...(map.ladders??[]),...ladders.map(([col,top,bottom]):Span=>[col+w,top,bottom])],
+  })
+}
+export const STAGE_NAMES = ['원시 정글', '불타는 화산', '얼어붙은 빙하', '황금 모래사막', '안개 늪', '대나무 숲', '붉은 협곡', '반짝이는 수정 계곡', '고요한 해안', '커다란 버섯 숲', '고대 왕국의 유적', '천둥 고원', '거대한 폭포', '가을 단풍 숲', '공주의 정원']
+const terrainSets=[0,1,2,1,0,0,1,2,0,0,1,1,0,0,2,1,0,2,1,0]
+/** Fifteen distinct silhouettes, with increasingly dense optional upper routes. */
+function variedExpedition(index:number):MapLayout {
+  const formations:[number,number,number,number][]= []
+  const w=240+index*8,ground:Span[]=[],islands:Island[]=[],ladders:Span[]=[],gaps:[number,number][]=[],water:[number,number][]=[],logs:Span[]=[],marks:Mark[]=[]
+  const floorAt=(c:number)=>c<26||c>w-24?21:20+Math.floor((c+index*13)/(12+index%5))%3
+  for(let c=0;c<w;c++)ground.push([c,c,floorAt(c)])
+  const count=2+Math.floor(index/3)
+  for(let k=0;k<count;k++){
+    const x=(index===0?30:14+index%7)+Math.floor(k*(w-65)/count)+(index*7+k*3)%9
+    const shape=(index+k*3)%8,lowRow=16+(index+k)%2,upperRow=8+(index+k)%4
+    const bands:[number,number][]=shape===0?[[4,18],[4,17],[8,16],[4,17]]:
+      shape===1?[[5,lowRow],[14,lowRow]]:shape===2?[[7,18],[5,16],[7,18]]:
+      shape===3?[[5,17],[5,15],[9,17]]:shape===4?[[24,17]]:
+      shape===5?[[6,18],[12,16],[6,18]]:shape===6?[[6,17],[12,16],[6,17]]:[[22,15]]
+    const low=island(x,1,...bands);islands.push(low)
+    ladders.push(link(x+2,low,floorAt(x+2)),link(x+low.top.length-3,low,floorAt(x+low.top.length-3)))
+    if(index>0){
+      const high=island(x+6,1,[index%2+7,upperRow],[5,upperRow+1]);islands.push(high)
+      ladders.push(link(x+8,high,low),link(x+15,high,low))
+      if(shape===1)formations.push([x+10,x+13,upperRow,lowRow])
+      if(shape===3)formations.push([x+10,x+12,upperRow,lowRow])
+      if(shape===6)formations.push([x+6,x+6,upperRow,lowRow],[x+17,x+17,upperRow+1,lowRow])
+    }
+    if(index>2&&shape===7)logs.push([x+2,x+19,10])
+    if(index>0&&k%2===0){const gap=x+low.top.length+3;((index+k)%3===0?water:gaps).push([gap,gap+1+(index>9?1:0)])}
+    marks.push([x+4,low.top[4]!-1,'E'],[x+12,6,'F'])
+  }
+  marks.push([9,20,'E'])
+  const result=route({w,h:ROWS,ground,islands,ladders,gaps,water,logs,marks})
+  const grid=result.map(row=>row.split(''))
+  for(const [left,right,top,bottom]of formations)for(let c=left;c<=right;c++)for(let r=top;r<=bottom;r++)if(['.','='].includes(grid[r]![c]!))grid[r]![c]='#'
+  return Object.assign(grid.map(row=>row.join('')),{ladders:result.ladders})
+}
+/** Cave floors include ground and ladder-connected upper ledges. */
+export function placeCaveEntrances(source:MapLayout,stage:number):MapLayout {
+  const grid=source.map(row=>row.replace(/D/g,'.').split(''))
+  const width=grid[0]!.length,candidates:{col:number;floor:number}[]=[]
+  for(let col=16;col<width-14;col++)for(let floor=6;floor<grid.length;floor++){
+    if(!Array.from({length:5},(_,i)=>col-2+i).every(c=>['#','R','='].includes(grid[floor]?.[c]??'')))continue
+    if(!Array.from({length:4},(_,i)=>grid[floor-1-i]?.[col]==='.').every(Boolean))continue
+    candidates.push({col,floor})
+  }
+  const chosen:typeof candidates=[],count=1+stage%2
+  for(let i=0;i<count;i++){
+    const target=18+(width-45)*(((stage*7+i*5)%15)/14),height=[21,16,9][(stage+i)%3]!
+    const best=candidates.filter(c=>chosen.every(o=>Math.abs(c.col-o.col)>28))
+      .sort((a,b)=>(Math.abs(a.col-target)+Math.abs(a.floor-height)*10)-(Math.abs(b.col-target)+Math.abs(b.floor-height)*10))[0]
+    if(best){chosen.push(best);grid[best.floor-1]![best.col]='D'}
+  }
+  return Object.assign(grid.map(row=>row.join('')),{ladders:source.ladders??[]})
+}
+export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
+  const last=index===STAGE_NAMES.length-1,source=last?19:index,set=terrainSets[source]!
+  const sea=index===16?makeUnderwaterMap():undefined
+  const sky=index===17?makeSkyMap():undefined
+  let map=sea?.map??sky?.map??(last?home:index<3?areas[index]!:expedition(index))
+  // The final garden also has its local flying species and a guardian clearing.
+  if(!map.some(row=>row.includes('F')))map=Object.assign(map.map((row,y)=>y===13?row.slice(0,45)+'F'+row.slice(46):row),{ladders:map.ladders})
+  if(!map.some(row=>row.includes('D')))map=Object.assign(map.map((row,y)=>y===20?row.slice(0,10)+'D'+row.slice(11):row),{ladders:map.ladders})
+  if(!sea&&!sky)map=index<15?variedExpedition(index):extendExpedition(map,index)
+  map=placeCaveEntrances(map,index+1)
+  const progress=Math.floor(index/4)
+  const cast=WORLD_CAST[source]!,habitat=HABITATS[source]!
+  const localRoles: StageDef['roles']={
+    E:{...BESTIARY[habitat.ground[0]!]!,fallbackKey:BESTIARY[habitat.ground[0]!]!.key,key:cast.normal[0],name:cast.names[0]},
+    M:{...BESTIARY[habitat.ground[1]!]!,fallbackKey:BESTIARY[habitat.ground[1]!]!.key,key:cast.normal[1],name:cast.names[1]},
+    U:{...BESTIARY[habitat.ground[2]!]!,fallbackKey:BESTIARY[habitat.ground[2]!]!.key,key:cast.normal[2],name:cast.names[2]},
+    F:{...BESTIARY[habitat.air[0]!]!,fallbackKey:BESTIARY[habitat.air[0]!]!.key,key:cast.normal[3],name:cast.names[3]},
+  }
+  const planned=planEncounters(map,index,localRoles,habitat,BESTIARY)
+  map=planned.map
+  return {
+    id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
+    theme:{...themes[set]!,background:source+1},roles:localRoles,caveEntrance:cast.door,
+    encounters:planned.encounters,
+    boss:{...bosses[set]!,key:cast.boss,name:cast.bossName,hp:24+index*2+progress,w:66+(index%5)*4,h:56+(index%4)*3,chargeSpeed:175+index*4},
+    weapon:set===1?'fire':'bone',icy:index===2,final:last,
+    map:withBossArena(map),arenaCol:map[0]!.length
+  }
+})
+

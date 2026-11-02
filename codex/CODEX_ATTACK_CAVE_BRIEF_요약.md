@@ -1,0 +1,16 @@
+# ATTACK_CAVE 요약
+- 원본: [CODEX_ATTACK_CAVE_BRIEF.md](CODEX_ATTACK_CAVE_BRIEF.md).
+- 주인공 공격은 투척에서 근접 내려치기·휘두르기로 변경; 도끼를 계속 쥠.
+- 화풍은 ART 1절, 시트 규칙은 SHEET의 시트 공통 규칙.
+- 기존 uga_sheet.png·buga_sheet.png 중 담당 캐릭터를 참조해 외형 유지.
+- art-src/sheets/uga_attack_sheet.png·buga_attack_sheet.png: 1536×1024, 투명, 5×2.
+- 1행: 준비 / 수평 휘두르기 / 내려친 직후 / 올려치기 / 두 손 강타.
+- 2행: 공중 내려찍기 / 기 모으기 / 뼈 몽둥이 서기 / 휘두르기 / 횃불 도끼.
+- fx_sheet.png: 1536×1024, 투명, 4×2; 캐릭터 없이 효과만.
+- FX 1행: 휘두르기 / 올려치기 / 불꽃 / 강타 충격파.
+- FX 2행: 타격 섬광 / 흙먼지 / 쓰러짐 별·뼈 / 아이템 반짝임.
+- art-src/cave/: entrance.png·exit.png 768² 투명, bg.png 3072×1024 불투명·좌우 연결.
+- ground.png·cliff.png 1024² seamless; top.png 2048×512 투명·좌우 연결.
+- ladder.png 256×1024 투명·상하 연결; treasure.png·stalactite.png 512² 투명.
+- 동굴은 숨겨진 짧은 보너스 구간; 소재 상세는 원본 3절만 확인.
+- 기존 결과물은 다시 만들지 않음.

@@ -1,0 +1,2 @@
+D:\99.Work\ugauga\codex\CODEX_STAGE23_BRIEF.md 를 읽고 "스테이지 3" 부분 그림만 전부 그려서 art-src\stage3\ 에 지정한 파일 이름으로 저장해 (이미 있으면 건너뛰기). 시트는 캐릭터 포즈를 한 장에 한 번에 그려. 투명 배경 파일은 진짜 알파 투명으로 저장(D:\99.Work\ugauga\codex\tools\save-generated.ps1 사용 가능). 다른 파일은 만들거나 덮어쓰지 마. 보조 스크립트·메모는 D:\99.Work\ugauga\codex\tools 에.
+한 장 끝날 때마다 D:\99.Work\ugauga\codex\progress.txt 에 파일명 덧붙이고, 전부 끝나면 D:\99.Work\ugauga\codex\DONE_S3.txt 를 만들어. 질문하지 말고 끝까지 진행해.

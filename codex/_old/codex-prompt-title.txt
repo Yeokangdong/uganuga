@@ -1,0 +1,1 @@
+D:\99.Work\ugauga\art-src\CODEX_TITLE_BRIEF.md 를 읽고 그대로 그림 2장을 이미지 생성 도구로 그려서 지정 경로에 저장해. 투명 배경 파일은 진짜 알파 투명으로 저장해(art-src\save-generated.ps1 사용 가능). 질문하지 말고 끝까지 진행해.

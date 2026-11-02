@@ -1,0 +1,2 @@
+art-src\title\title_bg.png
+art-src\title\logo.png

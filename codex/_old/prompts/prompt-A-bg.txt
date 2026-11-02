@@ -1,0 +1,4 @@
+D:\99.Work\ugauga\codex\CODEX_ART_BRIEF.md 의 8번(배경) 중 아직 없는 파일만 그려서 저장해: art-src\bg\bg_mid.png, art-src\bg\bg_near.png, art-src\bg\bg_far_boss.png (이미 있는 파일은 건너뛰기, art-src\bg\bg_far.png 는 이미 있으니 그 그림을 참조 이미지로 넣어 색감과 원근을 맞춰).
+그림체는 지시서 1번과 Samhan_Girls 참고 이미지를 따라. 투명 배경 파일은 진짜 알파 투명으로 저장(D:\99.Work\ugauga\codex\tools\save-generated.ps1 사용 가능). 다른 파일은 절대 만들거나 덮어쓰지 마.
+보조 스크립트나 메모 파일이 필요하면 art-src 가 아니라 D:\99.Work\ugauga\codex\tools 에 만들어.
+끝날 때마다 D:\99.Work\ugauga\codex\progress.txt 에 파일명 덧붙이고, 전부 끝나면 D:\99.Work\ugauga\codex\DONE_A.txt 를 만들어. 질문하지 말고 끝까지 진행해.

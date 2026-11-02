@@ -1,0 +1,141 @@
+{
+  "mode": "built-in image_gen",
+  "referenceImagesViewed": [
+    "D:/99.Work/ugauga/art-src/heroes/uga_idle_1.png",
+    "D:/99.Work/Samhan_Girls/art/select/heroes-fullbody-v1/kim.png",
+    "D:/99.Work/Samhan_Girls/art/select/heroes-fullbody-v1/yeon.png",
+    "D:/99.Work/Samhan_Girls/art/enemies/male-v2/tang.png",
+    "D:/99.Work/Samhan_Girls/art/comics/backgrounds-v1/kim.png"
+  ],
+  "jobs": [
+    {
+      "id": "uga",
+      "dest": "sheets/uga_sheet.png",
+      "prompt": "Create one finished 1536x1024 RGBA transparent game sprite sheet, all 14 poses generated together, NOT separate images. Reference image 1 is the exact Uga character identity: match orange spiky hair, amber eyes, leopard one-shoulder tunic, vine belt/wrists/ankles, bare feet, gray stone axe on wood shaft bound with green vines. References 2-4 are Samhan Girls style only, never copy costumes. True THREE-head-tall SD chibi, warm dark-brown crisp ink, rich hand-painted anime cel shading, warm saturated colors. Invisible equal grid 5 columns by 3 rows. Each character centered within cell, no crossing cell boundaries, generous padding, same head and body scale in every fullbody pose; all face RIGHT in slight 3/4 side view. Local foot baseline 92% cell height. Exact row-major placement: row1 standing idle, breathing idle slightly crouched, jumping knees bent arms raised, victory both arms raised, comic fallen with X eyes. Row2 running cycle frame1 stride, frame2 passing legs, frame3 opposite stride, frame4 opposite passing, hit recoiling backward. Row3 throw windup axe behind head, post throw empty hand arm extended forward, upward throw arm aimed up, smiling head-and-shoulders HUD portrait, EMPTY last cell. Keep all 14 sprites distinct separated. No lettering, labels, grid lines, borders, drop shadows, ground, halos or background. Actual alpha-zero transparency.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-f6a9e8cc-cd44-4fa4-b081-669eb7576524.png"
+    },
+    {
+      "id": "buga",
+      "dest": "sheets/buga_sheet.png",
+      "prompt": "Create one finished 1536x1024 RGBA transparent game sprite sheet, all 14 poses generated together, NOT separate images. Reference image 1 is the Uga sheet for layout and sibling proportions. Create BUGA instead in every cell: PURPLE hair swept back into a short tied ponytail, amber eyes, TIGER-STRIPED orange-and-black one-shoulder tunic, vine belt/wrists/ankles, bare feet, gray stone axe on wood shaft bound with green vines. References 2-4 are Samhan Girls style only, never copy costumes. True THREE-head-tall SD chibi, warm dark-brown crisp ink, rich hand-painted anime cel shading, warm saturated colors. Invisible equal grid 5 columns by 3 rows. Each character centered within cell, no crossing cell boundaries, generous padding, same head and body scale in every fullbody pose; all face RIGHT in slight 3/4 side view. Local foot baseline 92% cell height. Exact row-major placement: row1 standing idle, breathing idle slightly crouched, jumping knees bent arms raised, victory both arms raised, comic fallen with X eyes. Row2 running cycle frame1 stride, frame2 passing legs, frame3 opposite stride, frame4 opposite passing, hit recoiling backward. Row3 throw windup axe behind head, post throw empty hand arm extended forward, upward throw arm aimed up, smiling head-and-shoulders HUD portrait, EMPTY last cell. Keep all 14 sprites distinct separated. No lettering, labels, grid lines, borders, drop shadows, ground, halos or background. Actual alpha-zero transparency.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-1167bc11-370e-4f22-bd7a-381105c8cb9f.png"
+    },
+    {
+      "id": "enemies",
+      "dest": "sheets/enemies_sheet.png",
+      "w": 1536,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "One 1536x1024 sprite sheet with an INVISIBLE equal 5 column x 3 row grid. Transparent alpha-zero background. ALL poses drawn together. Each sprite centered in its cell with padding, no crossing cell edges, local foot baseline at 92% cell height, characters face RIGHT slight 3/4 side view. Consistent size within each species. Row1 exactly FOUR bulky bearded cavemen: brown tousled hair, gray fur tunic, bare feet, huge wooden club; walking left leg forward, walking opposite leg forward, lifting club overhead, striking club down. Row1 col5 EMPTY. Row2 exactly FIVE cute green SD raptors, yellow bellies, readable sharp teeth: running four DISTINCT alternating leg cycle phases, then jumping. Row3 exactly THREE purple pterosaurs with yellow beaks: wings UP, wings DOWN, diving down-right. Row3 cols4,5 EMPTY. No other sprites, no shadows, labels or grid. Match reference art STYLE only, no historical armor. Match established Samhan Girls 2D illustration style from references: true THREE-HEAD-TALL super-deformed chibi, very large round heads, compact torso, short chunky limbs, big readable expressive eyes. Crisp warm dark-brown ink contours, rich hand-painted anime cel shading, warm saturated colors, polished game-ready finish. No pixel art, no 3D, no photorealism. No text except requested logo. No frame, UI, drop shadows, halos. CRITICAL LAYOUT: each cell is ONLY 307 pixels wide and 341 pixels high. Do not spread the four cavemen evenly across full sheet: caveman centers MUST be x=154,461,768,1075; EMPTY col5 x=1229..1535. Row1 ALL cavemen including raised CLUB fit within y=16..314, never below 314. Row2 raptors centers x=154,461,768,1075,1382, fit y=365..655. Row3 pterosaurs centers x=154,461,768, fit y=705..996; wings must fit in 280px width, no wing crossings; cols4 and5 fully empty. Shrink each entire sprite to fit inside its own invisible rectangle. Preserve SAME species design from reference sheet. No background or grid.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-9e52348d-2049-4127-b9cc-fa32b6ee7f5e.png"
+    },
+    {
+      "id": "boss",
+      "dest": "sheets/boss_sheet.png",
+      "w": 1536,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "One 1536x1024 transparent game sprite sheet. INVISIBLE equal 3 columns x 3 rows. All NINE poses of SAME red tyrannosaurus boss Kungkwang generated together. Cream belly, red dorsal spikes, yellow eyes, tiny arms, massive cute round head; comic but menacing super-deformed chibi proportions. Identical anatomy, head size, color and scale in each cell. All face RIGHT slight 3/4 side view, long tail to left. One distinct sprite centered in each cell, generous margin and local standing foot baseline at 92% cell height. Exact row-major order: row1 idle standing, walking first stride, walking opposite stride. Row2 roaring mouth wide open, charging head lowered, stunned dizzy little stars. Row3 jumping in air, mouth glowing just BEFORE spitting fire, comic defeated on back feet up. Actual alpha-zero background, no ground shadows, labels, lines, borders. Match established Samhan Girls 2D illustration style from references: true THREE-HEAD-TALL super-deformed chibi, very large round heads, compact torso, short chunky limbs, big readable expressive eyes. Crisp warm dark-brown ink contours, rich hand-painted anime cel shading, warm saturated colors, polished game-ready finish. No pixel art, no 3D, no photorealism. No text except requested logo. No frame, UI, drop shadows, halos. Each cell exactly 512 wide x341 high; sprites fit within 460x285 rectangles. Foot baselines y314,655,996.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-92b7defa-7a7d-4aa7-a727-c86965d241a3.png"
+    },
+    {
+      "id": "far",
+      "dest": "bg/bg_far.png",
+      "w": 3072,
+      "h": 1024,
+      "alpha": false,
+      "prompt": "Game parallax FAR BACKGROUND, exact very wide panoramic 3:1 3072x1024 composition. Straight SIDE VIEW for a horizontal platformer, no top-down, no ground plane or perspective path. Blue sky with soft white clouds in upper two thirds, far gently smoking prehistoric volcano, layered purple mountain range, lower third finished with a continuous distant lush jungle forest belt. LEFT and RIGHT edges match seamlessly for horizontal repeating, same height and colors of forest and sky at both edges. No foreground objects, characters, architecture, text or frame. Samhan Girls background reference for painterly anime coloring only; create prehistoric tropical jungle instead of historical buildings. Warm saturated detailed hand-painted anime game illustration, clean brown contours and rich layered cel shading.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-0fd98348-8355-4e52-8eee-bdea459453b7.png"
+    },
+    {
+      "id": "mid",
+      "dest": "bg/bg_mid.png",
+      "w": 3072,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "Game parallax MIDDLE DISTANCE layer, very wide panoramic 3:1 3072x1024 composition. Straight SIDE VIEW of a horizontal scrolling prehistoric platformer. Colored lush teal and green jungle hills with clusters of tropical palms and broadleaf trees, continuous vegetation silhouette across lower half. Upper half is EMPTY REAL ALPHA-ZERO TRANSPARENCY, no sky, no clouds, no mountains. Left and right edges join seamlessly to repeat horizontally: equal vegetation height/color at edges. No foreground leaves or props, ground planes, paths, characters, text, shadows, glow or frame. Samhan Girls painterly anime coloring from background reference; warm saturated detailed polished 2D hand-painted game art.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-e6fa49ca-a2b9-45d4-999e-1c057d831fa2.png"
+    },
+    {
+      "id": "near",
+      "dest": "bg/bg_near.png",
+      "w": 3072,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "Game parallax NEAR FOREGROUND layer, very wide panoramic 3:1 3072x1024 composition, straight side view horizontal platformer. Isolated close tropical huge leaves, dangling vines along upper edges with plentiful empty central opening; a continuous belt of lush deep green foreground underbrush and big leaves along BOTTOM 20%. Actual ALPHA-ZERO TRANSPARENT canvas in all empty spaces, NOT a scene background. Horizontal LEFT and RIGHT edges match for seamless repeating. No sky, mountains, ground plane, characters, labels, text, shadows, glow or border. Samhan Girls hand-painted anime foliage style, warm dark-brown crisp contours, rich cel shaded overlapping leaves, readable silhouettes.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-327abd77-b2c6-4b87-b88d-6c76e43c01c0.png"
+    },
+    {
+      "id": "farboss",
+      "dest": "bg/bg_far_boss.png",
+      "w": 3072,
+      "h": 1024,
+      "alpha": false,
+      "prompt": "Create BOSS version of reference daytime FAR BACKGROUND. Preserve same straight side-view panorama layout and 3:1 3072x1024 composition, same forest horizon height and layered mountain silhouettes. Change to vivid RED sunset sky, glowing orange clouds, ERUPTING volcano with bright lava at crater and dark red smoke plume. Lower third distant jungle forest belt in warm dusk purple teal. Both LEFT RIGHT edges must join seamlessly horizontally with matching sky/forest height. No characters, text, foreground objects, ground plane, buildings or paths. Rich hand-painted polished Samhan Girls anime background coloring.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-fa525c12-753a-47b4-80bc-d1f2ab0c97b1.png"
+    },
+    {
+      "id": "ground",
+      "dest": "tiles/ground.png",
+      "w": 1024,
+      "h": 1024,
+      "alpha": false,
+      "prompt": "1024x1024 opaque SEAMLESS square game terrain texture, all four edges tile seamlessly both horizontal and vertical. A SIDE-VIEW UNDERGROUND soil cross-section, entire image is warm brown earth with embedded small gravel stones and a few thin winding roots, rich hand-painted anime cel shaded game texture matching Samhan Girls style. Uniform material scale and density throughout, readable at small scale, no giant center object, no grass, no sky, no horizon, no surface edge, no text, no borders, no lighting gradient, no vignette.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-bcb992ce-de53-424f-b6c9-0439acd6272e.png"
+    },
+    {
+      "id": "grass",
+      "dest": "tiles/grass.png",
+      "w": 2048,
+      "h": 512,
+      "alpha": true,
+      "prompt": "One 2048x512 extra-wide horizontal strip of lush prehistoric grass for the TOP SURFACE of a platformer ground tile, straight side view. True alpha-zero transparent background above and below. Continuous natural green grass blades pointing up, thick green turf and short brown-green grass ROOTS hanging down over the earth edge underneath. The strip runs the full width with left and right edge identical height color to join seamlessly horizontally. Center grass strip within canvas height, no detached props, no soil block, no sky, text, shadow or frame. Samhan Girls polished hand-painted anime game art, crisp dark warm-brown outlines, warm saturated rich layered cel shading.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-4b91c336-8422-4297-accc-b825c5211615.png"
+    },
+    {
+      "id": "log",
+      "dest": "tiles/log.png",
+      "w": 1536,
+      "h": 384,
+      "alpha": true,
+      "prompt": "One 1536x384 horizontal transparent PNG game platform. A long thick weathered tree LOG platform seen exactly from the SIDE, wood bark with readable warm brown painted texture, rounded end grain at ends, green jungle vines tightly binding log at intervals. Centered long narrow silhouette with 8 percent clear margins, entire log visible, level walkable top edge. Actual alpha-zero transparent background, no ground, grass, scenery, cast shadow, lettering or frame. Samhan Girls polished 2D hand-painted anime game art, crisp warm dark-brown ink contours and rich warm cel shading.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-d544bae7-3964-4e4a-a6f6-1d4246eeb87c.png"
+    },
+    {
+      "id": "items",
+      "dest": "sheets/items_sheet.png",
+      "w": 1536,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "Create one finished 1536x1024 transparent GAME ITEM SPRITE SHEET, invisible equal 5 columns x 2 rows. Each object centered separately in its cell, never touching adjacent cells, all together in one generation. Baseline 92% each cell height. EXACT row-major order: row1 bone-in roasted meat, big whole roast meat, tropical fruit bunch bananas pineapple mango, curved bone boomerang, wooden torch with vivid orange flame. Row2 throwing stone axe gray stone blade vine-bound to wooden handle matching hero reference, primitive circular stone wheel with hole, dinosaur orange-red FIREBALL projectile, angular falling gray ROCK, final cell EMPTY. Objects large and readable with generous margins, no ground shadow. Actual alpha-zero transparency, no background, labels, text or grid. Match established Samhan Girls 2D illustration style from references: true THREE-HEAD-TALL super-deformed chibi, very large round heads, compact torso, short chunky limbs, big readable expressive eyes. Crisp warm dark-brown ink contours, rich hand-painted anime cel shading, warm saturated colors, polished game-ready finish. No pixel art, no 3D, no photorealism. No text except requested logo. No frame, UI, drop shadows, halos. IMPORTANT positions: cell width307 height512, centers x154,461,768,1075,1382; row1 y256 and row2 y768. Last row2 cell EMPTY.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-b2e0fbc5-bbb7-44a1-9f3f-ab14d1488fb8.png"
+    },
+    {
+      "id": "props",
+      "dest": "sheets/props_sheet.png",
+      "w": 1536,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "Create one finished 1536x1024 transparent GAME PROP SPRITE SHEET, invisible equal 5 columns x 2 rows. Each prop isolated, centered in cell, no touching neighboring cells. Baseline of all objects at 92% local cell height, generous margin. Exact row-major: row1 tall palm tree1 curved left trunk, tall palm tree2 straight trunk, tall palm tree3 curved right trunk, primitive skull TOTEM pillar boss entrance, pile of dinosaur BONES ribs skull. Row2 leafy tropical BUSH with RED BERRIES, second leafy bush, mossy rock1, differently shaped mossy rock2, big lush FERN. Palms occupy almost all cell height but never extend past its bounds, all bases aligned. Actual alpha-zero transparent empty canvas, no ground, shadows, text, grid, frames, scenery. Match established Samhan Girls 2D illustration style from references: true THREE-HEAD-TALL super-deformed chibi, very large round heads, compact torso, short chunky limbs, big readable expressive eyes. Crisp warm dark-brown ink contours, rich hand-painted anime cel shading, warm saturated colors, polished game-ready finish. No pixel art, no 3D, no photorealism. No text except requested logo. No frame, UI, drop shadows, halos. Each cell width307 height512, tree foliage must stay within width270; col centers x154,461,768,1075,1382; rows at y0..511 and512..1023. Skull totem only in fourth column.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-c81e6112-a146-40e2-9a05-1b181599d9e9.png"
+    },
+    {
+      "id": "title",
+      "dest": "title/title_bg.png",
+      "w": 1920,
+      "h": 1080,
+      "alpha": false,
+      "prompt": "Create finished 1920x1080 widescreen KEY VISUAL for a prehistoric side scrolling action game, NO TEXT at all. Tropical jungle and smoking volcano setting in warm vivid hand-painted anime colors. UGA and BUGA, two THREE-HEAD-TALL SD chibi caveman brothers, RUN to the RIGHT in foreground carrying vine-bound stone axes; behind on left a huge RED tyrannosaurus with cream belly, dorsal spikes, yellow eyes and tiny arms CHASES them in comic threatening pursuit. Uga matches orange spiky hair and leopard one-shoulder tunic of reference; Buga purple hair tied short ponytail, orange/black tiger-striped one shoulder tunic. Both bare feet vine bracelets, large expressive eyes. Preserve exact hero identities from sheets and red boss from sheet. Energetic readable clear composition, detailed lush prehistoric plants and dramatic volcanic backdrop, polished hand-painted anime cel shading and crisp warm brown ink contours. No lettering, logo, UI, frame or border.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-afefea7c-1789-4d6e-bcaf-505d2d58058f.png"
+    },
+    {
+      "id": "logo",
+      "dest": "title/logo.png",
+      "w": 1536,
+      "h": 1024,
+      "alpha": true,
+      "prompt": "Create one polished Korean game title LOGO with exact Hangul text: \"우가우가!\". Precisely four Hangul syllables 우 가 우 가 followed by an exclamation mark, readable large bold rounded chunky letters carved from warm sandstone stone, chiseled beveled edges and a few stone cracks, warm orange-brown stone faces with dark-brown deep engraved contours, small jungle vine accents. Playful prehistoric action game mood. Center the single horizontal logo with generous clear margins on a TRUE ALPHA-ZERO transparent background. Samhan Girls warm hand-painted anime cel shading, crisp polished 2D illustration. No English, no other words, no characters, background, panels, frames or drop shadows.",
+      "generatedSource": "C:\\Users\\Administrator\\.codex\\generated_images\\01a18309-ed82-7821-a3f5-68b2950f16d2\\exec-21bd3325-8bfa-4743-b692-49228f63d94b.png"
+    }
+  ]
+}

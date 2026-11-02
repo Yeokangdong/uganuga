@@ -1,0 +1,11 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>덩굴 원화 검수</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#17241d;color:#ede7d3;font:14px system-ui;display:grid;place-items:center;min-height:100vh}main{width:min(1200px,100vw,calc((100vh - 64px)*16/9))}canvas{width:100%;display:block}footer{min-height:56px;padding:12px;display:flex;align-items:center;gap:12px}button,select,input{font:inherit}p{margin:0;opacity:.8}</style>
+<main><canvas aria-label="게임 렌더러로 그린 덩굴과 정글 지형"></canvas><footer><strong>덩굴 원화 검수</strong><select aria-label="구간"></select><label>덩굴 각도 <input aria-label="덩굴 각도" type="range" min="-0.9" max="0.9" step="0.01" value="0.2"></label><p>실제 게임의 지형·원화·덩굴 렌더러</p></footer></main>
+<script type="module">
+import{loadArt,drawArt}from'/src/game/art.ts';import{STAGES}from'/src/game/stages.ts';import{Level}from'/src/game/level.ts';import{Background}from'/src/game/background.ts';import{crossings,drawCrossings}from'/src/game/traversal.ts';import{SCALE,VIEW_W,VIEW_H}from'/src/game/constants.ts';
+await loadArt();const level=new Level(STAGES[0]),nodes=crossings(level),bg=new Background();bg.setStage(1);
+const canvas=document.querySelector('canvas');canvas.width=VIEW_W*SCALE;canvas.height=VIEW_H*SCALE;const ctx=canvas.getContext('2d'),select=document.querySelector('select'),angle=document.querySelector('input');
+nodes.forEach((n,i)=>{const option=document.createElement('option');option.value=i;option.textContent=`정글 구간 ${i+1}`;select.append(option)});
+function draw(){const n=nodes[Number(select.value)];if(!n)return;n.angle=Number(angle.value);const cx=Math.max(0,Math.min(level.width-VIEW_W,n.pivotX-VIEW_W*.65)),cy=Math.max(0,Math.min(level.height-VIEW_H,n.pivotY-30));ctx.setTransform(SCALE,0,0,SCALE,0,0);bg.draw(ctx,cx,0,cy,level.height-VIEW_H);ctx.drawImage(level.canvas,cx*SCALE,cy*SCALE,VIEW_W*SCALE,VIEW_H*SCALE,0,0,VIEW_W,VIEW_H);drawCrossings({level,players:[]},ctx,cx,cy);drawArt(ctx,'p1.idle',0,n.left-24-cx,n.bankY-cy,false)}
+select.addEventListener('change',draw);angle.addEventListener('input',draw);draw();
+</script></html>

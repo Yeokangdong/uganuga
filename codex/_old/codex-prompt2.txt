@@ -1,0 +1,5 @@
+D:\99.Work\ugauga\art-src\CODEX_SHEET_BRIEF.md 를 읽고 그대로 진행해. 그림체·캐릭터 설정은 거기서 안내하는 CODEX_ART_BRIEF.md 와 Samhan_Girls 참고 이미지를 반드시 열어보고 맞춰.
+- 캐릭터 포즈는 낱장으로 그리지 말고, 시트 한 장에 모든 포즈를 한 번에 그려서 저장해.
+- 투명 배경 파일은 진짜 알파 투명으로 저장해 (저장 도구는 art-src\save-generated.ps1 을 계속 써도 됨).
+- 한 장 끝날 때마다 D:\99.Work\ugauga\art-src\progress.txt 에 파일명을 덧붙여 적어.
+- 질문하지 말고 끝까지 진행해. 전부 끝나면 D:\99.Work\ugauga\art-src\DONE.txt 를 만들어.

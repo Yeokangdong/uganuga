@@ -1,0 +1,1 @@
+Stage 2 complete: 11 PNG assets. Dimensions, alpha, sheet cells/baselines, repeating edges verified.

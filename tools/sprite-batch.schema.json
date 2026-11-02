@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "character": {
+      "type": "string"
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sprite": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "needs_redraw": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "frames": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "source": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "duration_ms": {
+                  "type": "integer",
+                  "minimum": 20,
+                  "maximum": 2000
+                },
+                "dx": {
+                  "type": "integer",
+                  "minimum": -24,
+                  "maximum": 24
+                },
+                "dy": {
+                  "type": "integer",
+                  "minimum": -24,
+                  "maximum": 24
+                }
+              },
+              "required": [
+                "source",
+                "duration_ms",
+                "dx",
+                "dy"
+              ]
+            }
+          }
+        },
+        "required": [
+          "sprite",
+          "reason",
+          "needs_redraw",
+          "frames"
+        ]
+      }
+    }
+  },
+  "required": [
+    "character",
+    "plans"
+  ]
+}

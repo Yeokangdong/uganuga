@@ -1,0 +1,73 @@
+﻿sheets\uga_sheet.png
+sheets\buga_sheet.png
+sheets/enemies_sheet.png
+sheets/boss_sheet.png
+bg/bg_far.png
+bg/bg_mid.png
+bg/bg_near.png
+bg/bg_far_boss.png
+tiles/ground.png
+tiles/grass.png
+tiles/log.png
+sheets/items_sheet.png
+sheets/props_sheet.png
+title/title_bg.png
+title/logo.png
+art-src\sheets\items_sheet.png (skipped: already exists)
+art-src\sheets\props_sheet.png (skipped: already exists)
+art-src\tiles\ground.png (skipped: already exists)
+art-src\tiles\grass.png (skipped: already exists)
+art-src\tiles\log.png (skipped: already exists)
+
+art-src\title\title_bg.png
+art-src\title\logo.png
+art-src\sheets\uga_attack_sheet.png
+art-src\sheets\buga_attack_sheet.png
+art-src\bg\bg_mid.png (skipped: already exists)
+art-src\bg\bg_near.png (skipped: already exists)
+art-src\bg\bg_far_boss.png (skipped: already exists)
+art-src\sheets\items_sheet.png (skipped: already exists)
+art-src\sheets\props_sheet.png (skipped: already exists)
+art-src\tiles\ground.png (skipped: already exists)
+art-src\tiles\grass.png (skipped: already exists)
+art-src\tiles\log.png (skipped: already exists)
+stage2\enemies_sheet.png
+stage2\boss_sheet.png
+art-src\title\title_bg.png
+art-src\title\logo.png
+stage3\enemies_sheet.png
+stage2\items_sheet.png
+stage3\boss_sheet.png
+stage2\props_sheet.png
+stage2\bg_far.png
+stage3\bg_far.png
+stage2\bg_mid.png
+stage3\bg_mid.png
+stage2\bg_near.png
+stage3\bg_near.png
+stage2\bg_far_boss.png
+stage3\bg_far_boss.png
+stage2\ground.png
+stage3\ground.png
+stage2\grass.png
+stage3\grass.png
+stage2\log.png
+stage3\log.png
+stage3\items_sheet.png
+stage3\props_sheet.png
+art-src\sheets\cave_hazard_sheet.png
+title\logo.png (v3)
+title\logo.png (v3)
+sheets\fx_sheet.png
+art-src\ui\ui_sheet.png
+art-src\ui\ui_layout.json
+art-src\cave\entrance.png
+DONE_E.txt
+art-src\cave\exit.png
+art-src\cave\bg.png
+art-src\cave\ground.png
+art-src\cave\top.png
+art-src\cave\cliff.png
+art-src\cave\ladder.png
+art-src\cave\treasure.png
+art-src\cave\stalactite.png

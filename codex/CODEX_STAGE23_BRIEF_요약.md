@@ -1,0 +1,16 @@
+# STAGE23 요약
+- 원본: [CODEX_STAGE23_BRIEF.md](CODEX_STAGE23_BRIEF.md).
+- 화풍은 ART 1절, 시트는 SHEET 공통 규칙; 스테이지1의 필요한 참조 1~2장 사용.
+- 캐릭터는 오른쪽 옆모습, 발은 칸 높이 92%; 동일 캐릭터 크기 유지.
+- 저장: art-src/stage2/와 art-src/stage3/; 각각 아래 11개 PNG.
+- enemies_sheet.png 5×3, boss_sheet.png 3×3, items_sheet.png·props_sheet.png 5×2.
+- 시트 모두 1536×1024, 투명; 칸 순서·빈칸은 원본 해당 스테이지 표 확인.
+- stage2: 불타는 화산; 불꽃 원시인·용암 도마뱀·화산 박쥐, 보스 용암 트리케라톱스 들이박.
+- stage3: 빙하; 창 원시인·검치호랑이·아기 매머드, 최종 보스 털매머드 만년설.
+- 각 보스: 서기·걷기 / 포효·돌진·기절 / 점프·특수공격 직전·쓰러짐.
+- 배경 4개: bg_far.png, bg_mid.png, bg_near.png, bg_far_boss.png.
+- 배경 3072×1024, 좌우 연결; mid·near 투명, 보스 배경은 더 어둡고 격렬하게.
+- 타일 3개: ground.png 1024² seamless, grass.png 2048×512 투명, log.png 1536×384 투명.
+- stage2 타일: 용암 실금 화산암 / 그을린 테두리·불씨 / 현무암 발판.
+- stage3 타일: 얼음·눈 단면 / 눈 테두리·고드름 / 얼음 발판.
+- 기존 결과물은 다시 만들지 않음.

@@ -1,0 +1,15 @@
+# CAVE_UI 요약
+- 원본: [CODEX_CAVE_UI_BRIEF.md](CODEX_CAVE_UI_BRIEF.md).
+- 화풍은 ART 1절, 시트 규칙은 SHEET 공통 규칙; 기존 시트로 스타일 유지.
+- art-src/sheets/cave_hazard_sheet.png: 1536×1024, 투명, 4×2.
+- 1행 거미: 매달림1 / 매달림2 / 내려오기 / 피격 뒤집힘.
+- 거미는 보라·검정 SD, 빨간 눈, 정면/아래 방향; 실은 그리지 않음.
+- 2행 불 함정: 작은 모닥불 3프레임 / 돌 화로의 큰 불기둥.
+- UI 필수 참조: codex/ref/hud_mockup.png.
+- art-src/ui/ui_sheet.png: 1536×1024, 투명, 부품 사이 넉넉한 간격.
+- panel: 나무·덩굴 틀, 왼쪽 원형 얼굴 칸, 어두운 반투명 내부, 비율 약 3.4:1.
+- 부품: panel, portrait_frame, heart_full, heart_empty, life_uga, life_buga.
+- 나머지: w_axe, w_bone, w_fire, tag, timer, boss_frame, scroll, button.
+- 글자·숫자는 게임에서 표시; 패널의 얼굴·하트는 분리된 부품으로 제작.
+- art-src/ui/ui_layout.json에 각 부품의 실제 그림 영역 [x,y,w,h] 저장.
+- 기존 결과물은 다시 만들지 않음.

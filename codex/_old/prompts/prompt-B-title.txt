@@ -1,0 +1,3 @@
+D:\99.Work\ugauga\codex\CODEX_TITLE_BRIEF.md 를 읽고 그대로 art-src\title\title_bg.png 와 art-src\title\logo.png 두 장만 그려서 저장해 (기존 파일이 있으면 덮어씀). 투명 배경 파일은 진짜 알파 투명으로 저장(D:\99.Work\ugauga\codex\tools\save-generated.ps1 사용 가능). 다른 파일은 절대 만들거나 덮어쓰지 마.
+보조 스크립트나 메모 파일이 필요하면 art-src 가 아니라 D:\99.Work\ugauga\codex\tools 에 만들어.
+끝나면 D:\99.Work\ugauga\codex\progress.txt 에 파일명 덧붙이고 D:\99.Work\ugauga\codex\DONE_B.txt 를 만들어. 질문하지 말고 끝까지 진행해.

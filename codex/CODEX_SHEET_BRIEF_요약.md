@@ -1,0 +1,14 @@
+# SHEET 요약
+- 원본: [CODEX_SHEET_BRIEF.md](CODEX_SHEET_BRIEF.md) — 낱장 대신 시트 제작.
+- 모든 시트 1536×1024, alpha 0; 글자·격자선·테두리·그림자 없음.
+- 같은 크기 칸 중앙에 포즈 1개; 발은 칸 높이 92%, 칸 밖 침범 금지.
+- 오른쪽 3/4 옆모습, 같은 캐릭터의 머리·키·복장·색 동일.
+- art-src/sheets/에 저장; 우가 기준은 art-src/heroes/uga_idle_1.png.
+- uga_sheet.png·buga_sheet.png: 5×3, 서기·점프·승리·쓰러짐 / 달리기·피격 / 던지기·초상·빈칸.
+- 던지기 동작은 ATTACK_CAVE의 근접 공격 변경사항과 함께 확인.
+- enemies_sheet.png: 5×3, 몽둥이맨 / 랩터 / 익룡 순.
+- boss_sheet.png: 3×3, 서기·걷기 / 포효·돌진·기절 / 점프·불뿜기 직전·쓰러짐.
+- items_sheet.png·props_sheet.png: 5×2; 칸별 순서는 원본 표 확인.
+- 배경·타일은 ART 8~9절, 타이틀은 TITLE 변경판 확인.
+- 순서: 우가→부가→적→보스→배경·타일→아이템·소품→타이틀.
+- 낱장 포즈는 만들지 않으며 기존 결과물 재생성 금지.

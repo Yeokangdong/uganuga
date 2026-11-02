@@ -1,0 +1,7 @@
+﻿DONE 2026-10-29 00:28:32 +09:00
+15 PNG assets completed using built-in image_gen.
+All character poses generated together as sheets; no new individual pose files.
+Validated: dimensions, true alpha transparency, sheet cell occupancy and 92% baselines, tile edge equality.
+File list: progress.txt
+Validation report: validation.json
+Generation prompts: generation-prompts.json
