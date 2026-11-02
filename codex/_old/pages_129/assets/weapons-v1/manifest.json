@@ -1,0 +1,98 @@
+{
+  "total": 4,
+  "sprites": {
+    "item.weapon.axe": {
+      "h": 20,
+      "ppu": 0.09174311926605505,
+      "fps": 1,
+      "facingLeft": false,
+      "pixelArt": false,
+      "durationsMs": [
+        1000
+      ],
+      "frames": [
+        {
+          "src": "axe.webp",
+          "rect": [
+            0,
+            0,
+            256,
+            256,
+            0.5,
+            0.9375
+          ]
+        }
+      ]
+    },
+    "item.weapon.stone": {
+      "h": 20,
+      "ppu": 0.09174311926605505,
+      "fps": 1,
+      "facingLeft": false,
+      "pixelArt": false,
+      "durationsMs": [
+        1000
+      ],
+      "frames": [
+        {
+          "src": "stone.webp",
+          "rect": [
+            0,
+            0,
+            256,
+            256,
+            0.5,
+            0.9375
+          ]
+        }
+      ]
+    },
+    "item.weapon.bone": {
+      "h": 20,
+      "ppu": 0.09174311926605505,
+      "fps": 1,
+      "facingLeft": false,
+      "pixelArt": false,
+      "durationsMs": [
+        1000
+      ],
+      "frames": [
+        {
+          "src": "bone.webp",
+          "rect": [
+            0,
+            0,
+            256,
+            256,
+            0.5,
+            0.9375
+          ]
+        }
+      ]
+    },
+    "item.weapon.fire": {
+      "h": 20,
+      "ppu": 0.09174311926605505,
+      "fps": 1,
+      "facingLeft": false,
+      "pixelArt": false,
+      "durationsMs": [
+        1000
+      ],
+      "frames": [
+        {
+          "src": "fire.webp",
+          "rect": [
+            0,
+            0,
+            256,
+            256,
+            0.5,
+            0.9375
+          ]
+        }
+      ]
+    }
+  },
+  "images": {}
+}

@@ -337,7 +337,7 @@ export const STAGE_NAMES = [
   '대나무 숲','붉은 협곡','반짝이는 수정 계곡','노을 해안','달빛 버섯 숲',
   '고대 돌기둥 유적','천둥 고원','거대한 폭포','가을 단풍 숲','오로라 설원',
   '검은 화산재 황무지','산호 바닷속 유적','하늘섬','별빛 사막','공주의 새벽 정원'
-]
+].slice(0,15)
 const terrainSets=[0,1,2,1,0,0,1,2,0,0,1,1,0,0,2,1,0,2,1,0]
 /** Distribute 2–4 caves along exploration routes, never inside the opening screen. */
 export function placeCaveEntrances(source:MapLayout,stage:number):MapLayout {
@@ -365,7 +365,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   const set=terrainSets[index]!,last=index===STAGE_NAMES.length-1
   const sea=index===16?makeUnderwaterMap():undefined
   const sky=index===17?makeSkyMap():undefined
-  let map=sea?.map??sky?.map??(last?home:index<3?areas[index]!:expedition(index))
+  let map=sea?.map??sky?.map??(index===19?home:index<3?areas[index]!:expedition(index))
   // The final garden also has its local flying species and a guardian clearing.
   if(!map.some(row=>row.includes('F')))map=Object.assign(map.map((row,y)=>y===13?row.slice(0,45)+'F'+row.slice(46):row),{ladders:map.ladders})
   if(!map.some(row=>row.includes('D')))map=Object.assign(map.map((row,y)=>y===20?row.slice(0,10)+'D'+row.slice(11):row),{ladders:map.ladders})
