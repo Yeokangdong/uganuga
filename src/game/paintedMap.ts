@@ -16,7 +16,7 @@ const upperObjects:ElevatedObject[][]=[
   ['local','local','local'],['basalt','bone','local'],['ice','local','bone'],
   ['stone','bone','local'],['local','vine','local'],['local','vine','ruin'],
   ['stone','bone','local'],['crystal','ruin','local'],['stone','vine','coral'],
-  ['mushroom','local','mushroom'],['ruin','stone','local'],['stone','ruin','crystal'],
+  ['local','local','local'],['ruin','stone','local'],['stone','ruin','crystal'],
   ['stone','vine','local'],['local','vine','local'],['ice','crystal','local'],
   ['basalt','bone','local'],['coral','ruin','local'],['local','crystal','ruin'],
   ['stone','ruin','bone'],['vine','local','ruin'],
@@ -28,6 +28,8 @@ export function elevatedObject(stage:number,col:number):ElevatedObject {
 
 /** The support is local scenery behind the collision geometry, clipped to its bank. */
 export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bottom:number,stage:number,left:number,right:number,object:ElevatedObject='local'):void {
+  // Mushroom ledges use their own thin platform art, without giant scenery below.
+  if(stage===10)return
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   // Complete alternate structures are drawn once by terrainDeck, including
   // their own lower supports. Never paint a second squeezed full silhouette.
