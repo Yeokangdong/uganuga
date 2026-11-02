@@ -6,7 +6,8 @@ const b=await build({stdin:{contents:"export {STAGES} from './src/game/stages.ts
 const {STAGES,art,drawStageSign,makeCrossings,crossingWater,crossings,advanceCrossings,drawCrossings}=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'))
 const images=[],text=[],lines=[],ellipses=[]
 const ctx=new Proxy({drawImage:(...a)=>images.push(a),fillText:(...a)=>text.push(a),moveTo:(...a)=>lines.push(a),ellipse:(...a)=>ellipses.push(a)},{get:(o,k)=>o[k]??(()=>{}),set:(o,k,v)=>(o[k]=v,true)})
-globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>ctx})}
+const offscreen=()=>new Proxy({fillText:(...a)=>text.push(a),createLinearGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]??(()=>{}),set:(o,k,v)=>(o[k]=v,true)})
+globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>offscreen()})}
 const manifest=JSON.parse(readFileSync(new URL('../public/assets/stage-signs-v1/manifest.json',import.meta.url),'utf8'))
 for(const def of STAGES){
  const key='ui.biome_sign_'+def.id,path=manifest.images[key]

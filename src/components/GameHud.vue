@@ -59,7 +59,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 .hud{position:absolute;inset:0;pointer-events:none;color:#fff2cd;font-family:system-ui,sans-serif;text-shadow:0 2px 2px #130c08}
 .trail-clue{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);max-width:80%;padding:8px 14px;border:1px solid #b69a67;border-radius:9px;background:#30271ee8;color:#fff1ce;font:600 clamp(11px,1.5cqw,20px)/1.6 "Malgun Gothic",sans-serif;text-align:center;text-shadow:none}
 /* Nine-slice the leather: stretch its middle, preserve the bone corners. */
-.status{--pixel:.2604167cqw;position:absolute;left:calc(var(--pixel)*4);top:calc(var(--pixel)*4);width:calc(var(--pixel)*210);height:calc(var(--pixel)*38);color:#fff0cb;text-shadow:none}
+.status{--pixel:.2604167cqw;position:absolute;left:calc(var(--pixel)*4);top:calc(var(--pixel)*4);width:calc(var(--pixel)*210);height:calc(var(--pixel)*38);transform:scale(.72);transform-origin:top left;color:#fff0cb;text-shadow:none}
 .status::before{content:'';position:absolute;inset:0 0 0 calc(var(--pixel)*23);border:calc(var(--pixel)*8) solid transparent;border-image-source:var(--panel-image);border-image-slice:88 128 fill;border-image-width:calc(var(--pixel)*8) calc(var(--pixel)*12);border-image-repeat:stretch;pointer-events:none}
 .portrait{position:absolute;z-index:1;left:0;top:calc(var(--pixel)*2);display:block;width:calc(var(--pixel)*34);height:calc(var(--pixel)*34);object-fit:contain;image-rendering:auto}
 .status-content{position:absolute;left:calc(var(--pixel)*43);right:calc(var(--pixel)*15);top:calc(var(--pixel)*9);display:flex;flex-direction:column;gap:calc(var(--pixel)*3);font-size:calc(var(--pixel)*6);line-height:1}
