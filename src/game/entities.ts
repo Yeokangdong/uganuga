@@ -319,7 +319,8 @@ export class Player implements Body {
       this.vx=approach(this.vx,0,150*dt)
       this.vy=this.swimming?approach(this.vy,-8,180*dt):Math.min(this.vy+GRAVITY*dt,MAX_FALL)
       moveBody(this,lv,dt,this.swimming);this.clampToCamera(g)
-      if((lv.waterAt(this.cx,this.y+this.h-3)&&!lv.swimmableAt(this.cx,this.y+this.h-3))||this.y>lv.height+24)this.die(g)
+      if(lv.waterAt(this.cx,this.y+this.h-3)&&!lv.swimmableAt(this.cx,this.y+this.h-3))this.die(g)
+      if(this.y>lv.height+24)this.die(g, true)
       return
     }
     if(rideVine(this,g,dt,inp)){this.clampToCamera(g);return}
@@ -438,7 +439,7 @@ export class Player implements Body {
       g.splash(this.cx, this.y + this.h)
       this.die(g)
     }
-    if (this.y > lv.height + 24) this.die(g)
+    if (this.y > lv.height + 24) this.die(g, true)
   }
 
   private updateClimb(g: Game, dt: number, inp: PlayerInput): void {
@@ -596,7 +597,7 @@ export class Player implements Body {
     this.hp = Math.min(this.maxHp, this.hp + n)
   }
 
-  die(g: Game): void {
+  die(g: Game, immediate = false): void {
     if (this.dead) return
     releaseCrossing(this)
     this.dead = true
@@ -612,6 +613,10 @@ export class Player implements Body {
     this.climbing = false
     this.swingT = 0
     g.sfx.hurt()
+    if (immediate) {
+      if (this.lives > 0) this.spawnAt(g)
+      else this.out = true
+    }
   }
 
   // ?? 洹몃━湲???

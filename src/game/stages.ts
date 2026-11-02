@@ -361,6 +361,20 @@ export function placeCaveEntrances(source:MapLayout,stage:number):MapLayout {
   }
   return Object.assign(grid.map(row=>row.join('')),{ladders:source.ladders??[]})
 }
+/** Catch missed jumps on the opening trails and the reported repeat-fall sites. */
+function softenFallSites(source:MapLayout,index:number):MapLayout {
+  const target=index===7?3398:index===10?785:undefined
+  if(index>2&&target===undefined)return source
+  const grid=source.map(row=>row.split(''))
+  const center=target===undefined?0:Math.floor(target/16)
+  for(let col=1;col<grid[0]!.length-1;col++){
+    if(target!==undefined&&Math.abs(col-center)>6)continue
+    // Retain upper decks and ladders; only restore missing ground underneath.
+    if(grid.some(row=>row[col]==='#'||row[col]==='w'))continue
+    for(let row=22;row<grid.length;row++)if(grid[row]![col]==='.')grid[row]![col]='#'
+  }
+  return Object.assign(grid.map(row=>row.join('')),{ladders:source.ladders??[]})
+}
 export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   const set=terrainSets[index]!,last=index===STAGE_NAMES.length-1
   const sea=index===16?makeUnderwaterMap():undefined
@@ -370,6 +384,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   if(!map.some(row=>row.includes('F')))map=Object.assign(map.map((row,y)=>y===13?row.slice(0,45)+'F'+row.slice(46):row),{ladders:map.ladders})
   if(!map.some(row=>row.includes('D')))map=Object.assign(map.map((row,y)=>y===20?row.slice(0,10)+'D'+row.slice(11):row),{ladders:map.ladders})
   if(!sea&&!sky)map=extendExpedition(map,index)
+  map=softenFallSites(map,index)
   map=placeCaveEntrances(map,index+1)
   const progress=Math.floor(index/4)
   const cast=WORLD_CAST[index]!,habitat=HABITATS[index]!

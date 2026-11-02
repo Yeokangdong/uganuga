@@ -218,7 +218,7 @@ export class Game {
     this.scrat=null
     this.mode = 'play'
     this.food = 0
-    this.timeLeft = TIME_LIMIT
+    this.timeLeft = this.stage.id === 1 ? TIME_LIMIT * 2 : TIME_LIMIT
     this.lastBeep = 0
     this.bg.setStage(this.stage.theme.background)
     this.bg.setBoss(false)
