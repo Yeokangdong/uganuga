@@ -22,8 +22,8 @@ const upperObjects:ElevatedObject[][]=[
   ['stone','ruin','bone'],['vine','local','ruin'],
 ]
 export function elevatedObject(stage:number,col:number):ElevatedObject {
-  // The first ten biomes use their own rooted scenery and matching ledge material.
-  if(stage>=1&&stage<=10)return 'local'
+  // Main-route biomes use their own scenery and matching ledge material.
+  if(stage>=1&&stage<=15)return 'local'
   const choices=upperObjects[stage-1]??upperObjects[0]!
   return choices[Math.floor(col/48)%choices.length]!
 }

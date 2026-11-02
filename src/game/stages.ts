@@ -299,6 +299,19 @@ function middleDecks(index:number,x:number,section:number):[Island,Island] {
   const top=index===5?10+shift:index===6?8+shift:index===7?9+shift:index===8?12:11+shift
   return [island(x,1,...bands[index-5]!),island(x+8,1,[3,top+1],[8,top],[3,top+1])]
 }
+/** Distinct late-game terraces, with wide ladder landings on both levels. */
+function lateDecks(index:number,x:number,section:number):[Island,Island] {
+  const shift=section%2
+  const bands:[number,number][][]=[
+    [[5,18],[5,16],[10,15],[5,16],[5,18]],
+    [[4,18],[4,16],[14,14+shift],[4,16],[4,18]],
+    [[6,18],[5,17],[8,15+shift],[5,17],[6,18]],
+    [[4,18],[5,17],[12,15+shift],[5,17],[4,18]],
+    [[6,18],[5,17],[8,16],[5,17],[6,18]],
+  ]
+  const top=[9+shift,8+shift,11+shift,10+shift,11][index-10]!
+  return [island(x,1,...bands[index-10]!),island(x+8,1,[3,top+1],[8,top],[3,top+1])]
+}
 /** New routes keep jump gaps short and connect every raised deck with ladders. */
 function expedition(index:number):MapLayout {
   const w=176+(index%5)*8
@@ -311,8 +324,9 @@ function expedition(index:number):MapLayout {
     let high=index===3?island(x+6,3,[3,10],[8,9],[3,10])
       :index===4?island(x+6,3,[4,13],[6,12],[4,13]):island(x+6,3,[3,11],[8,10],[3,11])
     if(index>=5&&index<=9)[low,high]=middleDecks(index,x,section)
+    if(index>=10&&index<=14)[low,high]=lateDecks(index,x,section)
     islands.push(low,high)
-    const floor=index>=3&&index<=9?ground.find(([l,r])=>x+3>=l&&x+3<=r)![2]:22
+    const floor=index>=3&&index<=14?ground.find(([l,r])=>x+3>=l&&x+3<=r)![2]:22
     ladders.push(link(x+3,low,floor),link(x+9,high,low),link(x+17,high,low))
     marks.push([x+6,15,'E'],[x+12,9,'M'],[x+25,20,'U'])
   }
@@ -346,12 +360,17 @@ function extendExpedition(map:MapLayout,index:number):MapLayout {
       :index===4?island(x+8,1,[5,12],[5,11],[4,12])
       :island(x+8,1,[3,11],[3,10],[5,9+(index+section)%2],[3,10])
     if(index>=5&&index<=9)[low,high]=middleDecks(index,x,section+1)
+    if(index>=10&&index<=14)[low,high]=lateDecks(index,x,section+1)
     islands.push(low,high)
     const floorAt=(col:number)=>ground.find(([l,r])=>col>=l&&col<=r)![2]
     ladders.push(link(x+2,low,floorAt(x+2)),link(x+11,high,low),
       link(x+20,high,low),link(x+27,low,floorAt(x+27)))
     // The broken lower trail leads up into the canopy and back down on its far side.
-    cutouts.push([x+9,x+22,19],[x+14,x+18,14])
+    cutouts.push([x+9,x+22,19])
+    if(index>=10&&index<=14){
+      // Hollow the bank below the lower deck, without cutting away its landing.
+      for(let c=x+14;c<=x+18;c++)cutouts.push([c,c,low.top[c-low.x]!+1])
+    }else cutouts.push([x+14,x+18,14])
     marks.push([x+6,16,'E'],[x+16,8,'M'],[x+25,15,'U'])
   }
   const pool=w-7
