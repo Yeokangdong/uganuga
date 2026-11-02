@@ -14,7 +14,7 @@ import {
   WEAPON_NAME, moveBody, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
-import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt } from './art'
+import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt, drawPaintedText } from './art'
 import { sfx, type Sfx } from './audio'
 import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
 
@@ -167,6 +167,7 @@ export class Game {
   private arrivalT=0
 
   skipIntro(): void {
+    if(this.stageLoadFailed){this.beginJourney();return}
     if(this.journeyT!==null){if(this.journeyT>=.6)this.nextStage();return}
     if (this.introT <= 0) return
     this.introT = 0
@@ -269,15 +270,20 @@ export class Game {
   previewJourney():void {
     if(!import.meta.env.DEV||this.stageIdx>=STAGES.length-1)return
     this.paused=false;this.sfx.setPaused(false)
-    this.introT=0;this.beginJourney()
-    this.journeyT=2.4;this.journeyPreview=true
+    this.introT=0;this.beginJourney(true)
   }
 
-  private beginJourney():void {
-    this.journeyPreview=false
-    this.mode='clear';this.journeyT=0
-    this.banner=null;this.bannerSub=null;this.bannerT=0
-    this.sfx.stopMusic();this.pushHud()
+  private beginJourney(preview=false):void {
+    if(this.stageLoading||this.stageIdx>=STAGES.length-1)return
+    this.stageLoading=true;this.stageLoadFailed=false
+    void loadStageArt(this.stageIdx+2).then(()=>{
+      if(this.stopped)return
+      this.journeyPreview=preview
+      this.mode='clear';this.journeyT=preview?2.4:0
+      this.banner=null;this.bannerSub=null;this.bannerT=0
+      this.sfx.stopMusic();this.pushHud()
+    }).catch(()=>{if(!this.stopped)this.stageLoadFailed=true})
+      .finally(()=>{this.stageLoading=false})
   }
 
   start(): void {
@@ -291,7 +297,7 @@ export class Game {
       let n = 0
       while (this.acc + 1e-10 >= STEP && n < 6) {
         this.captureRenderState()
-        if(!this.stageLoading)this.update(STEP)
+        if(!this.stageLoading&&!this.stageLoadFailed)this.update(STEP)
         this.acc = Math.max(0, this.acc - STEP)
         n++
       }
@@ -972,6 +978,11 @@ export class Game {
       ctx.fillStyle='#24170f';ctx.fillRect(0,0,VIEW_W,VIEW_H)
       const logo=image('title.logo')
       if(logo)ctx.drawImage(logo,VIEW_W/2-100,VIEW_H/2-55,200,80)
+      if(this.stageLoadFailed){
+        drawPaintedText(ctx,'그림을 불러오지 못했습니다',VIEW_W/2,VIEW_H/2+55,18)
+        drawPaintedText(ctx,'화면을 눌러 다시 불러오기',VIEW_W/2,VIEW_H/2+85,16)
+        return
+      }
       ctx.fillStyle='#f2bb62';ctx.fillRect(VIEW_W/2-60,VIEW_H/2+40,120,5)
       return
     }

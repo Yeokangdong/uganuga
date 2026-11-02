@@ -65,7 +65,7 @@ async function loadAnimationPack(stage:number):Promise<void>{
     const response=await fetch(BASE+folder+'/manifest.json')
     if(!response.ok)throw new Error(folder+'/manifest.json')
     return {folder,pack:await response.json()}
-  }))
+  })).catch(error=>{manifests=null;throw error})
   const cast=WORLD_CAST[stage-1]!
   const local=new Set<string>([...cast.normal,cast.boss,cast.door])
   const regional=new Set<string>(WORLD_CAST.flatMap(c=>[...c.normal,c.boss,c.door]))
