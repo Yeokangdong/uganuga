@@ -53,8 +53,27 @@ assert.equal(localBase[6]+localBase[8],186,'Local support must be buried in terr
 assert(localBase[7]<=34,'Jungle trunk is oversized')
 for(const object of ['vine','stone','basalt','ice','ruin','mushroom','bone','coral','crystal']){
  calls.length=0;terrainDeck(ctx,20,40,1,96,object,190)
+ if(object==='ice'){
+  const body=calls[0];assert.equal(body.length,5)
+  assert(Math.abs(body[0].width/body[0].height-body[3]/body[4])<1e-6,'Ice structure stretched')
+  assert(calls.slice(1).every(a=>a[0]!==art.images['world.elevated.ice']),'Ice silhouette split into distorted pieces')
+  continue
+ }
  assert.equal(calls.length,2)
  const cap=calls[0];assert(Math.abs(cap[3]/cap[4]-cap[7]/cap[8])<1e-6,'Crown squashed')
  assert.equal(calls[1][2],cap[4],'Duplicate full support instead of lower segment')
+}
+for(const width of [16,48,96,240,480])for(const depth of [32,96,192,304]){
+ calls.length=0;terrainDeck(ctx,20,40,3,width,'ice',40+depth)
+ const body=calls[0]
+ assert.equal(body.length,5)
+ assert(Math.abs(body[0].width/body[0].height-body[3]/body[4])<1e-6,'Ice aspect changes with ledge dimensions')
+ assert.equal(body[2],40);assert.equal(body[4],depth+6,'Ice support lost its ground contact')
+ assert(calls.slice(1).some(a=>a[5]===20&&a[6]===40),'Ice ledge top missing')
+}
+for(const stage of [3,15])for(const depth of [48,128,256]){
+ calls.length=0;terrainSupport(ctx,120,20,20+depth,stage,0,300)
+ const body=calls.find(a=>a.length===5)
+ assert(body&&Math.abs(body[0].width/body[0].height-body[3]/body[4])<1e-6,'Ice pillar stretched')
 }
 console.log(`Terrain passed: all ${runs} platform runs in ${STAGES.length} maps are visible; unsupported bridges, 80 ladder spans, support ceilings, stepped-bank/pit foundations and 9 undistorted crowns.`)

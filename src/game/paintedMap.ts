@@ -43,7 +43,8 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
     g.restore();return
   }
   const h=Math.max(72,bottom-top+14)
-  const w=theme.organic?Math.min(132,h*im.width/im.height):Math.min(48,h*im.width/im.height)
+  const w=theme.structure==='ice'||theme.structure==='snow'?h*im.width/im.height
+    :theme.organic?Math.min(132,h*im.width/im.height):Math.min(48,h*im.width/im.height)
   const center=Math.max(left+w*.25,Math.min(right-w*.25,x))
   g.save()
   // The platform owns the walkable top. Scenery must stay underneath it.
@@ -58,6 +59,20 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
 export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:number,width:number,object:ElevatedObject='local',bottom?:number):void {
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   if(objectArt){
+    if(object==='ice'){
+      // An ice arch is a complete silhouette: stretching its crown to a long
+      // ledge and its legs to another height squashes the whole structure.
+      // Fit the original uniformly; let the separate ledge own the full top.
+      const height=Math.max(1,(bottom??y+80)-y+6)
+      const naturalWidth=objectArt.width*height/objectArt.height
+      const support=naturalWidth<=width?objectArt:part(stage,'support')??objectArt
+      const supportWidth=support.width*height/support.height
+      g.save();g.beginPath();g.rect(x,y,width,height);g.clip()
+      g.drawImage(support,x+(width-supportWidth)/2,y,supportWidth,height)
+      g.restore()
+      terrainDeck(g,x,y,stage,width,'local')
+      return
+    }
     // Keep the authored crown's proportions. Only the lower stem/pillars extend
     // to the ground; drawing a second complete object made overlapping caps.
     const sourceTop=objectArt.height*.28
