@@ -22,6 +22,8 @@ const upperObjects:ElevatedObject[][]=[
   ['stone','ruin','bone'],['vine','local','ruin'],
 ]
 export function elevatedObject(stage:number,col:number):ElevatedObject {
+  // The opening biomes use their own rooted scenery and matching ledge material.
+  if(stage>=1&&stage<=5)return 'local'
   const choices=upperObjects[stage-1]??upperObjects[0]!
   return choices[Math.floor(col/48)%choices.length]!
 }
@@ -97,6 +99,19 @@ export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:n
   // otherwise a long platform becomes a row of disconnected miniature ledges.
   const unit=stage===15?44:64
   const depth=im.height*unit/im.width,edge=Math.min(8,width/2)
+  if(stage>=1&&stage<=5){
+    // Discard the authored transparent border so the painted top and ends
+    // coincide with the one-way collision span, including short stair treads.
+    const top=[2,3,2,3,2][stage-1]!,sourceWidth=im.width-4,sourceHeight=im.height-top-2
+    const cap=sourceWidth/8
+    g.drawImage(im,2,top,cap,sourceHeight,x,y,edge,depth)
+    for(let offset=edge;offset<width-edge;offset+=48){
+      const w=Math.min(48,width-edge-offset)
+      g.drawImage(im,2+cap,top,sourceWidth*w/unit,sourceHeight,x+offset,y,w,depth)
+    }
+    g.drawImage(im,im.width-2-cap,top,cap,sourceHeight,x+width-edge,y,edge,depth)
+    return
+  }
   const sourceEdge=im.width/8
   g.drawImage(im,0,0,sourceEdge,im.height,x,y,edge,depth)
   for(let offset=edge;offset<width-edge;offset+=48){

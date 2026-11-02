@@ -360,7 +360,7 @@ export class Level {
         if(nextBottom!==bottom)break
         w++
       }
-      const x=(c+w/2)*TILE,top=r*TILE-1,end=bottom*TILE
+      const x=(c+w/2)*TILE,top=r*TILE-(theme<=5?0:1),end=bottom*TILE
       ladder(g,theme,x,top,end)
       c+=w-1
     }

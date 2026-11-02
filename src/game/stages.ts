@@ -292,11 +292,14 @@ function expedition(index:number):MapLayout {
   const ground:Span[]=[],islands:Island[]=[],ladders:Span[]=[],marks:Mark[]=[]
   for(let x=0;x<w;x+=16)ground.push([x,Math.min(w-1,x+15),21+((Math.floor(x/16)+index)%3===0?1:0)])
   for(let section=0;section<3;section++){
-    const x=16+section*48+(index%3)*2
-    const low=island(x,3,[4,17],[12,16],[4,17])
-    const high=island(x+6,3,[3,11],[8,10],[3,11])
+    const x=16+section*48+(index%3)*2+(index===3?[0,4,-3][section]!:0)
+    const low=index===3?island(x,3,[4,18],[4,16],[8,15],[4,16])
+      :index===4?island(x,3,[5,18],[10,17],[5,18]):island(x,3,[4,17],[12,16],[4,17])
+    const high=index===3?island(x+6,3,[3,10],[8,9],[3,10])
+      :index===4?island(x+6,3,[4,13],[6,12],[4,13]):island(x+6,3,[3,11],[8,10],[3,11])
     islands.push(low,high)
-    ladders.push(link(x+3,low,22),link(x+9,high,low),link(x+17,high,low))
+    const floor=index===3||index===4?ground.find(([l,r])=>x+3>=l&&x+3<=r)![2]:22
+    ladders.push(link(x+3,low,floor),link(x+9,high,low),link(x+17,high,low))
     marks.push([x+6,15,'E'],[x+12,9,'M'],[x+25,20,'U'])
   }
   // Center the entrance within the first 16-tile terrace so its full width is supported.
@@ -317,8 +320,17 @@ function extendExpedition(map:MapLayout,index:number):MapLayout {
   for(let section=0;section<sections;section++){
     const x=8+Math.floor(section*w/sections)+(index+section)%3
     const crest=15+(index+section)%2
-    const low=island(x,1,[3,18],[4,17],[6,16],[6,crest],[6,16],[3,17],[2,18])
-    const high=island(x+8,1,[3,11],[3,10],[5,9+(index+section)%2],[3,10])
+    const low=index===0?island(x,1,[3,18],[4,17],[6,16],[8,15+section%2],[6,16],[3,17])
+      :index===1?island(x,1,[4,18],[4,16],[12,14+section%2],[6,16],[4,18])
+      :index===2?island(x,1,[6,18],[6,17],[8,16-section%2],[6,17],[4,18])
+      :index===3?island(x,1,[5,18],[5,16],[10,15-section%2],[5,16],[5,18])
+      :index===4?island(x,1,[6,18],[6,17],[8,16+section%2],[6,17],[4,18])
+      :island(x,1,[3,18],[4,17],[6,16],[6,crest],[6,16],[3,17],[2,18])
+    const high=index===1?island(x+8,1,[4,10],[6,8],[4,10])
+      :index===2?island(x+8,1,[4,11],[6,10],[4,11])
+      :index===3?island(x+8,1,[4,11],[6,9],[4,11])
+      :index===4?island(x+8,1,[5,12],[5,11],[4,12])
+      :island(x+8,1,[3,11],[3,10],[5,9+(index+section)%2],[3,10])
     islands.push(low,high)
     const floorAt=(col:number)=>ground.find(([l,r])=>col>=l&&col<=r)![2]
     ladders.push(link(x+2,low,floorAt(x+2)),link(x+11,high,low),
