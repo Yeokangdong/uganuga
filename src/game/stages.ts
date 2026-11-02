@@ -365,10 +365,26 @@ export function placeCaveEntrances(source:MapLayout,stage:number):MapLayout {
 }
 /** Catch missed jumps on the opening trails and the reported repeat-fall sites. */
 function softenFallSites(source:MapLayout,index:number):MapLayout {
+  if([3,4,7,8,10].includes(index)){
+    const grid=source.map(row=>row.split(''))
+    // Upper decks must not hide an open pit in the lower walking route.
+    for(let col=1;col<grid[0]!.length-1;){
+      const open=(c:number)=>[21,22,23].every(r=>grid[r]?.[c]!==undefined&&!['#','R','w'].includes(grid[r]![c]!))
+      if(!open(col)){col++;continue}
+      const left=col
+      while(col<grid[0]!.length-1&&open(col))col++
+      if(col-left<=2)continue
+      const gap=left+Math.floor((col-left-2)/2)
+      for(let c=left;c<col;c++)if(c<gap||c>gap+1)grid[21]![c]='='
+    }
+    return Object.assign(grid.map(row=>row.join('')),{ladders:source.ladders??[]})
+  }
   const target=index===7?3398:index===10?785:undefined
   if(index>2&&target===undefined)return source
   const grid=source.map(row=>row.split(''))
   const center=target===undefined?0:Math.floor(target/16)
+  // A level walking deck bypasses the overlapping ladder/ledge at x=1266.
+  if(index===0)for(let col=74;col<=93;col++)if(grid[14]![col]==='.')grid[14]![col]='='
   for(let col=1;col<grid[0]!.length-1;col++){
     if(target!==undefined&&Math.abs(col-center)>6)continue
     // Retain upper decks and ladders; only restore missing ground underneath.

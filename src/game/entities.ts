@@ -316,7 +316,7 @@ export class Player implements Body {
       this.vx=approach(this.vx,0,150*dt)
       this.vy=this.swimming?approach(this.vy,-8,180*dt):Math.min(this.vy+GRAVITY*dt,MAX_FALL)
       moveBody(this,lv,dt,this.swimming);this.clampToCamera(g)
-      if(lv.waterAt(this.cx,this.y+this.h-3)&&!lv.swimmableAt(this.cx,this.y+this.h-3))this.die(g)
+      if(lv.waterAt(this.cx,this.y+this.h-3)&&!lv.swimmableAt(this.cx,this.y+this.h-3))this.die(g, lv.def.id===7)
       if(this.y>lv.height+24)this.die(g, true)
       return
     }
@@ -425,7 +425,7 @@ export class Player implements Body {
 
     if (lv.waterAt(this.cx, this.y + this.h - 3)&&!lv.swimmableAt(this.cx,this.y+this.h-3)) {
       g.splash(this.cx, this.y + this.h)
-      this.die(g)
+      this.die(g, lv.def.id===7)
     }
     if (this.y > lv.height + 24) this.die(g, true)
   }
