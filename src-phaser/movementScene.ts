@@ -3,7 +3,9 @@ import { Player } from '../src/game/entities'
 import { Level } from '../src/game/level'
 import { loadStageArt } from '../src/game/art'
 import { STEP, VIEW_W, VIEW_H } from '../src/game/constants'
-import type { Game } from '../src/game/game'
+import { Game } from '../src/game/game'
+import { Background } from '../src/game/background'
+import { spawnCombat } from './combat'
 import type { PlayerInput } from '../src/game/input'
 import type { StageDef } from '../src/game/stages'
 import type { MapData } from './tiled'
@@ -16,6 +18,7 @@ const neutral = (): PlayerInput => ({ left:false,right:false,up:false,down:false
  * Tiled supplies collision geometry; Phaser owns input, lifecycle and presentation.
  */
 export class MovementScene extends Phaser.Scene {
+  private background = new Background()
   player!: Player
   level!: Level
   body!: Phaser.Physics.Arcade.Body
@@ -62,11 +65,13 @@ export class MovementScene extends Phaser.Scene {
     if('objects' in ladders)for(const o of ladders.objects)this.level.ladders[o.y/16*data.width+o.x/16]=JSON.parse(o.properties[0]!.value)
     this.player=new Player(0,'우가','#ffe7a4')
     const noop=()=>{}
-    // No enemies, items, progression or combat targets are introduced in this stage.
-    this.runtime={level:this.level,players:[this.player],enemies:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
-      sfx:{jump:noop,hurt:noop,throw:noop,charge:noop,big:noop},splash:noop,burst:noop,fx:noop,shake:noop,popup:noop} as unknown as Game
+    this.background.setStage(def.theme.background)
+    this.runtime=Object.assign(Object.create(Game.prototype),{level:this.level,stage:def,players:[this.player],enemies:[],items:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
+      food:0,foodMax:60,timeLeft:356.4,time:0,
+      sfx:new Proxy({}, {get:()=>noop}),splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.player.spawnAt(this.runtime)
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
+    // Same 384x216 world viewport and Player.draw dimensions as the original game.
     this.add.image(0,0,'movement-view').setOrigin(0).setDisplaySize(960,540).setDepth(-1)
     this.marker=this.add.rectangle(0,0,this.player.w,this.player.h).setVisible(false)
     this.physics.add.existing(this.marker)
@@ -104,7 +109,17 @@ export class MovementScene extends Phaser.Scene {
     while(this.accumulator+1e-9>=STEP){
       const state={...this.held}
       for(const edge of ['jumpPressed','downPressed','attackPressed','attackReleased'] as const){state[edge]=this.pending[edge];this.pending[edge]=false}
+      spawnCombat(this.runtime)
       this.player.update(this.runtime,STEP,state,STEP)
+      for(const enemy of this.runtime.enemies){enemy.advanceStatus(STEP);enemy.update(this.runtime,STEP)}
+      for(const projectile of this.runtime.projectiles)projectile.update(this.runtime,STEP)
+      for(const item of this.runtime.items)item.update(this.runtime,STEP)
+      // Reuse the original pickup, contact immunity and projectile hit-set rules.
+      ;(this.runtime as unknown as {collide():void}).collide()
+      this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
+      this.runtime.items=this.runtime.items.filter(i=>!i.dead)
+      this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
+      this.runtime.time+=STEP
       this.accumulator=Math.max(0,this.accumulator-STEP);this.ticks++
     }
     this.body.reset(this.player.cx,this.player.y+this.player.h/2)
@@ -117,10 +132,13 @@ export class MovementScene extends Phaser.Scene {
     const cy=Math.max(0,Math.min(lv.height-VIEW_H,p.y-VIEW_H*.5))
     this.runtime.camX=cx;this.runtime.camY=cy
     const ctx=this.surface.context
-    ctx.fillStyle='#244b50';ctx.fillRect(0,0,VIEW_W,VIEW_H)
+    this.background.draw(ctx,cx,this.runtime.time,cy,lv.height-VIEW_H)
     ctx.drawImage(lv.canvas,cx*lv.scale,cy*lv.scale,VIEW_W*lv.scale,VIEW_H*lv.scale,0,0,VIEW_W,VIEW_H)
+    for(const item of this.runtime.items)item.draw(ctx,cx,cy)
+    for(const enemy of this.runtime.enemies){enemy.draw(ctx,cx,cy);enemy.drawStars(ctx,cx,cy)}
+    for(const projectile of this.runtime.projectiles)projectile.draw(ctx,cx,cy)
     p.draw(ctx,cx,cy);this.surface.refresh()
-    this.hud.setText(`STAGE ${lv.def.id}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}`)
+    this.hud.setText(`STAGE ${lv.def.id}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
   }
 }
 
