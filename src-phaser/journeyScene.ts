@@ -1,3 +1,4 @@
+import { loadKingKong, replaceOpeningKingKong } from './kingKong'
 import lettersUrl from './letter-art.png'
 import letters from './letter-art.json'
 import { loadSuukuret, replaceOpeningAnimal } from './suukuret'
@@ -43,9 +44,9 @@ export class JourneyScene extends Phaser.Scene {
       if(this.textures.exists('journey-view'))this.textures.remove('journey-view')
     })
     const stage=data.kind==='opening'?1:data.stage??15
-    const load=()=>Promise.all([loadStageArt(stage),loadSuukuret(),letterSheet.decode(),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
+    const load=()=>Promise.all([loadStageArt(stage),loadSuukuret(),loadKingKong(),letterSheet.decode(),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
       if(!this.scene.isActive())return
-      replaceOpeningAnimal()
+      replaceOpeningAnimal();replaceOpeningKingKong()
       loading.destroy();this.background.setStage(STAGES[stage-1]!.theme.background)
       this.surface=this.textures.createCanvas('journey-view',384,216)!
       this.add.image(0,0,'journey-view').setOrigin(0).setDisplaySize(960,540)

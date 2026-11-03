@@ -1,5 +1,5 @@
 import { EnvironmentEvent, TREE, drawStory } from './environment'
-import { KingKong, drawCaptive } from './kingKong'
+import { KingKong, drawCaptive, loadKingKong } from './kingKong'
 import Phaser from 'phaser'
 import { sfx } from '../src/game/audio'
 import { drawArt, frameAt, art } from '../src/game/art'
@@ -84,7 +84,7 @@ export class MovementScene extends Phaser.Scene {
     const url=maps[`./maps/${String(stage).padStart(2,'0')}.tmj`]!
     const response=await fetch(url); if(!response.ok)throw new Error(`Map load: ${response.status}`)
     const data:MapData=await response.json()
-    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this), loadSuukuret()])
+    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this), loadSuukuret(), ...(stage===15?[loadKingKong()]:[])])
     if(!this.scene.isActive())return
     const def=JSON.parse(data.properties[0]!.value) as StageDef
     this.level=new Level(def)

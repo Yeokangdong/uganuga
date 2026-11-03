@@ -1,12 +1,34 @@
 ﻿import { Boss } from '../src/game/boss'
-import { drawArt, frameAt } from '../src/game/art'
+import { art, drawArt, frameAt } from '../src/game/art'
 import type { Game } from '../src/game/game'
 import type { Player } from '../src/game/entities'
 import { VIEW_W, overlap } from '../src/game/constants'
 
+const files=import.meta.glob('./assets/kingkong_*',{query:'?url',import:'default',eager:true}) as Record<string,string>
+const actions=['pound','charge','dizzy','slam','defeat'] as const
+let loading:Promise<void>|undefined
+export function loadKingKong(){
+  return loading??=Promise.all(actions.map(async action=>{
+    const base=`./assets/kingkong_${action}`
+    const data=await (await fetch(files[base+'.json']!)).json()
+    const img=new Image();img.src=files[base+'.png']!;await img.decode()
+    const frames=Object.values(data.frames as Record<string,{frame:{x:number;y:number;w:number;h:number}}>).map(v=>v.frame)
+    const canvas=document.createElement('canvas');canvas.width=img.width;canvas.height=img.height
+    const ctx=canvas.getContext('2d',{willReadFrequently:true})!;ctx.drawImage(img,0,0)
+    const pixels=ctx.getImageData(0,0,img.width,img.height).data
+    let left=Infinity,right=0,top=Infinity,bottom=0
+    for(const f of frames)for(let y=0;y<f.h;y++)for(let x=0;x<f.w;x++)if(pixels[((f.y+y)*img.width+f.x+x)*4+3]!>32){left=Math.min(left,x);right=Math.max(right,x+1);top=Math.min(top,y);bottom=Math.max(bottom,y+1)}
+    const scale=Math.min(54/(right-left),68/(bottom-top))
+    art.sprites[`kingkong.${action}`]={img,frames:frames.map(f=>[f.x,f.y,f.w,f.h,(left+right)/2/f.w,bottom/f.h]),h:frames[0]!.h*scale,fps:18,ax:.5,ay:1,facingLeft:true}
+  })).then(()=>{}).catch(error=>{loading=undefined;throw error})
+}
+export function replaceOpeningKingKong(){
+  for(const [key,action] of [['walk','charge'],['carry','charge'],['grab','pound'],['jump','slam']])art.sprites[`kingkong.${key}`]=art.sprites[`kingkong.${action}`]!
+}
+
 type Move = 'chest'|'charge'|'jump'
 type Phase = 'warning'|'attack'|'recover'|'dizzy'
-/** Stage 15 only. Authored opening poses are reused without changing the atlas. */
+/** Stage 15 boss with the authored Ludo atlas; collision timing stays authoritative. */
 export class KingKong extends Boss {
   move:Move='chest'
   phase:Phase='warning'
@@ -29,7 +51,7 @@ export class KingKong extends Boss {
     if(this.dying||this.flash>0)return
     this.hp=Math.max(0,this.hp-dmg);this.flash=.24
     g.sfx.hit();g.burst(this.cx,this.y+30,'#fff2be',6)
-    if(!this.hp){this.state='dying';this.t=1.2;this.waves=[];this.vx=0;g.sfx.roar()}
+    if(!this.hp){this.state='dying';this.t=2.5;this.elapsed=0;this.y=this.floor-this.h;this.waves=[];this.vx=0;g.sfx.roar()}
     // Damage never cancels a warning or shortens the two-second wall opening.
   }
   private warn(g:Game){
@@ -45,7 +67,7 @@ export class KingKong extends Boss {
   override update(g:Game,dt:number){
     if(this.dead)return
     this.anim+=dt;this.flash=Math.max(0,this.flash-dt)
-    if(this.dying){this.t=Math.max(0,this.t-dt);if(!this.t)this.dead=true;return}
+    if(this.dying){this.elapsed+=dt;this.t=Math.max(0,this.t-dt);if(!this.t)this.dead=true;return}
     this.remaining=Math.max(0,this.remaining-dt);this.elapsed+=dt
     const left=g.level.arenaX+44,right=g.level.arenaX+VIEW_W-44
     if(this.phase==='warning'){
@@ -75,7 +97,7 @@ export class KingKong extends Boss {
           g.burst(this.cx,this.floor-4,'#ffe4a1',8)
         }
       }else if(this.phase2&&this.pulses===1&&this.elapsed>=.36){this.pulse();this.pulses=2}
-      if(this.phase==='attack'&&!this.remaining){this.phase='recover';this.remaining=.65;this.y=this.floor-this.h}
+      if(this.phase==='attack'&&!this.remaining){this.phase='recover';this.elapsed=0;this.remaining=.65;this.y=this.floor-this.h}
     }else if(!this.remaining)this.warn(g)
     for(const wave of this.waves){
       wave.x+=wave.dir*135*dt;wave.life-=dt
@@ -96,10 +118,18 @@ export class KingKong extends Boss {
       ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillStyle='#ffe9a8'
       ctx.fillText(this.move==='chest'?'가슴 두드리기 · 점프!':this.move==='charge'?'돌진 · 피하세요!':'그림자 밖으로!',192,cy===0?74:62)
     }
-    const key=this.move==='jump'?'kingkong.jump':'kingkong.walk'
+    let action:string='pound',frame=0
+    if(this.dying){action='defeat';frame=Math.min(35,Math.floor(this.elapsed*18))}
+    else if(this.phase==='dizzy'){action='dizzy';frame=Math.floor(this.elapsed*18)%36}
+    else if(this.move==='charge'){action='charge';frame=Math.floor(this.elapsed*18)%36}
+    else if(this.move==='jump'){
+      action='slam'
+      frame=this.phase==='warning'?Math.min(17,Math.floor(this.elapsed/(this.phase2?.8:1)*18)):this.phase==='attack'?18+Math.min(11,Math.floor(this.elapsed/.14*12)):30+Math.min(5,Math.floor(this.elapsed/.65*6))
+    }else frame=this.phase==='warning'?Math.min(23,Math.floor(this.elapsed/(1.2*(this.phase2?.8:1))*24)):this.phase==='attack'?24+Math.min(11,Math.floor(this.elapsed/(this.phase2?.75:.38)*12)):35
+    const key=`kingkong.${action}`
     ctx.save()
     if(this.phase2)ctx.filter='sepia(1) saturate(6) hue-rotate(315deg)'
-    drawArt(ctx,key,frameAt(key,this.anim),x,this.y+this.h-cy,this.facing<0,{scale:1.05,white:this.flash>.15,alpha:this.dying?Math.max(0,this.t/1.2):1})
+    drawArt(ctx,key,frame,x,this.y+this.h-cy,this.facing<0,{white:this.flash>.15})
     ctx.restore()
     for(const wave of this.waves){ctx.strokeStyle='#ffd07b';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(wave.x-cx,floor-4,7,4,0,Math.PI,Math.PI*2);ctx.stroke()}
     if(this.phase==='dizzy'){
@@ -122,4 +152,5 @@ export function drawCaptive(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:num
   ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillStyle='#fff0c0';ctx.fillText('누가',x,floor-95)
   ctx.restore()
 }
+
 
