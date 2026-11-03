@@ -1,4 +1,4 @@
-﻿import Phaser from 'phaser'
+import Phaser from 'phaser'
 import { Player } from '../src/game/entities'
 import { Level } from '../src/game/level'
 import { loadStageArt } from '../src/game/art'
@@ -35,7 +35,7 @@ export class MovementScene extends Phaser.Scene {
     this.ready=false; this.accumulator=0; this.ticks=0
     this.held=neutral(); this.previous=neutral(); this.pending=neutral()
     this.hud=this.add.text(18, 12, 'Loading movement…', {fontSize:'16px',color:'#ffe7a4'})
-    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE'}) as typeof this.keys
+    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE',restart:'ENTER'}) as typeof this.keys
     const reset=()=>{this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0;this.input.keyboard?.resetKeys()}
     this.game.events.on(Phaser.Core.Events.BLUR,reset)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
@@ -78,6 +78,13 @@ export class MovementScene extends Phaser.Scene {
   /** Called once per display frame; edge inputs survive frames with no physics tick. */
   update(_time:number,delta:number) {
     if(!this.ready)return
+    if(this.player.out && Phaser.Input.Keyboard.JustDown(this.keys.restart!)) {
+      this.player=new Player(0,'우가','#ffe7a4')
+      this.runtime.players=[this.player]
+      this.player.spawnAt(this.runtime)
+      this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0
+      this.input.keyboard?.resetKeys()
+    }
     const input=neutral()
     for(const action of ['left','right','up','down','attack'] as const)input[action]=this.keys[action]!.isDown
     input.jump=input.up
@@ -113,7 +120,7 @@ export class MovementScene extends Phaser.Scene {
     ctx.fillStyle='#244b50';ctx.fillRect(0,0,VIEW_W,VIEW_H)
     ctx.drawImage(lv.canvas,cx*lv.scale,cy*lv.scale,VIEW_W*lv.scale,VIEW_H*lv.scale,0,0,VIEW_W,VIEW_H)
     p.draw(ctx,cx,cy);this.surface.refresh()
-    this.hud.setText(`STAGE ${lv.def.id}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.dead?'RESPAWNING':p.out?'OUT':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}`)
+    this.hud.setText(`STAGE ${lv.def.id}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}`)
   }
 }
 
