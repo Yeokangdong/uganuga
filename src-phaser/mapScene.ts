@@ -9,31 +9,44 @@ export class MapScene extends Phaser.Scene {
     const status = this.add.text(20, 12, 'TILED / 15 STAGES — loading corrected runtime geometry', { fontSize: '17px', color: '#ffe7a4' })
     const convert = new URLSearchParams(location.search).has('convert')
     const maps: MapData[] = [], checks: unknown[] = []
+    const previews: Phaser.GameObjects.Image[] = []
     for (let i = 0; i < 15; i++) {
       status.setText(`TILED / 15 STAGES — ${i + 1}/15`)
-      const level = await sourceLevel(i)
+      const level = convert ? await sourceLevel(i) : undefined
       const url = stored[`./maps/${String(i + 1).padStart(2, '0')}.tmj`]
       if (!convert && !url) throw new Error(`Missing Tiled map ${i + 1}`)
-      const map: MapData = convert ? convertLevel(level) : await fetch(url!).then(r => { if (!r.ok) throw new Error(url); return r.json() })
-      checks.push(verifyRoundTrip(level, map)); maps.push(map)
+      const map: MapData = convert ? convertLevel(level!) : await fetch(url!).then(r => { if (!r.ok) throw new Error(url); return r.json() })
+      if (level) checks.push(verifyRoundTrip(level, map))
+      maps.push(map)
       const x = 20 + i % 3 * 314, y = 48 + Math.floor(i / 3) * 74
       const cv = document.createElement('canvas'); cv.width = 600; cv.height = 90
-      cv.getContext('2d')!.drawImage(level.canvas, 0, 0, 600, 90)
+      if (level) cv.getContext('2d')!.drawImage(level.canvas, 0, 0, 600, 90)
+      else {
+        const ctx = cv.getContext('2d')!
+        const terrain = map.layers.find(layer => layer.name === 'Terrain')
+        if (terrain && 'data' in terrain) terrain.data.forEach((tile, cell) => {
+          if (!tile) return
+          ctx.fillStyle = ['#000000', '#66aa66', '#ddbb55', '#558855', '#5599cc', '#888888'][tile] ?? '#ffffff'
+          ctx.fillRect(cell % map.width * 600 / map.width, Math.floor(cell / map.width) * 90 / map.height, 600 / map.width, 90 / map.height)
+        })
+      }
       this.textures.addCanvas(`map-art-${i}`, cv)
-      this.add.text(x, y, `${String(i + 1).padStart(2, '0')}  ${level.def.sub}`, { fontSize: '11px', color: '#e4e9d5' })
-      this.add.image(x, y + 17, `map-art-${i}`).setOrigin(0).setDisplaySize(300, 45).setInteractive().on('pointerdown', () => this.showMap(maps[i]!, i))
-      if (i === 0) {
+      this.add.text(x, y, `${String(i + 1).padStart(2, '0')}  ${level?.def.sub ?? 'Tiled map'}`, { fontSize: '11px', color: '#e4e9d5' })
+      previews.push(this.add.image(x, y + 17, `map-art-${i}`).setOrigin(0).setDisplaySize(300, 45).on('pointerdown', () => this.showMap(maps[i]!, i)))
+      if (i === 0 && level) {
         const detail = document.createElement('canvas'); detail.width = 960; detail.height = 384
         detail.getContext('2d')!.drawImage(level.canvas, 0, 0, 960 * level.scale, 384 * level.scale, 0, 0, 960, 384)
         this.textures.addCanvas('detail-art', detail)
       }
-      level.canvas.width = 1; level.canvas.height = 1
+      if (level) { level.canvas.width = 1; level.canvas.height = 1 }
       await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
     }
     status.setText('TILED / 15 STAGES — coordinate + count round trips PASS')
     this.load.image('collision-tiles', collisionUrl)
     this.load.once('complete', () => {
       this.showMap(maps[0]!, 0)
+      previews.forEach(preview => preview.setInteractive())
+      status.setText(convert ? 'TILED / 15 STAGES ? coordinate + count round trips PASS' : 'TILED / 15 STAGES ? ready')
       Object.assign(window, { __tiledMaps: maps, __tiledChecks: checks, __mapsReady: true })
     })
     this.load.start()
@@ -57,7 +70,7 @@ export class MapScene extends Phaser.Scene {
     layer.setCollision([1, 3])
     // One-way platforms retain a separate tile kind; movement is stage 3.
     layer.setScale(.23).setAlpha(.7)
-    if (index === 0) group.add(this.add.image(0, 0, 'detail-art').setOrigin(0).setScale(.23))
+    if (index === 0 && this.textures.exists('detail-art')) group.add(this.add.image(0, 0, 'detail-art').setOrigin(0).setScale(.23))
     group.add(layer)
     const maskGraphics = this.make.graphics({ x: 20, y: 438 }).fillRect(0, 0, 221, 89)
     const mask = maskGraphics.createGeometryMask(); layer.setMask(mask)
