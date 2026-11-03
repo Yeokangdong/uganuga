@@ -1,3 +1,4 @@
+import {updateStagePattern,drawStagePattern} from './patternRuntime'
 import { Piranha } from './piranha'
 import { rollCaveReward, addCaveLife } from './caveRewards'
 import { drawOpening, OPENING_DURATION, OPENING_GRAB_START, OPENING_ESCAPE_START, OPENING_PLEA_START, OPENING_DIALOGUE_START, OPENING_HERO_LINE_START } from './opening'
@@ -440,6 +441,7 @@ export class Game {
       p.update(this, dt, inp.get(i),realDt)
       p.advanceIdleThought(realDt,inp.get(i))
     })
+    updateStagePattern(this,realDt)
     this.updateCamera(dt)
     this.updateScrat(dt)
     this.spawn()
@@ -1000,6 +1002,7 @@ export class Game {
         ctx.restore()
       }
     }
+    drawStagePattern(this,ctx,cx,cy)
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)

@@ -1,3 +1,4 @@
+import {loadPatternArt} from './patternRuntime'
 import { STAGES } from './stages'
 import { WORLD_CAST } from './world-cast'
 import { CHARACTER_SCALE } from './constants'
@@ -60,6 +61,7 @@ export function loadStageArt(stage:number):Promise<void>{
   stageLoads.set(stage,request);return request
 }
 async function loadAnimationPack(stage:number):Promise<void>{
+  await loadPatternArt(stage)
   art.images['title.logo']=await cachedImage('runtime_logo_crisp.webp')
   if(!manifests)manifests=Promise.all(['painted-v6','terrain-v10','stage-backgrounds-v1','stage-signs-v1','elevated-objects-v1','monsters-v7','world-v8','monsters-v9','underwater-v1','fierce-monsters-v1','hq-monsters-v1','weapons-v1'].map(async folder=>{
     const response=await fetch(BASE+folder+'/manifest.json')

@@ -40,6 +40,7 @@ export function themeKey(base: string, n: string): string {
 }
 
 export class Level {
+  patternCliffs: {x:number;top:number;bottom:number}[]=[]
   cols: number
   rows = ROWS
   tiles: Uint8Array
@@ -286,6 +287,15 @@ export class Level {
         foundation=Math.max(foundation,floor)
       }
       decks.push({x:start*TILE,y,width:(end-start+1)*TILE,support,bottom:foundation})
+    }
+    if(this.def.id===3){
+      const im=image('terrain.3.support')
+      if(im)for(const tree of supports){
+        const scale=Math.min((tree.bottom-tree.top+6)/im.height,(tree.right-tree.left)/im.width)
+        const width=im.width*scale,height=im.height*scale
+        const center=Math.max(tree.left+width/2,Math.min(tree.right-width/2,tree.x))
+        this.patternCliffs.push({x:center+width/2,top:tree.bottom+6-height,bottom:tree.bottom})
+      }
     }
     for(const tree of supports){
       if(tree.object!=='local'&&image('world.elevated.'+tree.object))continue
