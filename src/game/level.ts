@@ -355,6 +355,28 @@ export class Level {
       if(this.def.id===9&&!Array.from({length:9},(_,i)=>Math.floor(x/TILE)-4+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(floor/TILE)-2+i).some(r=>this.tile(c,r)===5)))continue
       this.patternAnchors.push({x,y:this.def.id===6?Math.max(deck.y+22,floor-52):this.def.id===9?floor-12:deck.y+4,floor,left:deck.x,right:deck.x+deck.width})
     }
+    if(!this.def.cave&&this.def.id>=11&&this.def.id<=15)for(const tree of supports){
+      const floor=this.groundY(tree.x)??tree.bottom
+      const im=image(`terrain.${this.def.id}.support`);if(!im)continue
+      // Same authored support transform as terrainSupport, including its alpha silhouette.
+      const snow=this.def.id===15,limit=snow?tree.right-tree.left:this.def.id===14?132:48
+      const scale=Math.min((tree.bottom-tree.top+6)/im.height,Math.min(limit,tree.right-tree.left)/im.width)
+      const width=im.width*scale,height=im.height*scale,center=Math.max(tree.left+width/2,Math.min(tree.right-width/2,tree.x))
+      const scan=document.createElement('canvas');scan.width=im.width;scan.height=im.height
+      const sg=scan.getContext('2d',{willReadFrequently:true})!;sg.drawImage(im,0,0)
+      const data=sg.getImageData(0,0,im.width,im.height).data
+      const desired=this.def.id===11?.5:this.def.id===13?.6:.15
+      let row=Math.floor(im.height*desired),col=-1
+      for(;row<im.height&&col<0;row++)for(let offset=0;offset<im.width/2;offset++){
+        const k=Math.floor(im.width/2)+offset
+        if(data[(row*im.width+k)*4+3]!>200){col=k;break}
+      }
+      if(col<0)continue
+      const x=center-width/2+col*scale
+      const y=(snow?tree.bottom+6-height:tree.top)+(row-1)*scale
+      if(floor-y<20||floor-y>112)continue
+      this.patternAnchors.push({x,y,floor,left:tree.left,right:tree.right})
+    }
     for(const tree of supports){
       if(tree.object!=='local'&&image('world.elevated.'+tree.object))continue
       terrainSupport(g,tree.x,tree.top,tree.bottom,theme,tree.left,tree.right,tree.object)

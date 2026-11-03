@@ -7,21 +7,31 @@ type Animation={fps:number;loop:boolean;frames:Frame[]}
 type Pack={animations:Record<string,Animation>;image:HTMLImageElement}
 const packs=new Map<number,Pack>()
 export async function loadPatternArt(stage:number):Promise<void>{
-  if(stage<1||stage>10||packs.has(stage))return
+  if(stage<1||stage>15||packs.has(stage))return
   const base=`${import.meta.env.BASE_URL}assets/patterns-v1/stage${String(stage).padStart(2,'0')}/`
   const response=await fetch(base+'manifest.json');if(!response.ok)throw new Error('Pattern manifest '+stage)
   const manifest=await response.json()
   const image=new Image();image.src=base+manifest.image;await image.decode()
   packs.set(stage,{animations:manifest.animations,image})
 }
-export interface PatternSite {x:number;y:number;floor:number;dir:number;left:number;right:number}
+export interface PatternSite {actorX?:number;x:number;y:number;floor:number;dir:number;left:number;right:number}
 interface Runtime {sites:PatternSite[];site:PatternSite|null;phase:'idle'|'warn'|'active'|'recover';age:number;wait:number;elapsed:number;rect:Rect|null}
 const states=new WeakMap<Level,Runtime>()
 /** Select only continuous, generous foreground surfaces; preserve ladder exits and both landing ends. */
 function sitesFor(l:Level):PatternSite[]{
   const id=l.def.id,result:PatternSite[]=[]
-  if(id>10)return result
+  if(id>15)return result
   const safe=(x:number,y:number)=>x>240&&x<l.arenaX-240&&!l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-x)<128)&&!Array.from({length:7},(_,i)=>Math.floor(x/TILE)-3+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(y/TILE)-3+i).some(r=>l.isLadder(c,r)))
+  if(id>=11){
+    for(const a of l.patternAnchors){
+      if(a.x<300||a.x>l.arenaX-300||l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-a.x)<160)||result.some(p=>Math.abs(p.x-a.x)<384))continue
+      // Keep a broad dry waiting area clear of ladder exits and landing edges.
+      const spot=l.findCombatPlacement(a.x-80,a.floor,160,24,Math.max(300,a.x-160),a.x+80,a.floor)
+      if(!spot||Math.abs(spot.x+80-a.x)>100)continue
+      result.push({...a,actorX:a.x,x:spot.x+80,dir:1})
+    }
+    return result
+  }
   if([1,6,7,8,9,10].includes(id)){
     for(const anchor of l.patternAnchors){
       const a={...anchor}
@@ -78,10 +88,11 @@ export function patternState(g:Game):Runtime{
   if(!state){state={sites:sitesFor(g.level),site:null,phase:'idle',age:0,wait:1,elapsed:0,rect:null};states.set(g.level,state)}
   return state
 }
-const warnings=[0,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.3,1.2]
-const durations=[0,3.6,1.1,.85,.65,1.15,1.5,1.6,.9,1.4,2.2]
+const warnings=[0,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.3,1.2,1.2,1.1,1.1,1,1.1]
+const durations=[0,3.6,1.1,.85,.65,1.15,1.5,1.6,.9,1.4,2.2,.85,2.3,1.7,2,4.2]
 function soundCenter(p:PatternSite):{x:number;y:number}{return{x:p.x,y:p.y}}
 function bounds(s:PatternSite,id:number):Rect{
+  if(id>=11)return{x:s.x-132,y:Math.min(s.y-52,s.floor-100),w:264,h:s.floor-Math.min(s.y-52,s.floor-100)+8}
   if(id===6){const c=soundCenter(s),radius=107;return{x:c.x-radius,y:c.y-radius,w:radius*2,h:radius*2}}
   if(id>=6)return{x:s.x-132,y:Math.min(s.y-50,s.floor-136),w:264,h:s.floor-Math.min(s.y-50,s.floor-136)+8}
   if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:s.right-s.x+64,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
@@ -92,7 +103,7 @@ function bounds(s:PatternSite,id:number):Rect{
 }
 function visible(g:Game,r:Rect):boolean{return r.x>=g.camX+4&&r.x+r.w<=g.camX+VIEW_W-4&&r.y>=g.camY+4&&r.y+r.h<=g.camY+VIEW_H-4}
 export function updateStagePattern(g:Game,dt:number):void{
-  const id=g.level.def.id;if(id<1||id>10||g.level.def.cave||g.mode!=='play')return
+  const id=g.level.def.id;if(id<1||id>15||g.level.def.cave||g.mode!=='play')return
   const s=patternState(g);s.elapsed+=dt;s.rect=null
   if(s.phase==='idle'){
     s.wait=Math.max(0,s.wait-dt);if(s.wait>0)return
@@ -102,7 +113,7 @@ export function updateStagePattern(g:Game,dt:number):void{
   }
   const p=s.site!
   // Leaving the screen cancels the entire cycle. Returning always requires a fresh warning.
-  if(!visible(g,bounds(p,id))||g.players.some(b=>b.alive&&b.invuln>1&&Math.abs(b.x-p.x)<150)){s.phase='idle';s.wait=id>=6?5:6;s.site=null;return}
+  if(!visible(g,bounds(p,id))||g.players.some(b=>b.alive&&b.invuln>1&&Math.abs(b.x-p.x)<150)){s.phase='idle';s.wait=id>=11?4:id>=6?5:6;s.site=null;return}
   s.age+=dt
   if(s.phase==='warn'&&s.age>=warnings[id]!){s.phase='active';s.age=0}
   if(s.phase==='active'){
@@ -115,10 +126,10 @@ export function updateStagePattern(g:Game,dt:number):void{
     if(id===7){const q=t<.65?t/.65:(t-.65)/.95;const x=t<.65?p.x:p.x+80*q;const y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;s.rect={x:x-10,y:y-10,w:20,h:20}}
     if(id===9)s.rect={x:p.x+32+t/1.4*64,y:p.floor-18,w:26,h:18}
     if(id===9&&s.rect&&!Array.from({length:3},(_,i)=>Math.floor(s.rect!.x/TILE)+i).every(c=>g.level.isSolidTile(g.level.tile(c,Math.round(p.floor/TILE))))){s.phase='recover';s.age=0;s.rect=null;return}
-    if(id>=6)for(const player of g.players)if(player.alive&&patternContact(id,p,t,player))player.hurt(g,1,p.x)
+    if(id>=6)for(const player of g.players)if(player.alive&&(id===11? (Math.abs(player.vx)>.5||Math.abs(player.vy)>.5)&&patternContact(id,p,t,player):patternContact(id,p,t,player)))player.hurt(g,1,p.x)
     if(s.rect&&id<6)for(const player of g.players)if(player.alive&&overlap(player,s.rect))player.hurt(g,1,p.x)
     if(t>=(id===1?(p.right-p.x-12)/32:durations[id]!)){s.phase='recover';s.age=0;s.rect=null}
-  }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=id>=6?5:6;s.site=null}
+  }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=id>=11?4:id>=6?5:6;s.site=null}
 }
 function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:number,y:number,flip=false,size=128,attach?:'top'|'bottom'|'left'|'center'):void{
   const a=pack.animations[key];if(!a)return
@@ -163,6 +174,7 @@ function tongue(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,r:Rec
 export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:number):void{
   const id=g.level.def.id,pack=packs.get(id);if(!pack||g.level.def.cave||g.mode!=='play')return
   const state=patternState(g),p=state.site
+  if(id>=11){drawFinal(g,ctx,pack,state,cx,cy);return}
   const idle=['','hang','idle','idle','buried_trace','idle','cling','idle','idle','idle','idle']
   const warn=['','windup','inflate','crack','sand_ring','mouth_open','wing_shiver','push','charge','draw_water','light_up']
   const active=['','throw','erupt','idle','jaw_rise','mouth_open','sing','return','connect','push_water','release_spores']
@@ -207,6 +219,10 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
 
 // Shared geometry drives both the visible warning and exact active contact.
 function patternContact(id:number,p:PatternSite,t:number,b:Rect):boolean{
+  if(id>=11){
+    if(id===11){for(let x=Math.max(p.x,b.x);x<=Math.min(p.x+110,b.x+b.w);x+=2){const q=(x-p.x)/110,top=p.y+(p.floor-64-p.y)*q,bottom=p.y+(p.floor-p.y)*q;if(b.y+b.h>=Math.min(top,bottom)&&b.y<=Math.max(top,bottom))return true}return false}
+    return finalRects(id,p,t).some(r=>overlap(b,r))
+  }
   if(id===6){const c=soundCenter(p),radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-c.x,0,c.x-b.x-b.w),Math.max(b.y-c.y,0,c.y-b.y-b.h)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,b.y+b.h].map(y=>Math.hypot(x-c.x,y-c.y))));return near<=radius+3&&far>=radius-3}
   if(id===7){const q=t<.65?t/.65:(t-.65)/.95,x=t<.65?p.x:p.x+80*q,y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;return overlap(b,{x:x-10,y:y-10,w:20,h:20})}
   if(id===8){for(let i=0;i<=40;i++)if(overlap(b,{x:p.x-64+i*3.2-3,y:p.floor-24-i*1.6-3,w:6,h:6}))return true;return false}
@@ -223,4 +239,44 @@ function drawLater(c:CanvasRenderingContext2D,pack:Pack,id:number,p:PatternSite,
   if(id===8){c.beginPath();c.moveTo(x-64,y-24);c.lineTo(x+64,y-88);c.stroke();if(active)for(const [dx,dy] of [[-64,-24],[64,-88]])sprite(c,pack,'endpoint_refraction',t,x+dx!,y+dy!,false,40)}
   if(id===9){if(active&&r)tongue(c,pack,'low_wave',t,r,cx,cy,false);else c.strokeRect(x+32,y-18,90,18)}
   if(id===10){const fall=active?t*10:0,top=y-126+fall,gap=y-65+fall;for(const a of [{x:p.x+40,y:top+cy,w:24,h:39},{x:p.x+40,y:gap+22+cy,w:24,h:Math.max(0,y-gap-22)}]){if(active)tongue(c,pack,'spore_curtain',t,a,cx,cy,false);else c.strokeRect(a.x-cx,a.y-cy,a.w,a.h)}c.strokeStyle='#98ffcd';c.strokeRect(x+36,gap-22,32,44)}
+}
+
+// These fixed geometries are used unchanged for warnings, effects and damage.
+function finalRects(id:number,p:PatternSite,t:number):Rect[]{
+  const pillar=(dx:number)=>({x:p.x+dx-14,y:p.floor-76,w:28,h:76})
+  if(id===12)return t<.45?[pillar(-64)]:t>=1.55&&t<2?[pillar(64)]:[]
+  if(id===15){
+    if(t<1.1){const r=16+88*t/1.1;return[-1,1].map(d=>({x:p.x+d*r-5,y:p.floor-17,w:10,h:17}))}
+    return t>=2.2&&t<2.6?[pillar(-64)]:t>=3.7&&t<4.1?[pillar(64)]:[]
+  }
+  if(id===13)return Array.from({length:25},(_,i)=>{const dx=-96+i*8;return{x:p.x+dx-5,y:p.floor-38+Math.sin(i/24*Math.PI*2)*29,w:10,h:16}})
+  if(id===14){const q=Math.sin(t/2*Math.PI*2),dx=q*88;return[{x:p.x+dx-15,y:p.floor-32-Math.abs(q)*30,w:30,h:30}]}
+  return[]
+}
+function drawFinal(g:Game,c:CanvasRenderingContext2D,pack:Pack,s:Runtime,cx:number,cy:number):void{
+  const id=g.level.def.id,p=s.site??s.sites.find(p=>visible(g,bounds(p,id)));if(!p)return
+  const phase=s.site?s.phase:'idle',t=s.age,active=phase==='active',warn=phase==='warn',x=p.x-cx,y=p.floor-cy
+  const keys:Record<number,string[]>={11:['eyes_closed','eye_open_warning','gaze','eye_close'],12:['idle','charge_first','discharge','recover'],13:['surface_trace','split_current','sweep','return'],14:['branch_idle','silk_warning','pendulum','retract'],15:['idle','ring_charge','ring_release','recover']}
+  let key=keys[id]![phase==='idle'?0:warn?1:active?2:3]!
+  if(active&&id===12&&t>=.45&&t<1.55)key='charge_second'
+  if(active&&id===15&&t>=1.1)key=t<2.2?'frost_sculpt':'eruption_command'
+  if(!(id===14&&active))sprite(c,pack,key,t,(p.actorX??p.x)-cx,p.y-cy,false,128,id===11?'center':id===14?'top':'bottom')
+  if(!active&&!warn)return
+  c.save();c.strokeStyle=active?'#e8fcff':'#ffdb78';c.fillStyle=active?'rgba(174,227,255,.28)':'rgba(255,220,120,.13)';c.lineWidth=active?3:2;c.setLineDash(active?[]:[4,3])
+  if(id===11){c.beginPath();c.moveTo(x,p.y-cy);c.lineTo(x+110,y-64);c.lineTo(x+110,y);c.closePath();c.fill();c.stroke();sprite(c,pack,'fan_outline',t,x+55,y-32,false,128);c.fillStyle='#a4ffd0';c.fillRect(x-64,y-3,36,3)}
+  if(id===12||id===15){
+    const ring=id===15&&(warn||t<1.1)
+    if(ring){const radius=active?16+88*t/1.1:104;c.beginPath();c.ellipse(x,y-8,radius,8,0,0,Math.PI*2);c.stroke();if(active)sprite(c,pack,'snow_ring',t,x,y-8,false,radius*2,'center')}
+    else {
+      const second=id===12?t>=.45:t>=2.6,dx=second?64:-64
+      const rects=active?finalRects(id,p,t):[]
+      for(const r of rects){c.fillRect(r.x-cx,r.y-cy,r.w,r.h);tongue(c,pack,id===12?'lightning':'pillar_erupt',t,r,cx,cy,false)}
+      if(!rects.length){c.strokeRect(x+dx-14,y-76,28,76);sprite(c,pack,id===12?'ground_flash':'frost_warning',t,x+dx,y,false,64,'bottom')}
+      // The following target is visible from the first warning, but never active together.
+      if(warn){c.strokeRect(x+64-14,y-76,28,76)}
+    }
+  }
+  if(id===13){c.lineWidth=active?16:2;c.beginPath();finalRects(id,p,t).forEach((r,i)=>{if(i===0)c.moveTo(r.x+5-cx,r.y+8-cy);else c.lineTo(r.x+5-cx,r.y+8-cy)});c.stroke();if(active)sprite(c,pack,'splash',t,x,y,false,128,'bottom')}
+  if(id===14){if(warn){c.beginPath();c.moveTo(x-88,y-60);c.quadraticCurveTo(x,y+4,x+88,y-60);c.stroke()}else{const r=finalRects(id,p,t)[0]!;c.beginPath();c.moveTo(x,p.y-cy);c.lineTo(r.x+15-cx,r.y+15-cy);c.stroke();tongue(c,pack,'pendulum',t,r,cx,cy,false)}}
+  c.restore()
 }
