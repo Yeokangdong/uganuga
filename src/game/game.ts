@@ -69,8 +69,8 @@ export type EndKind = 'clear' | 'over'
 
 /** ?�테?��? ?�한 ?�간(�? / ?�간 초과 ???�시 주는 ?�간 / ?�계 ?�이??*/
 export const TIME_UNIT = 3.6
-export const TIME_LIMIT = 99 * TIME_UNIT
-export const TIME_EXTEND = 40 * TIME_UNIT
+export const TIME_LIMIT = 30 * TIME_UNIT
+export const TIME_EXTEND = 15 * TIME_UNIT
 export const CLOCK_BONUS = 10 * TIME_UNIT
 
 export interface GameCallbacks {
@@ -213,7 +213,7 @@ export class Game {
     this.scrat=null
     this.mode = 'play'
     this.food = 0
-    this.timeLeft = this.stage.id === 1 ? TIME_LIMIT * 2 : TIME_LIMIT
+    this.timeLeft = TIME_LIMIT
     this.lastBeep = 0
     this.bg.setStage(this.stage.theme.background)
     this.bg.setBoss(false)

@@ -8,7 +8,7 @@ import { Player } from '../src/game/entities'
 import { Level } from '../src/game/level'
 import { loadStageArt } from '../src/game/art'
 import { STEP, VIEW_W, VIEW_H } from '../src/game/constants'
-import { Game } from '../src/game/game'
+import { Game, TIME_LIMIT } from '../src/game/game'
 import { Background } from '../src/game/background'
 import { spawnCombat } from './combat'
 import { round, spawnRound } from './round'
@@ -86,7 +86,7 @@ export class MovementScene extends Phaser.Scene {
     const noop=()=>{}
     this.background.setStage(def.theme.background)
     this.runtime=Object.assign(Object.create(Game.prototype),{level:this.level,stage:def,players:[this.player],enemies:[],items:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
-      food:0,foodMax:60,timeLeft:stage===1?712.8:356.4,time:0,
+      food:0,foodMax:60,timeLeft:TIME_LIMIT,time:0,
       stageIdx:stage-1,saved:null,doors:[],ambushes:[],particles:[],popups:[],effects:[],introT:0,lastBeep:0,bannerT:0,bg:this.background,
       sfx,splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.player.spawnAt(this.runtime)
