@@ -42,11 +42,12 @@ await page.waitForFunction(()=>window.__phaserGame?.scene.isActive('Title'))
 await page.keyboard.press('Space')
 await page.waitForFunction(()=>window.__movement?.ready)
 if(process.argv.includes('--qa')){
- await page.keyboard.press('Space');await page.keyboard.press('Escape');
+ await page.keyboard.press('Space',{delay:40});await page.keyboard.press('Escape',{delay:40});
+ await page.waitForFunction(()=>window.__movement.paused);
  const paused=await page.evaluate(()=>({paused:window.__movement.paused,time:window.__movement.runtime.time}))
  await page.waitForTimeout(300)
  const pauseFrozen=await page.evaluate(t=>window.__movement.runtime.time===t,paused.time)
- await page.keyboard.press('Escape');await page.evaluate(()=>window.__phaserGame.loop.stop())
+ await page.keyboard.press('Escape',{delay:40});await page.waitForFunction(()=>!window.__movement.paused);await page.evaluate(()=>window.__phaserGame.loop.stop())
  const timer=await page.evaluate(()=>{
   const s=window.__movement,g=s.runtime,p=s.player,draw=s.draw.bind(s);let k=0,extensions=0,respawns=0,was=p.dead;
   s.draw=()=>{if(k++%30===0)draw()};
@@ -58,7 +59,7 @@ if(process.argv.includes('--qa')){
  })
  await page.evaluate(()=>window.__phaserGame.loop.wake())
  await page.waitForFunction(()=>window.__phaserGame.scene.getScene('Journey').journey?.kind==='result')
- await page.waitForTimeout(700);await page.keyboard.press('Enter')
+ await page.waitForFunction(()=>{const s=window.__phaserGame.scene.getScene('Journey');return s.ready&&s.elapsed>.6});await page.keyboard.press('Enter')
  await page.waitForFunction(()=>window.__phaserGame.scene.getScene('Journey').journey?.kind==='opening')
  const sizes=[];
  for(const [width,height] of [[640,360],[1280,720],[1920,1080]]){
@@ -75,6 +76,7 @@ if(process.argv.includes('--qa')){
 } else {
 await page.evaluate(()=>window.__phaserGame.loop.stop())
 const result=await page.evaluate(async({stage,policy})=>{
+ const adaptive=policy===9;if(adaptive)policy=2;
  const s=window.__movement,g=s.runtime,p=s.player,lv=s.level;
  const nodes=[],byCell=new Map();
  for(let c=1;c<lv.cols-1;c++)for(let r=2;r<lv.rows;r++){
@@ -87,7 +89,7 @@ const result=await page.evaluate(async({stage,policy})=>{
   const b=byCell.get((n.c+dc)+','+(n.r+dr));if(!b||b===n)continue;
   let kind='jump',ok=false;
   if(Math.abs(dc)<=1&&Math.abs(dr)<=1&&n.ladder&&b.ladder){ok=true;kind='ladder'}
-  else if(Math.abs(dc)===1&&Math.abs(dr)<=1){ok=true;kind='walk'}
+  else if(Math.abs(dc)===1&&dr>=0&&dr<=1){ok=true;kind='walk'}
   else if(dc){
    const h=b.y-n.y,disc=340*340+2400*h;
    if(disc>=0){const duration=(340+Math.sqrt(disc))/1200;ok=Math.abs(dc*16)<=duration*90-2;
@@ -101,11 +103,12 @@ const result=await page.evaluate(async({stage,policy})=>{
  // Render at 10Hz while preserving every 60Hz gameplay/input tick.
  const draw=s.draw.bind(s);let renderTick=0;
  s.draw=()=>{if(renderTick++%6===0)draw()};
- let prev={},extended=0,clocks=0,bossAt=null,fullAt=null,lastX=p.x,stuck=0,trace=[],deaths=0,wasDead=false;
+ let prev={},extended=0,clocks=0,bossAt=null,fullAt=null,lastX=p.x,lastY=p.y,stuck=0,trace=[],deaths=0,wasDead=false;
  let furthest=p.x,progressAt=0;const foes=new WeakMap();
- let caveEntered=false,caveReturned=false;
+ let caveEntered=false,caveReturned=false,airTarget=null,routeTarget=null;
  const keys={left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',attack:'Space'};
  for(let tick=0;tick<36000;tick++){
+  if(adaptive&&g.food>=60)policy=stage===7?6:8;
   if(!s.ready||p.out||g.mode==='clear'||g.mode==='rescue'||caveReturned)break;
   const input={left:false,right:false,up:false,down:false,attack:false};
   if(p.alive){
@@ -131,20 +134,29 @@ const result=await page.evaluate(async({stage,policy})=>{
    }
    if(!input.left&&!input.right){input.left=target<p.cx-3;input.right=target>p.cx+3;}
    const dir=input.left?-1:1,feet=p.y+p.h;
-   stuck=Math.abs(p.x-lastX)<.15?stuck+1:0;lastX=p.x;
+   stuck=Math.hypot(p.x-lastX,p.y-lastY)<.15?stuck+1:0;lastX=p.x;lastY=p.y;
    const wall=lv.solidAt(p.cx+dir*14,feet-8);
    const support=(x,y)=>{const c=Math.floor(x/16),r=Math.floor(y/16);return lv.solidAt(x,y)||lv.tile(c,r)===2||lv.isLadderTop(c,r)};
-   const gap=!support(p.cx+dir*9,feet+4);
+   const gap=!support(p.cx+dir*(policy===0?3:9),feet+4);
    const pickup=foods[0]&&Math.abs(foods[0].x-p.cx)<35&&foods[0].y<p.y-5;
    const fallback=g.time-progressAt>8&&Math.floor((g.time-progressAt)/8)%2===1;
    const jump=(wall||gap||pickup||stuck>18||(policy===1||policy===3||policy>=4||fallback)&&tick%75<2)&&p.onGround;
    input.up=p.climbing||jump;
-   if(policy>=2&&!fallback&&!foe&&!foods[0]&&g.mode==='play'&&(policy<6||p.onGround||p.climbing)){
+   if(policy>=2&&!foe&&!foods[0]&&g.mode==='play'){
+    if(p.onGround||p.climbing)airTarget=null;
+    if(policy===2)routeTarget=null;
     const near=nodes.filter(n=>Number.isFinite(n.cost)&&Math.abs(n.x-p.cx)<40&&Math.abs(n.y-feet)<30).sort((a,b)=>Math.hypot(a.x-p.cx,(a.y-feet)*2)-Math.hypot(b.x-p.cx,(b.y-feet)*2))[0];
-    if(near?.next){const to=near.next.node;input.left=to.x<p.cx-2;input.right=to.x>p.cx+2;
-     input.up=near.next.kind==='ladder'||p.climbing||near.next.kind==='jump'&&p.onGround&&Math.abs(p.cx-near.x)<10;
-     if(near.next.kind==='jump'&&p.onGround&&Math.abs(p.cx-near.x)>=10){input.left=near.x<p.cx;input.right=near.x>p.cx}
+    if(routeTarget&&(Math.hypot(routeTarget.node.x-p.cx,routeTarget.node.y-feet)<6||stuck>100))routeTarget=null;
+    if(!routeTarget&&near?.next)routeTarget={...near.next,from:near};
+    if(routeTarget){const to=routeTarget.node,from=routeTarget.from;input.left=to.x<p.cx-2;input.right=to.x>p.cx+2;
+     input.down=policy>=6&&to.y>feet+6&&Math.abs(to.x-p.cx)<10;
+     input.up=!input.down&&(routeTarget.kind==='ladder'||p.climbing||routeTarget.kind==='jump'&&p.onGround&&Math.abs(p.cx-from.x)<10);
+     if(routeTarget.kind==='jump'&&p.onGround&&Math.abs(p.cx-from.x)>=10){input.left=from.x<p.cx;input.right=from.x>p.cx}
+     if(routeTarget.kind==='jump'&&input.up&&p.onGround)airTarget=to;
     }
+    // Keep the selected landing point while airborne instead of reversing toward
+    // whichever graph node happens to become nearest during the jump.
+    if(airTarget&&!p.onGround&&!p.climbing){input.left=airTarget.x<p.cx-2;input.right=airTarget.x>p.cx+2;input.up=false;}
    }
    if(g.mode==='boss'&&foe?.phase==='attack'&&foe.move==='chest'&&p.onGround)input.up=true;
    if(g.mode==='boss'&&policy>=6&&foe?.phase){
@@ -152,11 +164,14 @@ const result=await page.evaluate(async({stage,policy})=>{
     if(foe.move==='jump'&&foe.phase==='warning'&&Math.abs(foe.target-p.cx)<70){input.left=p.cx<foe.target;input.right=!input.left;input.attack=false;}
    }
    if(p.climbing&&stuck>100){input.up=false;input.right=true;}
+   if(policy>=6&&!p.climbing&&g.enemies.some(e=>!e.dead&&!e.dying&&Math.abs(e.cx-p.cx)<e.w/2+35&&Math.abs(e.y+e.h-feet)<24))input.attack=p.swingT<=0&&!prev.attack;
    if(policy===5){
+    const clock=g.saved?g.items.find(i=>i.kind==='clock'&&!i.dead):null;
     const door=g.saved?{x:64,floor:p.y+p.h}:g.doors.find(d=>!d.used);
     if(door){input.left=door.x<p.cx-3;input.right=door.x>p.cx+3;input.attack=false;
      if(Math.abs(door.x-p.cx)<8&&p.onGround){input.up=false;input.down=!prev.down}
     }
+    if(clock){input.left=clock.x<p.cx-3;input.right=clock.x>p.cx+3;input.down=false;}
    }
   }
   for(const [action,code] of Object.entries(keys))if(input[action]!==!!prev[action]){
