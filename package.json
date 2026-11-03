@@ -4,16 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev:phaser": "vite --config src-phaser/vite.config.ts",
-    "build:phaser": "tsc --project src-phaser/tsconfig.json && vite build --config src-phaser/vite.config.ts",
-    "preview:phaser": "vite preview --config src-phaser/vite.config.ts",
     "dev": "vite",
-    "build": "vue-tsc -b && tsc --project src-phaser/tsconfig.json && vite build --outDir dist/old --emptyOutDir false && vite build --config src-phaser/vite.config.ts --outDir ../dist",
+    "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "phaser": "3.90.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {

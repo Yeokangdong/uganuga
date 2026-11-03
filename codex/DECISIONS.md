@@ -149,3 +149,4 @@
 - 2026-11-04 | 사용자: 「움직임이 많은건 ludo ai 써」 | 여러 장 애니메이션 그림은 Codex가 그리지 않고 실장이 Ludo.ai로 제작(Codex는 임시 구현 + Ludo 요청 표).
 - 2026-11-04 | 사용자: 맵 긴장감 강화 기획안 제공 | codex\우가누가_맵_긴장감_강화_기획안.md 채택. 229 취소, P0 237 / P1 238 / P2 239.
 - 2026-11-04 | 사용자: 「모두 완료하고 git에 반영」 | Phaser 판 main 병합·Pages 공개, 예전 판 /old/, 태그 pre-phaser-main·pre-phaser-pages.
+- 2026-11-04 | 사용자: 「다시 이전으로 돌려라 새엔진빼라」 | Phaser 판 내림. 게임 페이지 pre-phaser-pages 로 복구, main 코드 pre-phaser-main 로 복구(codex 폴더 제외), Phaser 코드는 _old\phaser_20261104 및 브랜치 phaser·backup/phaser-main 에 보관. 시간 60 등 Phaser 판에서 바꾼 규칙도 이전 값으로 돌아감.

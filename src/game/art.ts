@@ -22,7 +22,7 @@ export interface FrameSet {
   pixelArt?: boolean
   facingLeft?: boolean
   img: HTMLImageElement | HTMLCanvasElement
-  /** [x, y, w, h, ax?, ay?, scale?] (프레임별 발 기준점과 크기 보정) */
+  /** [x, y, w, h] 또는 [x, y, w, h, ax, ay] (프레임별 발 기준점) */
   frames: number[][]
   /** 월드 단위 / 출력 픽셀 (있으면 프레임 크기 그대로 사용) */
   ppu?: number
@@ -81,7 +81,7 @@ async function loadAnimationPack(stage:number):Promise<void>{
     if(/^proj3\.|^item3\./.test(key))return STAGES[stage-1]!.theme.n==='3'
     if(regional.has(prefix)&&!local.has(prefix))return false
     const numbered=key.match(/^(?:terrain\.|stage\.bg|ui\.biome_sign_|ui\.stage_sign_)(\d+)(?:\.|$)/)
-    if(numbered)return Number(numbered[1])===stage || key==='terrain.3.support'
+    if(numbered)return /^(?:terrain\.|stage\.bg)/.test(key)&&Number(numbered[1])<=15 || Number(numbered[1])===stage
     if(prefix.startsWith('stage')&&/^stage\d+_/.test(prefix))return local.has(prefix)
     if(/^dino[123]_/.test(prefix))return local.has(prefix)
     if(/^boss[23]?$/.test(prefix))return local.has(prefix)
@@ -196,7 +196,7 @@ export function drawArt(
   if (!s) return false
   const f = s.frames[Math.max(0, frame) % s.frames.length]
   const [fx, fy, fw, fh] = f
-  const k = (o.scale ?? 1) * (f[6] ?? 1)
+  const k = o.scale ?? 1
   const h = s.ppu ? fh * s.ppu * k : s.h * k
   const w = s.ppu ? fw * s.ppu * k : (fw / fh) * h
   const ax = f.length >= 6 ? f[4] : s.ax

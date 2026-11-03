@@ -533,9 +533,7 @@ export class Player implements Body {
       if (e.dying || e.invulnerable || this.swingHit.has(e)) continue
       if (overlap(hb, e)) {
         this.swingHit.add(e)
-        const hpBefore = e.hp
         e.hit(g, dmg, this.cx, this)
-        if (this.weapon !== 'fire' && e.hp < hpBefore) g.clubImpact(e.cx, e.y + e.h / 2)
         g.fx('fx.hit', e.cx, e.y + e.h * 0.7, false, 0.2)
         if (this.weapon === 'fire') g.burst(e.cx, e.y + e.h / 2, '#ff7a1a', 6)
         if (this.swingKind === 'air') this.vy = -220
@@ -544,9 +542,7 @@ export class Player implements Body {
     const b = g.boss
     if (b && !b.dying && !this.swingHit.has(b) && overlap(hb, b.hitbox)) {
       this.swingHit.add(b)
-      const hpBefore = b.hp
       b.hit(g, dmg, this)
-      if (this.weapon !== 'fire' && b.hp < hpBefore) g.clubImpact(b.cx, b.y + b.h / 2)
       g.fx('fx.hit', hb.x + hb.w / 2, hb.y + hb.h / 2, false, 0.2)
       if (this.swingKind === 'air') this.vy = -240
     }
@@ -657,15 +653,7 @@ export class Player implements Body {
     return { key: idleKey, frame: this.poseFrame(idleKey) }
   }
 
-  draw(ctx: CanvasRenderingContext2D, cx: number, cy: number, reducedMotion = false): void {
-    ctx.save()
-    try {
-      if (reducedMotion && !this.dead && this.invuln > 0 && this.spawnFireT <= 0) ctx.globalAlpha *= .55
-      this.drawBody(ctx, cx, cy, reducedMotion)
-    } finally { ctx.restore() }
-  }
-
-  private drawBody(ctx: CanvasRenderingContext2D, cx: number, cy: number, reducedMotion: boolean): void {
+  draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
     if (this.out) return
     const left = this.facing < 0
     const bx = this.cx - cx
@@ -689,7 +677,7 @@ export class Player implements Body {
         drawArt(ctx, key, this.poseFrame(key,false), bx, by, left, { rot: has(`${this.key}.dead`) ? 0 : this.deathRot })
         return
       }
-      if (!reducedMotion && this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
+      if (this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
       const { key, frame } = this.paintedKey()
       const flash = this.chargeReady && Math.floor(this.anim * 16) % 2 === 0
       drawArt(ctx, key, frame, bx, by, this.climbing||this.ropeAngle!==null?false:left, { feet: !this.climbing && this.ropeAngle===null, white: flash, glow: this.chargeReady ? '#ffd23a' : undefined })
@@ -705,7 +693,7 @@ export class Player implements Body {
       drawSpriteRot(ctx, s.jump, bx, by - 10, this.deathRot, left)
       return
     }
-    if (!reducedMotion && this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
+    if (this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
     let f: Sprite
     if (this.swingT > 0) f = this.swingKind === 'up' ? s.throwUp : s.throw
     else if (!this.onGround || this.climbing) f = s.jump

@@ -69,8 +69,8 @@ export type EndKind = 'clear' | 'over'
 
 /** ?�테?��? ?�한 ?�간(�? / ?�간 초과 ???�시 주는 ?�간 / ?�계 ?�이??*/
 export const TIME_UNIT = 3.6
-export const TIME_LIMIT = 60 * TIME_UNIT
-export const TIME_EXTEND = 20 * TIME_UNIT
+export const TIME_LIMIT = 99 * TIME_UNIT
+export const TIME_EXTEND = 40 * TIME_UNIT
 export const CLOCK_BONUS = 10 * TIME_UNIT
 
 export interface GameCallbacks {
@@ -213,7 +213,7 @@ export class Game {
     this.scrat=null
     this.mode = 'play'
     this.food = 0
-    this.timeLeft = TIME_LIMIT
+    this.timeLeft = this.stage.id === 1 ? TIME_LIMIT * 2 : TIME_LIMIT
     this.lastBeep = 0
     this.bg.setStage(this.stage.theme.background)
     this.bg.setBoss(false)
@@ -324,8 +324,6 @@ export class Game {
     }
     return best
   }
-
-  clubImpact(_x: number, _y: number): void {}
 
   burst(x: number, y: number, color: string, n: number): void {
     for (let i = 0; i < n; i++) {
@@ -795,7 +793,7 @@ export class Game {
         if(e.contactDmg>0&&e.stunT<=0&&e.flash<=0)p.hurt(this,e.contactDmg,e.cx)
       }
       const b = this.boss
-      if (b && b.contactDmg > 0 && !b.dying && b.state !== 'enter' && b.state!=='stun' && overlap(p, b.hitbox)) p.hurt(this, b.contactDmg, b.cx)
+      if (b && !b.dying && b.state !== 'enter' && b.state!=='stun' && overlap(p, b.hitbox)) p.hurt(this, b.contactDmg, b.cx)
 
       for (const it of this.items) {
         if (it.dead || it.t < it.pickupDelay || !overlap(p, it)) continue

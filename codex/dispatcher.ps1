@@ -45,10 +45,12 @@ Get-ChildItem $dirs.done -Filter *.txt | ForEach-Object { $seen[$_.Name] = $true
 while ($true) {
   Set-Content -Path "$cx\dispatcher-alive.txt" -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8
 
-  # --- 팀장 체제 자동 체인 ---
+  $hold = Test-Path "$cx\HOLD.txt"
+  # --- 팀장 체제 자동 체인 (HOLD.txt 있으면 멈춤) ---
   foreach ($f in (Get-ChildItem $dirs.done -Filter *.txt | Sort-Object LastWriteTime)) {
     if ($seen[$f.Name]) { continue }
     $seen[$f.Name] = $true
+    if ($hold) { continue }
     if ($f.BaseName -notmatch '^(\d+)_(.+)$') { continue }
     $num = [int]$Matches[1]; $rest = $Matches[2]
     $round = 0; if ($rest -match '_r(\d+)$') { $round = [int]$Matches[1] }
@@ -96,8 +98,9 @@ while ($true) {
   foreach ($j in (Get-ChildItem $dirs.queue -Filter *.txt | Sort-Object { if ($_.BaseName -match '^(\d+)') { [int]$Matches[1] } else { 0 } })) {
     if ($running -ge $MAX) { break }
     $name = $j.BaseName
+    if ($hold -and $name -notlike '*_긴급_*') { continue }
     $head = (Get-Content -Encoding UTF8 $j.FullName -TotalCount 1)
-    if ($head -like '[취소]*') {
+    if ($head -and $head.TrimStart([char]0xFEFF).StartsWith('[취소]')) {
       if (-not (Test-Path "$cx\_old\cancelled")) { New-Item -ItemType Directory -Path "$cx\_old\cancelled" | Out-Null }
       Move-Item -Force $j.FullName "$cx\_old\cancelled\"
       Add-Content -Path "$cx\dispatcher-log.txt" -Value "$(Get-Date -Format 'HH:mm:ss') 취소(실행 안 함): $name" -Encoding UTF8

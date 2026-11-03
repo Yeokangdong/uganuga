@@ -1,0 +1,114 @@
+{
+  "status": "failed_character_corruption",
+  "usableInGame": false,
+  "legAlternation": "unjudgeable; no valid walk cycle",
+  "sourceSize": [
+    160,
+    192
+  ],
+  "originalCharacterSize": [
+    80,
+    128
+  ],
+  "cellSize": [
+    256,
+    288
+  ],
+  "padding": [
+    48,
+    48
+  ],
+  "fps": 12,
+  "frames": [
+    {
+      "sourceFrame": 0,
+      "rect": [
+        0,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 5,
+      "rect": [
+        256,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 10,
+      "rect": [
+        512,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 15,
+      "rect": [
+        768,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 20,
+      "rect": [
+        1024,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 25,
+      "rect": [
+        1280,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 30,
+      "rect": [
+        1536,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    },
+    {
+      "sourceFrame": 35,
+      "rect": [
+        1792,
+        0,
+        256,
+        288
+      ],
+      "phase": "unverified"
+    }
+  ],
+  "fourFrameCandidateIndices": [
+    0,
+    2,
+    4,
+    6
+  ],
+  "model": "Wan2.2 TI2V 5B fp16",
+  "elapsedSeconds": 165.649,
+  "workflow": "codex/tools/comfy/walk_i2v.json",
+  "note": "Experimental failed output. No confirmed alternating-leg four-frame cycle."
+}
