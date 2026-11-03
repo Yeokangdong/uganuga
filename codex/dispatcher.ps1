@@ -1,4 +1,4 @@
-﻿# Uganuga Codex 작업 배차기 (v3: 팀장 체제 자동 수행)
+﻿# Uganuga Codex 작업 배차기 (v4: 팀장 체제 자동 수행 + 멈춘 작업 자동 정리)
 # codex\queue\*.txt -> running -> done. 구현 작업이 끝나면 개발팀장 검수를 자동으로 넣고,
 # 검수에서 지적이 나오면 구현 수정 작업을 자동으로 넣는다 (최대 3회). 통과/한도 도달 시 codex\reports\AUTO_팀장체제.md 에 기록.
 $ErrorActionPreference = 'SilentlyContinue'
@@ -39,6 +39,7 @@ $COMMON = '파일 삭제 금지(필요시 _old로 이동). 창 띄우지 말 것
 $DEPLOY = "끝나면: npm run build 성공 확인 -> robocopy dist _pages /MIR /XD .git (.nojekyll 유지) -> cd _pages; git add -A; git commit -m ""자동 수정""; git push -f origin gh-pages -> 루트에서 git add -A; git commit -m ""팀장 지적 자동 수정""; git push origin main."
 
 $seen = @{}
+$stale = @{}
 Get-ChildItem $dirs.done -Filter *.txt | ForEach-Object { $seen[$_.Name] = $true }
 
 while ($true) {
@@ -70,11 +71,38 @@ while ($true) {
     }
   }
 
+  # --- 끝났는데 running 에 남은 작업 정리 (로그 끝에 tokens used, 10분 넘게 변화 없음) ---
+  foreach ($rf in (Get-ChildItem $dirs.running -Filter *.txt)) {
+    if ($stale[$rf.Name]) { continue }
+    $lg = Join-Path $dirs.logs "$($rf.BaseName).log"
+    if (-not (Test-Path $lg)) { continue }
+    $li = Get-Item $lg
+    if (((Get-Date) - $li.LastWriteTime).TotalMinutes -lt 10) { continue }
+    $tail = ''
+    try { $fs = [IO.File]::Open($lg, 'Open', 'Read', 'ReadWrite'); $sr = New-Object IO.StreamReader($fs); $all = $sr.ReadToEnd(); $sr.Close(); $tail = $all.Substring([Math]::Max(0, $all.Length - 3000)) } catch {}
+    $finished = $tail -match 'tokens used'
+    $hung = ((Get-Date) - $li.LastWriteTime).TotalMinutes -ge 90
+    if (-not ($finished -or $hung)) { continue }
+    Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like "*$($rf.Name)*" -or $_.CommandLine -like "*$($rf.BaseName).log*" } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+    Start-Sleep -Seconds 2
+    $dest = Join-Path $dirs.done $rf.Name
+    try { Move-Item -Force $rf.FullName $dest -ErrorAction Stop } catch { Copy-Item -Force $rf.FullName $dest; $stale[$rf.Name] = $true }
+    $why = if ($finished) { '끝났는데 멈춤' } else { '90분 무응답' }
+    Add-Content -Path "$cx\dispatcher-log.txt" -Value "$(Get-Date -Format 'HH:mm:ss') 정리($why): $($rf.BaseName)" -Encoding UTF8
+  }
+
   # --- 배차 ---
-  $running = @(Get-ChildItem $dirs.running -Filter *.txt).Count
+  $running = @(Get-ChildItem $dirs.running -Filter *.txt | Where-Object { -not $stale[$_.Name] }).Count
   foreach ($j in (Get-ChildItem $dirs.queue -Filter *.txt | Sort-Object { if ($_.BaseName -match '^(\d+)') { [int]$Matches[1] } else { 0 } })) {
     if ($running -ge $MAX) { break }
     $name = $j.BaseName
+    $head = (Get-Content -Encoding UTF8 $j.FullName -TotalCount 1)
+    if ($head -like '[취소]*') {
+      if (-not (Test-Path "$cx\_old\cancelled")) { New-Item -ItemType Directory -Path "$cx\_old\cancelled" | Out-Null }
+      Move-Item -Force $j.FullName "$cx\_old\cancelled\"
+      Add-Content -Path "$cx\dispatcher-log.txt" -Value "$(Get-Date -Format 'HH:mm:ss') 취소(실행 안 함): $name" -Encoding UTF8
+      continue
+    }
     $file = Join-Path $dirs.running $j.Name
     $rules = if (Test-Path "$cx\RULES.md") { Get-Content -Raw -Encoding UTF8 "$cx\RULES.md" } else { '' }
     $task  = Get-Content -Raw -Encoding UTF8 $j.FullName

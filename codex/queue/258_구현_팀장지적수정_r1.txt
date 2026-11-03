@@ -1,0 +1,4 @@
+[구현] 개발팀장 지적 자동 수정 (258, ) — 파일 삭제 금지(필요시 _old로 이동). 창 띄우지 말 것. .bat 실행 금지. 다른 작업 큐에 넣지 말 것(자동 체인이 처리).
+codex\reports\LEAD_248.md 의 지적을 우선순위 높은 것부터 수정. 지적 외 변경 금지. codex\DECISIONS.md 결정과 충돌하는 지적은 고치지 말고 보고서에 이유만.
+끝나면: npm run build 성공 확인 -> robocopy dist _pages /MIR /XD .git (.nojekyll 유지) -> cd _pages; git add -A; git commit -m "자동 수정"; git push -f origin gh-pages -> 루트에서 git add -A; git commit -m "팀장 지적 자동 수정"; git push origin main.
+결과: codex\reports\구현_258.md 4줄.

@@ -1,16 +1,26 @@
+import lettersUrl from './letter-art.png'
+import letters from './letter-art.json'
 import { loadSuukuret, replaceOpeningAnimal } from './suukuret'
 ﻿import Phaser from 'phaser'
-import { loadStageArt, image, drawArt, frameAt, textArtKey, drawPaintedText } from '../src/game/art'
+import { loadStageArt, image, drawArt, frameAt, textArtKey } from '../src/game/art'
 import { drawOpening, OPENING_DURATION, OPENING_GRAB_START } from '../src/game/opening'
 import { drawJourney, JOURNEYS, JOURNEY_DURATION } from '../src/game/journey'
 import { Background } from '../src/game/background'
 import { STAGES } from '../src/game/stages'
 import { sfx } from '../src/game/audio'
 
+const letterSheet=new Image();letterSheet.src=lettersUrl
+function drawLetters(ctx:CanvasRenderingContext2D,text:string,x:number,y:number,h:number){
+  const advance=h*.85,width=text.length*advance
+  for(const [i,c] of [...text].entries()){
+    const n=letters.indexOf(c);if(n<0||!letterSheet.complete)continue
+    ctx.drawImage(letterSheet,n%16*48,Math.floor(n/16)*48,48,48,x-width/2+i*advance,y-h,h,h)
+  }
+}
 export function paintedLabel(ctx:CanvasRenderingContext2D,text:string,x:number,y:number,h:number){
   const key=textArtKey(text), art=key?image(key):null
   if(art){const w=art.width*h/art.height;ctx.drawImage(art,x-w/2,y-h,w,h)}
-  else drawPaintedText(ctx,text,x,y,h)
+  else drawLetters(ctx,text,x,y,h)
 }
 type JourneyData={kind:'opening'|'travel'|'rescue'|'result';stage?:number;score?:number;lives?:number;clear?:boolean}
 /** Phaser owns the timeline and input; original painters retain all sprite pivots and proportions. */
@@ -24,7 +34,7 @@ export class JourneyScene extends Phaser.Scene {
   create(data:JourneyData){
     this.journey=data;this.elapsed=0;this.ready=false
     const loading=this.add.text(480,270,'원화 불러오는 중',{fontSize:'22px'}).setOrigin(.5)
-    const proceed=()=>{sfx.init();if(this.ready&&this.elapsed>.6&&this.journey.kind==='result')this.scene.start('Journey',{kind:'opening'})}
+    const proceed=()=>{sfx.init();if(!this.ready||this.elapsed<.6)return;if(this.journey.kind==='travel')this.scene.start('Play',{stage:(this.journey.stage??1)+1,score:this.journey.score,lives:this.journey.lives});else if(this.journey.kind==='result')this.scene.start('Journey',{kind:'opening'})}
     const title=()=>{if(this.journey.kind==='result')this.scene.start('Title')}
     this.input.on('pointerdown',proceed);this.input.keyboard?.on('keydown-SPACE',proceed);this.input.keyboard?.on('keydown-ENTER',proceed);this.input.keyboard?.on('keydown-ESC',title)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
@@ -33,7 +43,7 @@ export class JourneyScene extends Phaser.Scene {
       if(this.textures.exists('journey-view'))this.textures.remove('journey-view')
     })
     const stage=data.kind==='opening'?1:data.stage??15
-    const load=()=>Promise.all([loadStageArt(stage),loadSuukuret(),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
+    const load=()=>Promise.all([loadStageArt(stage),loadSuukuret(),letterSheet.decode(),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
       if(!this.scene.isActive())return
       replaceOpeningAnimal()
       loading.destroy();this.background.setStage(STAGES[stage-1]!.theme.background)
@@ -64,7 +74,11 @@ export class JourneyScene extends Phaser.Scene {
     const ctx=this.surface.context,t=this.elapsed,d=this.journey
     ctx.clearRect(0,0,384,216)
     if(d.kind==='opening')drawOpening(ctx,t)
-    else if(d.kind==='travel')drawJourney(ctx,JOURNEYS[(d.stage??1)-1]!,t)
+    else if(d.kind==='travel'){
+      const original=ctx.fillText
+      ctx.fillText=(text,x,y)=>{const h=Number.parseFloat(ctx.font.replace('bold ',''))||7;drawLetters(ctx,text,x,y,h)}
+      try{drawJourney(ctx,JOURNEYS[(d.stage??1)-1]!,t)}finally{ctx.fillText=original}
+    }
     else {
       this.background.draw(ctx,0,t,0,0)
       ctx.fillStyle='rgba(30,20,10,.55)';ctx.fillRect(0,0,384,216)
