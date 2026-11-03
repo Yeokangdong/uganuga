@@ -139,10 +139,11 @@ export class EnvironmentEvent {
       const height=spec.kind==='rise'?Math.min(18,t*3):12+Math.sin(t*2)*5
       hit=p.cx>s.x&&p.cx<s.x+192&&p.y+p.h>s.floor-height
     }else if(spec.kind==='fall'||spec.kind==='chain'){
-      const i=spec.kind==='chain'?Math.min(2,Math.floor(t)):1
-      source=s.x+32+i*56
-      const y=s.floor-100+Math.min(100,(t%1)*145)
-      hit=Math.abs(p.cx-source)<13&&p.y<y+16&&p.y+p.h>y
+      for(const object of this.fallingObjects()){
+        if(object.active&&p.x+p.w>object.x&&p.x<object.x+24&&p.y<object.y+16&&p.y+p.h>object.y){
+          hit=true;source=object.x+12;break
+        }
+      }
     }else if(spec.kind==='chase'){
       this.rockX=s.x-48+t*RUN_SPEED*.65;source=this.rockX
       hit=p.cx<source+22&&p.cx>s.x-64&&p.y+p.h>s.floor-42
@@ -151,6 +152,14 @@ export class EnvironmentEvent {
     if(hit&&this.pulse>=1.5){p.hurt(g,1,source);this.pulse=0}
     if(t>=spec.duration||p.cx>s.x+208)this.resolve(g)
     // No falling-through holes, permanent tile edits, item removal, or score hooks.
+  }
+  private fallingObjects(){
+    const s=this.site!,chain=P2[this.level.def.id]?.kind==='chain'
+    return Array.from({length:3},(_,i)=>{
+      const active=this.phase==='ACTIVE'&&(!chain||this.age>=i)
+      const elapsed=this.age-(chain?i:0)
+      return {x:s.x+20+i*56,y:s.floor-100+(active?Math.min(100,(elapsed%1)*145):Math.sin(this.age*18)*2),active}
+    })
   }
   private drawP2(ctx:CanvasRenderingContext2D,cx:number,cy:number){
     const s=this.site!,spec=P2[this.level.def.id]!,active=this.phase==='ACTIVE',t=this.age
@@ -169,8 +178,8 @@ export class EnvironmentEvent {
     }else{
       for(let i=0;i<3;i++){
         ctx.strokeRect(20+i*56,-18,24,18)
-        const falling=active&&(spec.kind!=='chain'||i<=Math.floor(t))
-        ctx.fillRect(20+i*56,-100+(falling?Math.min(100,(t%1)*145):Math.sin(t*18)*2),24,16)
+        const object=this.fallingObjects()[i]!
+        ctx.fillRect(object.x-s.x,object.y-s.floor,24,16)
       }
     }
     ctx.restore()
