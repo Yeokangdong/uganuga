@@ -6,6 +6,7 @@ import { STEP, VIEW_W, VIEW_H } from '../src/game/constants'
 import { Game } from '../src/game/game'
 import { Background } from '../src/game/background'
 import { spawnCombat } from './combat'
+import { round, spawnRound } from './round'
 import type { PlayerInput } from '../src/game/input'
 import type { StageDef } from '../src/game/stages'
 import type { MapData } from './tiled'
@@ -23,6 +24,10 @@ export class MovementScene extends Phaser.Scene {
   level!: Level
   body!: Phaser.Physics.Arcade.Body
   runtime!: Game
+  paused = false
+  private stageNumber = 1
+  private carry?: {score:number;lives:number}
+  private clearT = 0
   ready = false
   accumulator = 0
   ticks = 0
@@ -34,11 +39,14 @@ export class MovementScene extends Phaser.Scene {
   private marker!: Phaser.GameObjects.Rectangle
   private keys!: Record<string, Phaser.Input.Keyboard.Key>
   constructor() { super('Play') }
-  create() {
+  create(data?:{stage?:number;score?:number;lives?:number}) {
+    this.stageNumber=data?.stage ?? (Number(new URLSearchParams(location.search).get('stage'))||1)
+    this.carry=data?.score===undefined?undefined:{score:data.score,lives:data.lives!}
+    this.paused=false;this.clearT=0
     this.ready=false; this.accumulator=0; this.ticks=0
     this.held=neutral(); this.previous=neutral(); this.pending=neutral()
     this.hud=this.add.text(18, 12, 'Loading movement…', {fontSize:'16px',color:'#ffe7a4'})
-    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE',restart:'ENTER'}) as typeof this.keys
+    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE',restart:'ENTER',pause:'ESC'}) as typeof this.keys
     const reset=()=>{this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0;this.input.keyboard?.resetKeys()}
     this.game.events.on(Phaser.Core.Events.BLUR,reset)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
@@ -49,7 +57,7 @@ export class MovementScene extends Phaser.Scene {
     void this.prepare().catch(error=>this.hud.setText(String(error)))
   }
   private async prepare() {
-    const stage=Math.max(1,Math.min(15,Number(new URLSearchParams(location.search).get('stage'))||1))
+    const stage=Math.max(1,Math.min(15,this.stageNumber))
     const url=maps[`./maps/${String(stage).padStart(2,'0')}.tmj`]!
     const response=await fetch(url); if(!response.ok)throw new Error(`Map load: ${response.status}`)
     const data:MapData=await response.json()
@@ -67,9 +75,11 @@ export class MovementScene extends Phaser.Scene {
     const noop=()=>{}
     this.background.setStage(def.theme.background)
     this.runtime=Object.assign(Object.create(Game.prototype),{level:this.level,stage:def,players:[this.player],enemies:[],items:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
-      food:0,foodMax:60,timeLeft:356.4,time:0,
+      food:0,foodMax:60,timeLeft:stage===1?712.8:356.4,time:0,
+      stageIdx:stage-1,saved:null,doors:[],ambushes:[],particles:[],popups:[],effects:[],introT:0,lastBeep:0,bannerT:0,bg:this.background,
       sfx:new Proxy({}, {get:()=>noop}),splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.player.spawnAt(this.runtime)
+    if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
     // Same 384x216 world viewport and Player.draw dimensions as the original game.
     this.add.image(0,0,'movement-view').setOrigin(0).setDisplaySize(960,540).setDepth(-1)
@@ -83,13 +93,14 @@ export class MovementScene extends Phaser.Scene {
   /** Called once per display frame; edge inputs survive frames with no physics tick. */
   update(_time:number,delta:number) {
     if(!this.ready)return
-    if(this.player.out && Phaser.Input.Keyboard.JustDown(this.keys.restart!)) {
-      this.player=new Player(0,'우가','#ffe7a4')
-      this.runtime.players=[this.player]
-      this.player.spawnAt(this.runtime)
-      this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0
+    if(Phaser.Input.Keyboard.JustDown(this.keys.pause!)) {
+      this.paused=!this.paused;this.accumulator=0;this.pending=neutral();this.previous=neutral()
       this.input.keyboard?.resetKeys()
     }
+    if(this.player.out && Phaser.Input.Keyboard.JustDown(this.keys.restart!)) {
+      this.scene.restart({stage:this.level.def.id});return
+    }
+    if(this.paused){this.draw();return}
     const input=neutral()
     for(const action of ['left','right','up','down','attack'] as const)input[action]=this.keys[action]!.isDown
     input.jump=input.up
@@ -103,17 +114,37 @@ export class MovementScene extends Phaser.Scene {
     this.draw()
   }
   advance(seconds:number,input?:PlayerInput) {
+    if(this.paused||!this.ready)return
     if(input){this.held={...input};this.pending={...input}}
     // Pause catch-up after suspension; normal 30/60/120/144Hz all consume identical STEP.
     this.accumulator+=Math.min(seconds,.25)
     while(this.accumulator+1e-9>=STEP){
       const state={...this.held}
       for(const edge of ['jumpPressed','downPressed','attackPressed','attackReleased'] as const){state[edge]=this.pending[edge];this.pending[edge]=false}
-      spawnCombat(this.runtime)
+      const r=round(this.runtime)
+      if(this.runtime.mode==='clear') {
+        this.clearT-=STEP;this.accumulator=Math.max(0,this.accumulator-STEP)
+        if(this.clearT<=0&&this.stageNumber<15){this.ready=false;this.scene.restart({stage:this.stageNumber+1,score:this.player.score,lives:this.player.lives});return}
+        continue
+      }
+      if(this.player.out){this.accumulator=0;break}
+      if(state.downPressed&&this.player.alive&&this.player.onGround) {
+        if(r.saved&&Math.abs(this.player.cx-64)<18)r.exitCave()
+        else if(!r.saved){const door=r.doors.find(d=>Math.abs(d.x-this.player.cx)<18&&Math.abs(d.floor-this.player.y-this.player.h)<6);if(door)r.enterCave(door)}
+      }
+      this.level=this.runtime.level
+      if(!r.saved)spawnCombat(this.runtime)
+      spawnRound(this.runtime)
       this.player.update(this.runtime,STEP,state,STEP)
       for(const enemy of this.runtime.enemies){enemy.advanceStatus(STEP);enemy.update(this.runtime,STEP)}
       for(const projectile of this.runtime.projectiles)projectile.update(this.runtime,STEP)
       for(const item of this.runtime.items)item.update(this.runtime,STEP)
+      this.runtime.boss?.update(this.runtime,STEP)
+      this.runtime.boss?.afterUpdate(this.runtime)
+      r.updateTimer(STEP)
+      r.updateCamera(STEP)
+      if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20)r.startBoss()
+      if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){r.completeStage();this.clearT=2.5}
       // Reuse the original pickup, contact immunity and projectile hit-set rules.
       ;(this.runtime as unknown as {collide():void}).collide()
       this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
@@ -128,7 +159,7 @@ export class MovementScene extends Phaser.Scene {
   }
   draw() {
     const p=this.player,lv=this.level
-    const cx=Math.max(0,Math.min(lv.width-VIEW_W,p.cx-VIEW_W*.4))
+    const cx=round(this.runtime).saved?0:this.runtime.mode==='boss'?this.level.arenaX:Math.max(0,Math.min(lv.width-VIEW_W,p.cx-VIEW_W*.4))
     const cy=Math.max(0,Math.min(lv.height-VIEW_H,p.y-VIEW_H*.5))
     this.runtime.camX=cx;this.runtime.camY=cy
     const ctx=this.surface.context
@@ -137,8 +168,19 @@ export class MovementScene extends Phaser.Scene {
     for(const item of this.runtime.items)item.draw(ctx,cx,cy)
     for(const enemy of this.runtime.enemies){enemy.draw(ctx,cx,cy);enemy.drawStars(ctx,cx,cy)}
     for(const projectile of this.runtime.projectiles)projectile.draw(ctx,cx,cy)
+    round(this.runtime).drawDoors(ctx,cx,cy)
+    if(!round(this.runtime).saved){
+      const x=lv.arenaX+16-cx
+      ctx.fillStyle=this.runtime.food>=60?'#64ed99':'#ff6859';ctx.fillRect(x,lv.floorBelow(lv.arenaX+16,0)-cy-48,4,48)
+    }
+    const boss=this.runtime.boss
+    if(boss){
+      boss.draw(ctx,cx,cy)
+      ctx.fillStyle='#261c22';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48,5)
+      ctx.fillStyle='#ff615b';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48*boss.hp/boss.maxHp,5)
+    }
     p.draw(ctx,cx,cy);this.surface.refresh()
-    this.hud.setText(`STAGE ${lv.def.id}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
+    this.hud.setText(`${this.paused?'PAUSED ? Esc resume':this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
   }
 }
 
