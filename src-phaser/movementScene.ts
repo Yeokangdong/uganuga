@@ -1,4 +1,4 @@
-import { EnvironmentEvent, TREE } from './environment'
+import { EnvironmentEvent, TREE, drawStory } from './environment'
 import { KingKong, drawCaptive } from './kingKong'
 import Phaser from 'phaser'
 import { sfx } from '../src/game/audio'
@@ -43,6 +43,9 @@ export class MovementScene extends Phaser.Scene {
   private clearT = 0
   private feedback:{x:number;y:number;text:string;t:number}[]=[]
   private impacts:{x:number;y:number;t:number}[]=[]
+  private reducedMotion=localStorage.getItem("uganuga.reduceMotion")==="true"
+  private shakeUntil=0
+  private shakePower=0
   private hitStop=0
   private visualTime=0
   private clearSeconds=0
@@ -66,7 +69,7 @@ export class MovementScene extends Phaser.Scene {
     this.ready=false; this.accumulator=0; this.ticks=0
     this.held=neutral(); this.previous=neutral(); this.pending=neutral()
     this.hud=this.add.text(18, 12, 'Loading movement…', {fontSize:'16px',color:'#ffe7a4'})
-    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE',restart:'ENTER',pause:'ESC'}) as typeof this.keys
+    this.keys=this.input.keyboard!.addKeys({left:'LEFT',right:'RIGHT',up:'UP',down:'DOWN',attack:'SPACE',restart:'ENTER',pause:'ESC',effects:'R'}) as typeof this.keys
     const reset=()=>{this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0;this.input.keyboard?.resetKeys()}
     this.game.events.on(Phaser.Core.Events.BLUR,reset)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
@@ -104,6 +107,7 @@ export class MovementScene extends Phaser.Scene {
       sfx,splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.runtime.popup=(x:number,y:number,text:string)=>{if(!text.startsWith('TIME BONUS'))this.feedback.push({x,y,text,t:.7})}
     this.runtime.burst=(x:number,y:number)=>{this.impacts.push({x,y,t:.18});if(this.player.weapon!=='fire'){this.hitStop=.045}}
+    this.runtime.shake=(seconds:number,power:number)=>{this.shakeUntil=this.runtime.time+Math.min(seconds,.3);this.shakePower=power}
     this.fullAt=-10
     this.runtime.showBanner=(text:string,duration=2)=>{this.notice={text,until:this.runtime.time+duration}}
     this.player.spawnAt(this.runtime)
@@ -115,7 +119,8 @@ export class MovementScene extends Phaser.Scene {
     }
     this.environment=new EnvironmentEvent(this.level)
     const treeSite=this.environment.site
-    if(treeSite)for(let i=0;i<4;i++)this.runtime.items.push(new RouteFood('fruit',treeSite.x+100+i*18,treeSite.floor-24,false,def.theme.n))
+    if(treeSite&&stage===1)for(let i=0;i<4;i++)this.runtime.items.push(new RouteFood('fruit',treeSite.x+100+i*18,treeSite.floor-24,false,def.theme.n))
+    if(treeSite&&stage===7)for(let i=0;i<4;i++)this.runtime.items.push(new RouteFood('fruit',treeSite.x+330+i*18,treeSite.floor-24,false,def.theme.n))
     this.suukuret.place(this.level)
     if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
@@ -134,8 +139,9 @@ export class MovementScene extends Phaser.Scene {
     if(Phaser.Input.Keyboard.JustDown(this.keys.pause!)) {
       this.paused=!this.paused;this.accumulator=0;this.pending=neutral();this.previous=neutral()
       this.input.keyboard?.resetKeys()
-      if(this.paused)sfx.stopMusic();else sfx.playMusic(this.runtime.mode==='boss'?'boss':'stage',this.level.def.theme.n)
+      if(this.paused)sfx.stopMusic();else sfx.playMusic(this.runtime.mode==='boss'||this.environment.phase==='ACTIVE'?'boss':'stage',this.level.def.theme.n)
     }
+    if(this.paused&&Phaser.Input.Keyboard.JustDown(this.keys.effects!)){this.reducedMotion=!this.reducedMotion;localStorage.setItem('uganuga.reduceMotion',String(this.reducedMotion))}
     if(this.player.out){this.scene.start('Journey',{kind:'result',score:this.player.score,stage:this.stageNumber,clear:false});return}
     if(this.paused){this.draw();return}
     const dt=Math.min(delta/1000,.1);this.visualTime+=dt
@@ -252,8 +258,9 @@ export class MovementScene extends Phaser.Scene {
     this.background.draw(ctx,cx,this.runtime.time,cy,lv.height-VIEW_H)
     this.drawAmbient(ctx,cx)
     ctx.save()
-    if(this.impacts.length)ctx.translate(Math.sin(this.visualTime*110)*1.2,Math.cos(this.visualTime*95)*.7)
+    if(!this.reducedMotion&&(this.impacts.length||this.runtime.time<this.shakeUntil))ctx.translate(Math.sin(this.visualTime*110)*(this.shakePower||1.2),Math.cos(this.visualTime*95)*.7)
     ctx.drawImage(lv.canvas,cx*lv.scale,cy*lv.scale,VIEW_W*lv.scale,VIEW_H*lv.scale,0,0,VIEW_W,VIEW_H)
+    drawStory(this.runtime,ctx,cx,cy,this.environment)
     this.environment.draw(this.runtime,ctx,cx,cy)
     for(const item of this.runtime.items)item.draw(ctx,cx,cy)
     for(const enemy of this.runtime.enemies){enemy.draw(ctx,cx,cy);enemy.drawStars(ctx,cx,cy)}
@@ -285,7 +292,7 @@ export class MovementScene extends Phaser.Scene {
     paintedLabel(ctx,`HP ${p.hp}   LIFE ${p.lives}`,66,16,9)
     paintedLabel(ctx,`FOOD ${this.runtime.food}/60`,66,29,9)
     ctx.fillStyle='#251c16';ctx.fillRect(12,32,108,4)
-    ctx.fillStyle=this.runtime.time-this.fullAt<2&&Math.sin(this.runtime.time*24)>0?'#fff9c2':'#eac65f'
+    ctx.fillStyle=!this.reducedMotion&&this.runtime.time-this.fullAt<2&&Math.sin(this.runtime.time*24)>0?'#fff9c2':'#eac65f'
     ctx.fillRect(13,33,106*this.runtime.food/60,2)
     paintedLabel(ctx,`STAGE ${String(this.stageNumber).padStart(2,'0')}`,219,16,9);this.drawRescue(ctx,148,24,18)
     paintedLabel(ctx,`SCORE ${String(p.score).padStart(6,'0')}`,204,32,10)
@@ -293,7 +300,7 @@ export class MovementScene extends Phaser.Scene {
     if(this.notice.until>this.runtime.time)paintedLabel(ctx,this.notice.text,192,61,17)
     if(this.runtime.mode==='clear'){ctx.fillStyle='rgba(30,20,10,.85)';ctx.fillRect(72,67,240,85);paintedLabel(ctx,'STAGE CLEAR',192,89,20);paintedLabel(ctx,`남은 시간 ${this.clearSeconds} × 10 = ${this.clearSeconds*10}`,192,111,12);this.drawRescue(ctx,145,139,20);paintedLabel(ctx,'누가의 흔적 →',221,138,12)}
     this.surface.refresh()
-    this.hud.setVisible(this.paused || p.out);this.hud.setText(`${this.paused?'PAUSED ? Esc resume':this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
+    this.hud.setVisible(this.paused || p.out);this.hud.setText(`${this.paused?`설정 / Esc 계속\nR / 화면 흔들림·번쩍임 줄이기: ${this.reducedMotion?'ON':'OFF'}`:this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
   }
 }
 
