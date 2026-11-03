@@ -7,8 +7,8 @@ type Animation={fps:number;loop:boolean;frames:Frame[]}
 type Pack={animations:Record<string,Animation>;image:HTMLImageElement}
 const packs=new Map<number,Pack>()
 export async function loadPatternArt(stage:number):Promise<void>{
-  if(stage<1||stage>5||packs.has(stage))return
-  const base=`${import.meta.env.BASE_URL}assets/patterns-v1/stage0${stage}/`
+  if(stage<1||stage>10||packs.has(stage))return
+  const base=`${import.meta.env.BASE_URL}assets/patterns-v1/stage${String(stage).padStart(2,'0')}/`
   const response=await fetch(base+'manifest.json');if(!response.ok)throw new Error('Pattern manifest '+stage)
   const manifest=await response.json()
   const image=new Image();image.src=base+manifest.image;await image.decode()
@@ -21,6 +21,16 @@ const states=new WeakMap<Level,Runtime>()
 function sitesFor(l:Level):PatternSite[]{
   const id=l.def.id,result:PatternSite[]=[]
   const safe=(x:number,y:number)=>x>240&&x<l.arenaX-240&&!l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-x)<128)&&!Array.from({length:7},(_,i)=>Math.floor(x/TILE)-3+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(y/TILE)-3+i).some(r=>l.isLadder(c,r)))
+  if([1,6,7,8,9,10].includes(id)){
+    for(const a of l.patternAnchors){
+      if(!safe(a.x,a.floor)||!safe(a.x,a.y)||a.right-a.left<80||result.some(p=>Math.abs(p.x-a.x)<384))continue
+      if(a.floor-a.y>120||a.floor-a.y<24&&id!==9)continue
+      const row=Math.round(a.floor/TILE)
+      if(id!==9&&!Array.from({length:15},(_,i)=>Math.floor(a.x/TILE)-7+i).every(c=>l.isSolidTile(l.tile(c,row))))continue
+      result.push({...a,dir:1})
+    }
+    return result
+  }
   if(id===3){
     for(const cliff of l.patternCliffs){
       const floor=cliff.bottom,x=cliff.x
@@ -54,9 +64,10 @@ export function patternState(g:Game):Runtime{
   if(!state){state={sites:sitesFor(g.level),site:null,phase:'idle',age:0,wait:1,elapsed:0,rect:null};states.set(g.level,state)}
   return state
 }
-const warnings=[0,2,1.9,1.8,1.7,1.6]
-const durations=[0,3.6,1.1,.85,.65,1.15]
+const warnings=[0,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.3,1.2]
+const durations=[0,3.6,1.1,.85,.65,1.15,1.5,1.6,.9,1.4,2.2]
 function bounds(s:PatternSite,id:number):Rect{
+  if(id>=6)return{x:s.x-132,y:Math.min(s.y-50,s.floor-136),w:264,h:s.floor-Math.min(s.y-50,s.floor-136)+8}
   if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:s.right-s.x+64,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
   if(id===2)return{x:s.x-48,y:s.floor-110,w:120,h:120}
   if(id===3)return{x:s.x-50,y:s.floor-100,w:164,h:110}
@@ -65,7 +76,7 @@ function bounds(s:PatternSite,id:number):Rect{
 }
 function visible(g:Game,r:Rect):boolean{return r.x>=g.camX+4&&r.x+r.w<=g.camX+VIEW_W-4&&r.y>=g.camY+4&&r.y+r.h<=g.camY+VIEW_H-4}
 export function updateStagePattern(g:Game,dt:number):void{
-  const id=g.level.def.id;if(id<1||id>5||g.level.def.cave||g.mode!=='play')return
+  const id=g.level.def.id;if(id<1||id>10||g.level.def.cave||g.mode!=='play')return
   const s=patternState(g);s.elapsed+=dt;s.rect=null
   if(s.phase==='idle'){
     s.wait=Math.max(0,s.wait-dt);if(s.wait>0)return
@@ -75,7 +86,7 @@ export function updateStagePattern(g:Game,dt:number):void{
   }
   const p=s.site!
   // Leaving the screen cancels the entire cycle. Returning always requires a fresh warning.
-  if(!visible(g,bounds(p,id))||g.players.some(b=>b.alive&&b.invuln>1&&Math.abs(b.x-p.x)<150)){s.phase='idle';s.wait=6;s.site=null;return}
+  if(!visible(g,bounds(p,id))||g.players.some(b=>b.alive&&b.invuln>1&&Math.abs(b.x-p.x)<150)){s.phase='idle';s.wait=id>=6?5:6;s.site=null;return}
   s.age+=dt
   if(s.phase==='warn'&&s.age>=warnings[id]!){s.phase='active';s.age=0}
   if(s.phase==='active'){
@@ -85,9 +96,13 @@ export function updateStagePattern(g:Game,dt:number):void{
     if(id===3){const reach=64*Math.min(1,t/.2,(.85-t)/.25);s.rect={x:p.x,y:p.floor-27,w:Math.max(0,reach),h:14}}
     if(id===4)s.rect={x:p.x-20,y:p.floor-25,w:40,h:25}
     if(id===5){const reach=64*Math.max(0,Math.min(1,t/.25,(1.15-t)/.3));s.rect={x:p.dir===1?p.x+25:p.x-25-reach,y:p.floor-13,w:reach,h:9}}
-    if(s.rect)for(const player of g.players)if(player.alive&&overlap(player,s.rect))player.hurt(g,1,p.x)
+    if(id===7){const q=t<.65?t/.65:(t-.65)/.95;const x=t<.65?p.x:p.x+80*q;const y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;s.rect={x:x-10,y:y-10,w:20,h:20}}
+    if(id===9)s.rect={x:p.x+32+t/1.4*64,y:p.floor-18,w:26,h:18}
+    if(id===9&&s.rect&&!Array.from({length:3},(_,i)=>Math.floor(s.rect!.x/TILE)+i).every(c=>g.level.isSolidTile(g.level.tile(c,Math.round(p.floor/TILE))))){s.phase='recover';s.age=0;s.rect=null;return}
+    if(id>=6)for(const player of g.players)if(player.alive&&patternContact(id,p,t,player))player.hurt(g,1,p.x)
+    if(s.rect&&id<6)for(const player of g.players)if(player.alive&&overlap(player,s.rect))player.hurt(g,1,p.x)
     if(t>=(id===1?(p.right-p.x-12)/32:durations[id]!)){s.phase='recover';s.age=0;s.rect=null}
-  }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=6;s.site=null}
+  }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=id>=6?5:6;s.site=null}
 }
 function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:number,y:number,flip=false,size=128):void{
   const a=pack.animations[key];if(!a)return
@@ -117,23 +132,25 @@ function tongue(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,r:Rec
 export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:number):void{
   const id=g.level.def.id,pack=packs.get(id);if(!pack||g.level.def.cave||g.mode!=='play')return
   const state=patternState(g),p=state.site
-  const idle=['','hang','idle','idle','buried_trace','idle']
-  const warn=['','windup','inflate','crack','sand_ring','mouth_open']
-  const active=['','throw','erupt','idle','jaw_rise','mouth_open']
-  const recover=['','return','recover','retract','bury','idle']
+  const idle=['','hang','idle','idle','buried_trace','idle','cling','idle','idle','idle','idle']
+  const warn=['','windup','inflate','crack','sand_ring','mouth_open','wing_shiver','push','charge','draw_water','light_up']
+  const active=['','throw','erupt','idle','jaw_rise','mouth_open','sing','return','connect','push_water','release_spores']
+  const recover=['','return','recover','retract','bury','idle','rest','return','extinguish','return','extinguish']
   ctx.save()
   // One selected actor only, so adjacent sites cannot produce concurrent attacks.
   const site=p??state.sites.map(s=>id===1?{...s,right:g.camX+VIEW_W-4}:s).find(s=>visible(g,bounds(s,id)))
   if(!site){ctx.restore();return}
   const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=site.floor-cy
   let ax=x,ay=y
-  if(id===1){ax=x;ay=site.y-cy}
+  if(id===1||id>=6){ax=x;ay=site.y-cy}
+  if(id===1)ay+=34
   if(id===2)ax=x-32
   if(id===3){ax=x;ay=y-20}
   if(id===5)ax=x
   const key=phase==='warn'?warn[id]:phase==='active'?active[id]:phase==='recover'?recover[id]:idle[id]
   if(!(id===4&&phase==='active'))sprite(ctx,pack,key!,t,ax,ay,id===5&&site.dir<0)
-  const color=['','#ffe6a2','#ffb34d','#a6efff','#ffe29b','#a8e3b5'][id]!
+  const color=['','#ffe6a2','#ffb34d','#a6efff','#ffe29b','#a8e3b5','#bcefff','#ffbb88','#e0b8ff','#9ceaff','#e6f3ad'][id]!
+  if(id>=6){drawLater(ctx,pack,id,site,phase,t,cx,cy,state.rect);ctx.restore();return}
   if(phase==='warn'){
     ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.setLineDash([3,3])
     const rx=id===1?x:id===3?x:id===2?x+23:id===5?x+site.dir*25+(site.dir<0?-64:0):x-20
@@ -155,4 +172,24 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
     }
   }
   ctx.restore()
+}
+
+// Shared geometry drives both the visible warning and exact active contact.
+function patternContact(id:number,p:PatternSite,t:number,b:Rect):boolean{
+  if(id===6){const radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-p.x,0,p.x-b.x-b.w),Math.max(b.y-(p.floor-35),0,p.floor-35-b.y-b.h)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,b.y+b.h].map(y=>Math.hypot(x-p.x,y-p.floor+35))));return near<=radius+3&&far>=radius-3}
+  if(id===7){const q=t<.65?t/.65:(t-.65)/.95,x=t<.65?p.x:p.x+80*q,y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;return overlap(b,{x:x-10,y:y-10,w:20,h:20})}
+  if(id===8){for(let i=0;i<=40;i++)if(overlap(b,{x:p.x-64+i*3.2-3,y:p.floor-24-i*1.6-3,w:6,h:6}))return true;return false}
+  if(id===9)return overlap(b,{x:p.x+32+t/1.4*64,y:p.floor-18,w:26,h:18})
+  const top=p.floor-126+t*10,gap=p.floor-65+t*10;return overlap(b,{x:p.x+40,y:top,w:24,h:gap-top-22})||overlap(b,{x:p.x+40,y:gap+22,w:24,h:Math.max(0,p.floor-gap-22)})
+}
+function drawLater(c:CanvasRenderingContext2D,pack:Pack,id:number,p:PatternSite,phase:string,t:number,cx:number,cy:number,r:Rect|null):void{
+  if(phase==='recover'){if(id===7)sprite(c,pack,'terminal_fragments',t,p.x+80-cx,p.floor-cy,false,56);if(id===9)sprite(c,pack,'foam_dissipate',t,p.x+80-cx,p.floor-cy,false,48);return}
+  if(phase!=='warn'&&phase!=='active')return
+  const x=p.x-cx,y=p.floor-cy,active=phase==='active'
+  c.strokeStyle=active?'#fff2bc':'#ffd876';c.fillStyle='rgba(242,213,143,.22)';c.lineWidth=active?5:2;c.setLineDash(active?[]:[4,3])
+  if(id===6){const radius=active?12+92*t/1.5:104;c.beginPath();c.arc(x,y-35,radius,0,Math.PI*2);c.stroke();if(active)sprite(c,pack,'sound_ring_expand',t,x,y-35,false,radius*2)}
+  if(id===7){for(const dx of [0,80])c.strokeRect(x+dx-12,y-5,24,5);if(active&&r){sprite(c,pack,'stone_rotate',t,r.x+10-cx,r.y+10-cy,false,40);if(t>.65&&t<.9)sprite(c,pack,'first_impact_dust',t-.65,x,y,false,56)}}
+  if(id===8){c.beginPath();c.moveTo(x-64,y-24);c.lineTo(x+64,y-88);c.stroke();if(active)for(const [dx,dy] of [[-64,-24],[64,-88]])sprite(c,pack,'endpoint_refraction',t,x+dx!,y+dy!,false,40)}
+  if(id===9){if(active&&r)tongue(c,pack,'low_wave',t,r,cx,cy,false);else c.strokeRect(x+32,y-18,90,18)}
+  if(id===10){const fall=active?t*10:0,top=y-126+fall,gap=y-65+fall;for(const a of [{x:p.x+40,y:top+cy,w:24,h:39},{x:p.x+40,y:gap+22+cy,w:24,h:Math.max(0,y-gap-22)}]){if(active)tongue(c,pack,'spore_curtain',t,a,cx,cy,false);else c.strokeRect(a.x-cx,a.y-cy,a.w,a.h)}c.strokeStyle='#98ffcd';c.strokeRect(x+36,gap-22,32,44)}
 }

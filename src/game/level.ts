@@ -40,6 +40,7 @@ export function themeKey(base: string, n: string): string {
 }
 
 export class Level {
+  patternAnchors: {x:number;y:number;floor:number;left:number;right:number}[]=[]
   patternCliffs: {x:number;top:number;bottom:number}[]=[]
   cols: number
   rows = ROWS
@@ -296,6 +297,14 @@ export class Level {
         const center=Math.max(tree.left+width/2,Math.min(tree.right-width/2,tree.x))
         this.patternCliffs.push({x:center+width/2,top:tree.bottom+6-height,bottom:tree.bottom})
       }
+    }
+    // Anchors share the authored scenery geometry, never invent terrain for an actor.
+    if(!this.def.cave&&[1,6,7,8,9,10].includes(this.def.id))for(const deck of decks){
+      const tree=supports[deck.support];if(!tree)continue
+      const x=this.def.id===6?tree.x:deck.x+deck.width/2
+      const floor=this.groundY(x)??tree.bottom
+      if(this.def.id===9&&!Array.from({length:9},(_,i)=>Math.floor(x/TILE)-4+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(floor/TILE)-2+i).some(r=>this.tile(c,r)===5)))continue
+      this.patternAnchors.push({x,y:this.def.id===6?Math.max(deck.y+22,floor-52):this.def.id===9?floor-12:deck.y+4,floor,left:deck.x,right:deck.x+deck.width})
     }
     for(const tree of supports){
       if(tree.object!=='local'&&image('world.elevated.'+tree.object))continue
