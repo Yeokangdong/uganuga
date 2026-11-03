@@ -86,7 +86,7 @@ function bounds(s:PatternSite,id:number):Rect{
   if(id>=6)return{x:s.x-132,y:Math.min(s.y-50,s.floor-136),w:264,h:s.floor-Math.min(s.y-50,s.floor-136)+8}
   if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:s.right-s.x+64,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
   if(id===2)return{x:s.x-48,y:s.floor-110,w:120,h:120}
-  if(id===3)return{x:s.x-50,y:s.floor-100,w:164,h:110}
+  if(id===3)return{x:s.x-50,y:s.y-100,w:164,h:110}
   if(id===4)return{x:s.x-48,y:s.floor-100,w:96,h:110}
   return{x:s.x-110,y:s.floor-100,w:220,h:110}
 }
@@ -109,7 +109,7 @@ export function updateStagePattern(g:Game,dt:number):void{
     const t=s.age
     if(id===1)s.rect={x:p.x+t*32,y:p.floor-22,w:12,h:12}
     if(id===2&&t>=.85&&t<.95)s.rect={x:p.x+23,y:p.floor-12,w:18,h:12}
-    if(id===3){const reach=64*Math.min(1,t/.2,(.85-t)/.25);s.rect={x:p.x,y:p.floor-27,w:Math.max(0,reach),h:14}}
+    if(id===3){const reach=64*Math.min(1,t/.2,(.85-t)/.25);s.rect={x:p.x,y:p.y-27,w:Math.max(0,reach),h:14}}
     if(id===4)s.rect={x:p.x-20,y:p.floor-25,w:40,h:25}
     if(id===5){const reach=64*Math.max(0,Math.min(1,t/.25,(1.15-t)/.3));s.rect={x:p.dir===1?p.x+25:p.x-25-reach,y:p.floor-13,w:reach,h:9}}
     if(id===7){const q=t<.65?t/.65:(t-.65)/.95;const x=t<.65?p.x:p.x+80*q;const y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;s.rect={x:x-10,y:y-10,w:20,h:20}}
@@ -171,7 +171,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   // One selected actor only, so adjacent sites cannot produce concurrent attacks.
   const site=p??state.sites.map(s=>id===1?{...s,right:g.camX+VIEW_W-4}:s).find(s=>visible(g,bounds(s,id)))
   if(!site){ctx.restore();return}
-  const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=site.floor-cy
+  const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=(id===3?site.y:site.floor)-cy
   let ax=x,ay=y
   if(id===1||[6,7,8].includes(id)){ax=x;ay=site.y-cy}
   if(id===1)ay+=4

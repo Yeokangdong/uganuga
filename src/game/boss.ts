@@ -39,7 +39,7 @@ export class Boss implements Body {
     this.anim+=dt;this.flash=Math.max(0,this.flash-dt);this.t=Math.max(0,this.t-dt)
     const left=g.level.arenaX+8,right=g.level.arenaX+VIEW_W-8
     if(this.dying){if(this.t===0){this.dead=true;g.burst(this.cx,this.y+20,'#ffe14a',20)}return}
-    if(this.state==='enter'){this.x=right-this.w-12;this.state='walk'}
+    if(this.state==='enter')this.state='walk'
     if(this.state==='stun'){
       this.vx=approach(this.vx,0,200*dt)
       if(this.t===0)this.state='walk'

@@ -12,7 +12,7 @@ import {
   WEAPON_NAME, moveBody, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
-import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt, drawPaintedText } from './art'
+import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt, drawPaintedText, art } from './art'
 import { sfx, type Sfx } from './audio'
 import { terrainDrawAudit } from './paintedMap'
 import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
@@ -624,9 +624,22 @@ export class Game {
     if(this.boss||this.mode!=='play'||this.saved)return
     this.mode = 'boss'
     const cfg = this.stage.boss
-    const placement=this.level.findCombatPlacement(this.level.arenaX+VIEW_W-cfg.w-24, this.level.floorBelow(this.level.arenaX+VIEW_W-40,0),cfg.w,cfg.h,this.level.arenaX+VIEW_W/2,this.level.arenaX+VIEW_W-cfg.w-16)
+    const boss = new Boss(cfg, 0, 0)
+    let radius=boss.w/2,height=boss.h
+    for(const action of ['idle','walk']){
+      const sprite=art.sprites[cfg.key+'.'+action]
+      if(!sprite)continue
+      for(const frame of sprite.frames){
+        const w=sprite.ppu?frame[2]*sprite.ppu:frame[2]/frame[3]*sprite.h
+        const h=sprite.ppu?frame[3]*sprite.ppu:sprite.h
+        const ax=frame.length>=6?frame[4]:sprite.ax,ay=frame.length>=6?frame[5]:sprite.ay
+        radius=Math.max(radius,w*ax,w*(1-ax));height=Math.max(height,h*ay)
+      }
+    }
+    const placement=this.level.findCombatPlacement(this.level.arenaX+VIEW_W-radius*2-24, this.level.floorBelow(this.level.arenaX+VIEW_W-40,0),radius*2,height,this.level.arenaX+VIEW_W/2,this.level.arenaX+VIEW_W-radius*2-16)
     if(!placement){this.mode='play';return}
-    this.boss = new Boss(cfg, placement.x, placement.floor - cfg.h)
+    boss.x=placement.x+radius-boss.w/2;boss.y=placement.floor-boss.h
+    this.boss = boss
     this.bg.setBoss(true)
     this.sfx.playMusic('boss')
     this.showBanner('보스 등장!', 2.2, cfg.name)
