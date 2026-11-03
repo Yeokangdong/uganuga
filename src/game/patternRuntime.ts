@@ -26,9 +26,10 @@ function sitesFor(l:Level):PatternSite[]{
     for(const a of l.patternAnchors){
       if(a.x<300||a.x>l.arenaX-300||l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-a.x)<160)||result.some(p=>Math.abs(p.x-a.x)<384))continue
       // Keep a broad dry waiting area clear of ladder exits and landing edges.
-      const spot=l.findCombatPlacement(a.x-80,a.floor,160,24,Math.max(300,a.x-160),a.x+80,a.floor)
-      if(!spot||Math.abs(spot.x+80-a.x)>100)continue
-      result.push({...a,actorX:a.x,x:spot.x+80,dir:1})
+      const width=id===13?224:160,height=id===13?184:24
+      const spot=l.findCombatPlacement(a.x-width/2,a.floor,width,height,Math.max(300,a.x-160),a.x+80,a.floor)
+      if(!spot||Math.abs(spot.x+width/2-a.x)>100)continue
+      result.push({...a,actorX:a.x,x:spot.x+width/2,dir:1})
     }
     return result
   }
@@ -92,6 +93,7 @@ const warnings=[0,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.3,1.2,1.2,1.1,1.1,1,1.1]
 const durations=[0,3.6,1.1,.85,.65,1.15,1.5,1.6,.9,1.4,2.2,.85,2.3,1.7,2,4.2]
 function soundCenter(p:PatternSite):{x:number;y:number}{return{x:p.x,y:p.y}}
 function bounds(s:PatternSite,id:number):Rect{
+  if(id===13)return{x:s.x-132,y:Math.min(s.y-52,s.floor-184),w:264,h:s.floor-Math.min(s.y-52,s.floor-184)+8}
   if(id>=11)return{x:s.x-132,y:Math.min(s.y-52,s.floor-100),w:264,h:s.floor-Math.min(s.y-52,s.floor-100)+8}
   if(id===6){const c=soundCenter(s),radius=107;return{x:c.x-radius,y:c.y-radius,w:radius*2,h:radius*2}}
   if(id>=6)return{x:s.x-132,y:Math.min(s.y-50,s.floor-136),w:264,h:s.floor-Math.min(s.y-50,s.floor-136)+8}
@@ -241,7 +243,14 @@ function drawLater(c:CanvasRenderingContext2D,pack:Pack,id:number,p:PatternSite,
   if(id===10){const fall=active?t*10:0,top=y-126+fall,gap=y-65+fall;for(const a of [{x:p.x+40,y:top+cy,w:24,h:39},{x:p.x+40,y:gap+22+cy,w:24,h:Math.max(0,y-gap-22)}]){if(active)tongue(c,pack,'spore_curtain',t,a,cx,cy,false);else c.strokeRect(a.x-cx,a.y-cy,a.w,a.h)}c.strokeStyle='#98ffcd';c.strokeRect(x+36,gap-22,32,44)}
 }
 
-// These fixed geometries are used unchanged for warnings, effects and damage.
+// Shared geometry keeps the moving body and tail identical in effects and damage.
+function snakeRects(p:PatternSite,t:number):Rect[]{
+  const sweep=Math.sin(Math.min(t,1.25)/1.25*Math.PI),tail=Math.max(0,(t-1.25)/.45)
+  return Array.from({length:49},(_,i)=>{
+    const q=i/48,dx=-96+q*192+12*sweep
+    return{x:p.x+dx-6,y:p.floor-94+Math.sin(q*Math.PI*2+sweep*.25)*80,w:12,h:16}
+  }).slice(Math.min(49,Math.floor(tail*49)))
+}
 function finalRects(id:number,p:PatternSite,t:number):Rect[]{
   const pillar=(dx:number)=>({x:p.x+dx-14,y:p.floor-76,w:28,h:76})
   if(id===12)return t<.45?[pillar(-64)]:t>=1.55&&t<2?[pillar(64)]:[]
@@ -249,7 +258,7 @@ function finalRects(id:number,p:PatternSite,t:number):Rect[]{
     if(t<1.1){const r=16+88*t/1.1;return[-1,1].map(d=>({x:p.x+d*r-5,y:p.floor-17,w:10,h:17}))}
     return t>=2.2&&t<2.6?[pillar(-64)]:t>=3.7&&t<4.1?[pillar(64)]:[]
   }
-  if(id===13)return Array.from({length:25},(_,i)=>{const dx=-96+i*8;return{x:p.x+dx-5,y:p.floor-38+Math.sin(i/24*Math.PI*2)*29,w:10,h:16}})
+  if(id===13)return snakeRects(p,t)
   if(id===14){const q=Math.sin(t/2*Math.PI*2),dx=q*88;return[{x:p.x+dx-15,y:p.floor-32-Math.abs(q)*30,w:30,h:30}]}
   return[]
 }
@@ -276,7 +285,13 @@ function drawFinal(g:Game,c:CanvasRenderingContext2D,pack:Pack,s:Runtime,cx:numb
       if(warn){c.strokeRect(x+64-14,y-76,28,76)}
     }
   }
-  if(id===13){c.lineWidth=active?16:2;c.beginPath();finalRects(id,p,t).forEach((r,i)=>{if(i===0)c.moveTo(r.x+5-cx,r.y+8-cy);else c.lineTo(r.x+5-cx,r.y+8-cy)});c.stroke();if(active)sprite(c,pack,'splash',t,x,y,false,128,'bottom')}
+  if(id===13){
+    const times=warn?[0,.625]:[t]
+    c.lineWidth=active?12:2
+    for(const age of times){c.beginPath();snakeRects(p,age).forEach((r,i)=>{if(i===0)c.moveTo(r.x+6-cx,r.y+8-cy);else c.lineTo(r.x+6-cx,r.y+8-cy)});c.stroke()}
+    if(warn){c.strokeStyle='#98ffcd';c.strokeRect(x+32,y-32,32,32)}
+    if(active)sprite(c,pack,'splash',t,x,y,false,128,'bottom')
+  }
   if(id===14){if(warn){c.beginPath();c.moveTo(x-88,y-60);c.quadraticCurveTo(x,y+4,x+88,y-60);c.stroke()}else{const r=finalRects(id,p,t)[0]!;c.beginPath();c.moveTo(x,p.y-cy);c.lineTo(r.x+15-cx,r.y+15-cy);c.stroke();tongue(c,pack,'pendulum',t,r,cx,cy,false)}}
   c.restore()
 }
