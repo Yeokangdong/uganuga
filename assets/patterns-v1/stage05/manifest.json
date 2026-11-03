@@ -1,0 +1,220 @@
+{
+  "version": 1,
+  "stage": 5,
+  "image": "sheet.webp",
+  "size": {
+    "w": 1024,
+    "h": 1024
+  },
+  "cell": {
+    "w": 256,
+    "h": 256
+  },
+  "paddingMinimum": 0.175,
+  "coordinateSystem": "top-left pixels; pivot relative to frame",
+  "suggestedWorldCell": {
+    "w": 128,
+    "h": 128
+  },
+  "animations": {
+    "idle": {
+      "fps": 6,
+      "loop": true,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        },
+        {
+          "x": 256,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        }
+      ]
+    },
+    "mouth_open": {
+      "fps": 6,
+      "loop": false,
+      "frames": [
+        {
+          "x": 512,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        },
+        {
+          "x": 768,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        }
+      ]
+    },
+    "tongue_extend": {
+      "fps": 6,
+      "loop": false,
+      "frames": [
+        {
+          "x": 0,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        },
+        {
+          "x": 256,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        },
+        {
+          "x": 512,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        }
+      ]
+    },
+    "tongue_hold": {
+      "fps": 6,
+      "loop": true,
+      "frames": [
+        {
+          "x": 768,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        },
+        {
+          "x": 0,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        }
+      ]
+    },
+    "tongue_retract": {
+      "fps": 6,
+      "loop": false,
+      "frames": [
+        {
+          "x": 256,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        },
+        {
+          "x": 512,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        },
+        {
+          "x": 768,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 70,
+            "y": 128
+          }
+        }
+      ]
+    },
+    "water_ring": {
+      "fps": 6,
+      "loop": false,
+      "frames": [
+        {
+          "x": 0,
+          "y": 768,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        },
+        {
+          "x": 256,
+          "y": 768,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        },
+        {
+          "x": 512,
+          "y": 768,
+          "w": 256,
+          "h": 256,
+          "pivot": {
+            "x": 128,
+            "y": 160
+          }
+        }
+      ]
+    }
+  },
+  "attachment": {
+    "bodyAction": "mouth_open",
+    "bodyMouth": {
+      "x": 177,
+      "y": 128
+    },
+    "partActions": [
+      "tongue_extend",
+      "tongue_hold",
+      "tongue_retract"
+    ],
+    "rule": "align tongue frame pivot to bodyMouth"
+  }
+}
