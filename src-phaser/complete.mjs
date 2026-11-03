@@ -103,6 +103,7 @@ if(process.argv.includes('--qa')){
 for(let currentStage=Number(process.argv[2]||1);currentStage<=15;currentStage++){
 await page.evaluate(()=>window.__phaserGame.loop.stop())
 const result=await page.evaluate(async({stage,policy})=>{
+ if(policy===12&&stage===13)policy=3;
  const survival=policy===12, adaptive=policy===9||policy===10||survival, explorer=policy===10||survival;if(adaptive)policy=2;
  const s=window.__movement,g=s.runtime,p=s.player,lv=s.level;
  const nodes=[],byCell=new Map();
@@ -139,7 +140,7 @@ const result=await page.evaluate(async({stage,policy})=>{
  for(let tick=0;tick<36000;tick++){
   if(survival&&g.food<60)policy=stage===8||stage===4?6:2;
   if(adaptive&&g.food>=60)policy=explorer?(g.mode==='boss'||survival&&p.hp<8?8:2):stage===7?6:8;
-  if(explorer&&g.mode==='play'&&g.food>=60&&g.time-progressAt>5){
+  if(explorer&&g.mode==='play'&&(g.food>=60||stage>=11)&&g.time-progressAt>5){
    const recovery=Math.floor((g.time-progressAt-5)/4);
    policy=[0,2,6,3][recovery%4];
    if(recovery!==lastRecovery){routeTarget=null;airTarget=null;recoveries.push([+g.time.toFixed(2),Math.round(p.x),Math.round(p.y),policy]);lastRecovery=recovery;}
@@ -149,14 +150,15 @@ const result=await page.evaluate(async({stage,policy})=>{
   if(p.alive){
    if(p.x>furthest+24){furthest=p.x;progressAt=g.time}
    const hungry=g.food<60||policy>=8&&p.hp<7;
-   const foods=hungry?g.items.filter(i=>!i.dead&&['fruit','meat','bigmeat'].includes(i.kind)&&Math.abs(i.y-p.y)<75&&i.x>p.x-80):[];
+   const bypass=explorer&&stage>=11&&g.time-progressAt>5;
+   const foods=hungry&&!bypass?g.items.filter(i=>!i.dead&&['fruit','meat','bigmeat'].includes(i.kind)&&Math.abs(i.y-p.y)<75&&i.x>p.x-80):[];
    foods.sort((a,b)=>Math.hypot(a.x-p.cx,(a.y-p.y)*2)-Math.hypot(b.x-p.cx,(b.y-p.y)*2));
    const enemies=g.enemies.filter(e=>{
     let seen=foes.get(e);if(!seen||seen.hp!==e.hp){seen={hp:e.hp,at:g.time};foes.set(e,seen)}
     return (policy<6||p.onGround)&&!e.dead&&!e.dying&&!e.invulnerable&&Math.abs(e.y+e.h-p.y-p.h)<(policy>=6?18:40)&&Math.abs(e.cx-p.cx)<150&&g.time-seen.at<12;
    });
    enemies.sort((a,b)=>Math.abs(a.cx-p.cx)-Math.abs(b.cx-p.cx));
-   const foe=g.mode==='boss'?g.boss:hungry?enemies[0]:null;
+   const foe=g.mode==='boss'?g.boss:hungry&&!bypass?enemies[0]:null;
    let target=lv.arenaX+48;
    if(hungry)target=foods[0]?.x??foe?.cx??target;
    if(foe){
@@ -253,7 +255,7 @@ const result=await page.evaluate(async({stage,policy})=>{
    result.endingRestart=true;
   }
  }
- console.log(JSON.stringify(result))
+ console.log(JSON.stringify(process.argv.includes('--summary')?{...result,trace:undefined,transitions:undefined}:result))
  if(!process.argv.includes('--continuous')||!result.next||result.next==='rescue')break;
 }
 }

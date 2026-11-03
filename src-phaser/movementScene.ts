@@ -187,6 +187,7 @@ export class MovementScene extends Phaser.Scene {
       if(!r.saved)spawnCombat(this.runtime)
       spawnRound(this.runtime)
       for(const enemy of this.runtime.enemies)enemy.score=100
+      const livesBefore=this.player.lives
       const previousPosition={x:this.player.x,y:this.player.y}
       this.player.update(this.runtime,STEP,state,STEP)
       const existingPattern=patternState(this.runtime)
@@ -218,7 +219,11 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.items=this.runtime.items.filter(i=>!i.dead)
       this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
       if(this.environment.busy){const pattern=patternState(this.runtime);pattern.phase='idle';pattern.site=null;pattern.rect=null;pattern.age=0;pattern.wait=Math.max(pattern.wait,TREE.monkeyGap)}
-      updateStagePattern(this.runtime,STEP)
+      if(this.stageNumber>=11&&this.player.lives<livesBefore){
+        this.environment.cancel()
+        const pattern=patternState(this.runtime)
+        pattern.phase='idle';pattern.site=null;pattern.rect=null;pattern.age=0;pattern.wait=4
+      }else updateStagePattern(this.runtime,STEP)
       this.ludo.advance(this.player,STEP)
       this.suukuret.advance(this.runtime,STEP)
       this.runtime.time+=STEP
