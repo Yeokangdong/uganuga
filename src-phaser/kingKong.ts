@@ -12,14 +12,13 @@ export function loadKingKong(){
     const base=`./assets/kingkong_${action}`
     const data=await (await fetch(files[base+'.json']!)).json()
     const img=new Image();img.src=files[base+'.png']!;await img.decode()
-    const frames=Object.values(data.frames as Record<string,{frame:{x:number;y:number;w:number;h:number}}>).map(v=>v.frame)
-    const canvas=document.createElement('canvas');canvas.width=img.width;canvas.height=img.height
-    const ctx=canvas.getContext('2d',{willReadFrequently:true})!;ctx.drawImage(img,0,0)
-    const pixels=ctx.getImageData(0,0,img.width,img.height).data
-    let left=Infinity,right=0,top=Infinity,bottom=0
-    for(const f of frames)for(let y=0;y<f.h;y++)for(let x=0;x<f.w;x++)if(pixels[((f.y+y)*img.width+f.x+x)*4+3]!>32){left=Math.min(left,x);right=Math.max(right,x+1);top=Math.min(top,y);bottom=Math.max(bottom,y+1)}
-    const scale=Math.min(54/(right-left),68/(bottom-top))
-    art.sprites[`kingkong.${action}`]={img,frames:frames.map(f=>[f.x,f.y,f.w,f.h,(left+right)/2/f.w,bottom/f.h]),h:frames[0]!.h*scale,fps:18,ax:.5,ay:1,facingLeft:true}
+    // Body landmarks exclude dust, shock waves and overhead status effects.
+    const entries=Object.values(data.frames) as {frame:{x:number;y:number;w:number;h:number};body:{w:number;h:number;footX:number;footY:number}}[]
+    const baseScale=Math.min(54/entries[0]!.body.w,68/entries[0]!.body.h)
+    art.sprites[`kingkong.${action}`]={img,frames:entries.map(({frame:f,body})=>[
+      f.x,f.y,f.w,f.h,body.footX/f.w,body.footY/f.h,
+      Math.min(54/body.w,68/body.h)/baseScale,
+    ]),h:entries[0]!.frame.h*baseScale,fps:18,ax:.5,ay:1,facingLeft:true}
   })).then(()=>{}).catch(error=>{loading=undefined;throw error})
 }
 export function replaceOpeningKingKong(){
@@ -129,7 +128,7 @@ export class KingKong extends Boss {
     const key=`kingkong.${action}`
     ctx.save()
     if(this.phase2)ctx.filter='sepia(1) saturate(6) hue-rotate(315deg)'
-    drawArt(ctx,key,frame,x,this.y+this.h-cy,this.facing<0,{white:this.flash>.15})
+    drawArt(ctx,key,frame,x,this.y+this.h-cy,this.facing<0,{white:this.flash>.15,scale:art.sprites[key]!.frames[frame]![6]})
     ctx.restore()
     for(const wave of this.waves){ctx.strokeStyle='#ffd07b';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(wave.x-cx,floor-4,7,4,0,Math.PI,Math.PI*2);ctx.stroke()}
     if(this.phase==='dizzy'){
