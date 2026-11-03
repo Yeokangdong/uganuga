@@ -1,4 +1,5 @@
 ﻿import Phaser from 'phaser'
+import { sfx } from '../src/game/audio'
 
 const assets = [
   ['title', 'painted-v6/title-scene-costume-v2.webp'],
@@ -63,7 +64,7 @@ export class BootScene extends Phaser.Scene {
 export class TitleScene extends Phaser.Scene {
   constructor() { super('Title') }
   create() {
-    this.add.image(480, 270, 'title').setDisplaySize(960, 540)
+    const bg=this.add.image(480,270,'title');bg.setScale(Math.max(960/bg.width,540/bg.height))
     const logo = this.add.image(480, 135, 'logo')
     logo.setScale(Math.min(620 / logo.width, 190 / logo.height))
     const texture = this.textures.get('hero')
@@ -85,7 +86,7 @@ export class TitleScene extends Phaser.Scene {
     const start = this.add.image(480, 492, 'start')
     start.setScale(Math.min(285 / start.width, 34 / start.height))
     // Enter the Tiled stage atlas.
-    const restart = () => this.scene.start(new URLSearchParams(location.search).has('maps') || new URLSearchParams(location.search).has('convert') ? 'Maps' : 'Play')
+    const restart = () => { sfx.init();sfx.setMusicEnabled(true); this.scene.start(new URLSearchParams(location.search).has('maps') || new URLSearchParams(location.search).has('convert') ? 'Maps' : new URLSearchParams(location.search).has('stage') ? 'Play' : 'Journey', {kind:'opening'}) }
     this.input.once('pointerdown', restart)
     this.input.keyboard?.once('keydown-SPACE', restart)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {

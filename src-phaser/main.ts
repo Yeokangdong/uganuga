@@ -1,6 +1,7 @@
 ﻿import Phaser from 'phaser'
 import { BootScene, TitleScene } from './scenes'
 import './style.css'
+import { JourneyScene } from './journeyScene'
 import { MapScene } from './mapScene'
 import { MovementScene } from './movementScene'
 
@@ -12,7 +13,7 @@ const game = new Phaser.Game({
   backgroundColor: '#102d32',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 } } },
-  scene: [BootScene, TitleScene, MapScene, MovementScene],
+  scene: [BootScene, TitleScene, MapScene, MovementScene, JourneyScene],
   loader: { maxRetries: 0 },
 })
 

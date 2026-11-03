@@ -1,4 +1,7 @@
 import Phaser from 'phaser'
+import { sfx } from '../src/game/audio'
+import { drawArt, frameAt } from '../src/game/art'
+import { paintedLabel } from './journeyScene'
 import { loadPatternArt, updateStagePattern, drawStagePattern, patternState, bounds } from './patterns'
 import { LudoHero } from './ludoHero'
 import { Player } from '../src/game/entities'
@@ -31,6 +34,7 @@ export class MovementScene extends Phaser.Scene {
   private stageNumber = 1
   private carry?: {score:number;lives:number}
   private clearT = 0
+  private intro = 2.1
   ready = false
   accumulator = 0
   ticks = 0
@@ -45,7 +49,7 @@ export class MovementScene extends Phaser.Scene {
   create(data?:{stage?:number;score?:number;lives?:number}) {
     this.stageNumber=data?.stage ?? (Number(new URLSearchParams(location.search).get('stage'))||1)
     this.carry=data?.score===undefined?undefined:{score:data.score,lives:data.lives!}
-    this.paused=false;this.clearT=0
+    this.paused=false;this.clearT=0;this.intro=2.1
     this.ready=false; this.accumulator=0; this.ticks=0
     this.held=neutral(); this.previous=neutral(); this.pending=neutral()
     this.hud=this.add.text(18, 12, 'Loading movement…', {fontSize:'16px',color:'#ffe7a4'})
@@ -53,7 +57,7 @@ export class MovementScene extends Phaser.Scene {
     const reset=()=>{this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0;this.input.keyboard?.resetKeys()}
     this.game.events.on(Phaser.Core.Events.BLUR,reset)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
-      this.ready=false; this.game.events.off(Phaser.Core.Events.BLUR,reset)
+      sfx.stopMusic(); this.ready=false; this.game.events.off(Phaser.Core.Events.BLUR,reset)
       this.input.keyboard?.removeAllKeys(true)
       if(this.textures.exists('movement-view'))this.textures.remove('movement-view'); if(this.level){this.level.canvas.width=1;this.level.canvas.height=1}
     })
@@ -84,7 +88,7 @@ export class MovementScene extends Phaser.Scene {
     this.runtime=Object.assign(Object.create(Game.prototype),{level:this.level,stage:def,players:[this.player],enemies:[],items:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
       food:0,foodMax:60,timeLeft:stage===1?712.8:356.4,time:0,
       stageIdx:stage-1,saved:null,doors:[],ambushes:[],particles:[],popups:[],effects:[],introT:0,lastBeep:0,bannerT:0,bg:this.background,
-      sfx:new Proxy({}, {get:()=>noop}),splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
+      sfx,splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.player.spawnAt(this.runtime)
     if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
@@ -94,7 +98,7 @@ export class MovementScene extends Phaser.Scene {
     this.physics.add.existing(this.marker)
     this.body=this.marker.body as Phaser.Physics.Arcade.Body
     this.body.setAllowGravity(false); this.body.moves=false
-    this.ready=true; this.draw()
+    this.ready=true; sfx.playMusic('stage',def.theme.n); this.draw()
     Object.assign(window,{__movement:this,__patternState:()=>patternState(this.runtime)})
   }
   /** Called once per display frame; edge inputs survive frames with no physics tick. */
@@ -103,10 +107,9 @@ export class MovementScene extends Phaser.Scene {
     if(Phaser.Input.Keyboard.JustDown(this.keys.pause!)) {
       this.paused=!this.paused;this.accumulator=0;this.pending=neutral();this.previous=neutral()
       this.input.keyboard?.resetKeys()
+      if(this.paused)sfx.stopMusic();else sfx.playMusic(this.runtime.mode==='boss'?'boss':'stage',this.level.def.theme.n)
     }
-    if(this.player.out && Phaser.Input.Keyboard.JustDown(this.keys.restart!)) {
-      this.scene.restart({stage:this.level.def.id});return
-    }
+    if(this.player.out){this.scene.start('Journey',{kind:'result',score:this.player.score,stage:this.stageNumber,clear:false});return}
     if(this.paused){this.draw();return}
     const input=neutral()
     for(const action of ['left','right','up','down','attack'] as const)input[action]=this.keys[action]!.isDown
@@ -117,6 +120,7 @@ export class MovementScene extends Phaser.Scene {
     input.attackReleased=!input.attack&&this.previous.attack
     for(const edge of ['jumpPressed','downPressed','attackPressed','attackReleased'] as const)this.pending[edge] ||= input[edge]
     this.previous={...input}; this.held=input
+    if(this.intro>0){this.intro=Math.max(0,this.intro-delta/1000);this.draw();return}
     this.advance(delta/1000)
     this.draw()
   }
@@ -129,9 +133,10 @@ export class MovementScene extends Phaser.Scene {
       const state={...this.held}
       for(const edge of ['jumpPressed','downPressed','attackPressed','attackReleased'] as const){state[edge]=this.pending[edge];this.pending[edge]=false}
       const r=round(this.runtime)
+      if(this.runtime.mode==='rescue'){this.ready=false;this.scene.start('Journey',{kind:'rescue',stage:15,score:this.player.score,lives:this.player.lives});return}
       if(this.runtime.mode==='clear') {
         this.clearT-=STEP;this.accumulator=Math.max(0,this.accumulator-STEP)
-        if(this.clearT<=0&&this.stageNumber<15){this.ready=false;this.scene.restart({stage:this.stageNumber+1,score:this.player.score,lives:this.player.lives});return}
+        if(this.clearT<=0&&this.stageNumber<15){this.ready=false;this.scene.start('Journey',{kind:'travel',stage:this.stageNumber,score:this.player.score,lives:this.player.lives});return}
         continue
       }
       if(this.player.out){this.accumulator=0;break}
@@ -150,8 +155,8 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.boss?.afterUpdate(this.runtime)
       r.updateTimer(STEP)
       r.updateCamera(STEP)
-      if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20)r.startBoss()
-      if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){r.completeStage();this.clearT=2.5}
+      if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20){r.startBoss();sfx.playMusic('boss')}
+      if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){if(this.stageNumber===15){this.player.score+=10000;this.runtime.mode='rescue'}else{r.completeStage();this.clearT=2.5}}
       // Reuse the original pickup, contact immunity and projectile hit-set rules.
       ;(this.runtime as unknown as {collide():void}).collide()
       this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
@@ -193,8 +198,14 @@ export class MovementScene extends Phaser.Scene {
       ctx.fillStyle='#ff615b';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48*boss.hp/boss.maxHp,5)
     }
     drawStagePattern(this.runtime,ctx,cx,cy)
-    this.ludo.draw(ctx,p,cx,cy);this.surface.refresh()
-    this.hud.setText(`${this.paused?'PAUSED ? Esc resume':this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
+    this.ludo.draw(ctx,p,cx,cy);
+    if(this.intro>0){drawArt(ctx,'p1.respawn',frameAt('p1.respawn',2.1-this.intro,false),p.cx-cx,p.y+p.h-cy,false);paintedLabel(ctx,'READY!',192,64,25)}
+    paintedLabel(ctx,'??',30,14,10);paintedLabel(ctx,'??',285,14,10);paintedLabel(ctx,'??',348,14,10);
+    ctx.fillStyle='#fff0c5';ctx.font='9px monospace';ctx.fillText(String(p.score),48,14);ctx.fillText(String(Math.ceil(this.runtime.timeLeft/3.6)),301,14);ctx.fillText(String(p.lives),363,14);
+    ctx.fillStyle='#301f16';ctx.fillRect(8,21,62,5);ctx.fillStyle='#f2c55d';ctx.fillRect(9,22,60*this.runtime.food/60,3);
+    ctx.fillStyle='#fff0c5';ctx.font='8px monospace';ctx.fillText(`FOOD ${this.runtime.food}/60   HP ${p.hp}   O2 ${p.oxygen.toFixed(0)}   ${p.weapon}`,9,37);
+    this.surface.refresh()
+    this.hud.setVisible(this.paused || p.out);this.hud.setText(`${this.paused?'PAUSED ? Esc resume':this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
   }
 }
 
