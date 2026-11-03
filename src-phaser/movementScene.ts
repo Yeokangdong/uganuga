@@ -189,7 +189,8 @@ export class MovementScene extends Phaser.Scene {
       for(const enemy of this.runtime.enemies)enemy.score=100
       const previousPosition={x:this.player.x,y:this.player.y}
       this.player.update(this.runtime,STEP,state,STEP)
-      this.environment.update(this.runtime,STEP,previousPosition)
+      const existingPattern=patternState(this.runtime)
+      if(this.environment.phase!=='IDLE'||!['warn','active'].includes(existingPattern.phase))this.environment.update(this.runtime,STEP,previousPosition)
       for(const enemy of this.runtime.enemies){enemy.advanceStatus(STEP);enemy.update(this.runtime,STEP)}
       for(const projectile of this.runtime.projectiles)projectile.update(this.runtime,STEP)
       for(const item of this.runtime.items)item.update(this.runtime,STEP)

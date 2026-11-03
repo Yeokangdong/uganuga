@@ -5,18 +5,18 @@ import { RUN_SPEED, VIEW_W, VIEW_H } from '../src/game/constants'
 
 export type EventPhase = 'IDLE'|'TELEGRAPH'|'ACTIVE'|'RESOLVED'|'CANCELLED'
 export const P2:Record<number,{name:string;kind:string;color:string;duration:number}>={
-  2:{name:'?? ?? ? ?? ????!',kind:'rise',color:'#fa713a',duration:8},
-  3:{name:'??? ?? ? ?? ????!',kind:'platform',color:'#b9eeff',duration:5},
-  4:{name:'???? ? ?? ?? ??!',kind:'fog',color:'#d9bd78',duration:6},
-  5:{name:'???? ??? ? ??!',kind:'platform',color:'#9d7145',duration:5},
-  6:{name:'?? ??? ? ??!',kind:'platform',color:'#91bd65',duration:5},
-  8:{name:'???? ?? ? ?? ???!',kind:'fall',color:'#bb9ff5',duration:4},
-  9:{name:'?? ?? ? ?? ????!',kind:'wave',color:'#6acbe4',duration:6},
-  10:{name:'?? ?? ? ?? ?? ??!',kind:'fog',color:'#b9d88c',duration:6},
-  11:{name:'??? ?? ?? ? ?? ???!',kind:'chain',color:'#b6a58a',duration:5},
-  12:{name:'?? ?? ?? ? ?? ????!',kind:'platform',color:'#f8e18d',duration:5},
-  14:{name:'???? ?? ? ?? ???!',kind:'fall',color:'#ae7d50',duration:4},
-  15:{name:'??? ?? ? ?????!',kind:'chase',color:'#e7f3ff',duration:7},
+  2:{name:'상승 용암 · 높은 발판으로!',kind:'rise',color:'#fa713a',duration:8},
+  3:{name:'깨지는 얼음 · 다음 발판으로!',kind:'platform',color:'#b9eeff',duration:5},
+  4:{name:'모래폭풍 · 밝은 길을 따라!',kind:'fog',color:'#d9bd78',duration:6},
+  5:{name:'가라앉는 통나무 · 점프!',kind:'platform',color:'#9d7145',duration:5},
+  6:{name:'휘는 대나무 · 점프!',kind:'platform',color:'#91bd65',duration:5},
+  8:{name:'수정기둥 붕괴 · 표시 밖으로!',kind:'fall',color:'#bb9ff5',duration:4},
+  9:{name:'대형 파도 · 높은 발판으로!',kind:'wave',color:'#6acbe4',duration:6},
+  10:{name:'포자 안개 · 밝은 길을 따라!',kind:'fog',color:'#b9d88c',duration:6},
+  11:{name:'돌기둥 연쇄 붕괴 · 표시 밖으로!',kind:'chain',color:'#b6a58a',duration:5},
+  12:{name:'낙뢰 파손 발판 · 다음 발판으로!',kind:'platform',color:'#f8e18d',duration:5},
+  14:{name:'나뭇가지 낙하 · 표시 밖으로!',kind:'fall',color:'#ae7d50',duration:4},
+  15:{name:'눈사태 추격 · 오른쪽으로!',kind:'chase',color:'#e7f3ff',duration:7},
 }
 export const TREE = { leafSeconds:1.2, telegraphSeconds:2.4, fallSeconds:.8, length:72, height:12, trigger:108, monkeyGap:10 } as const
 /** Scene-owned simulation clock: no delayed callbacks, terrain edits, or camera effects survive cancellation. */
@@ -34,15 +34,15 @@ export class EnvironmentEvent {
   constructor(readonly level:Level) {
     if(P2[level.def.id]){
       // A reversible event lane in the middle fifth; never replace authored terrain.
-      for(let x=Math.ceil(Math.max(384,level.arenaX*.4)/16)*16;x<Math.min(level.arenaX*.6,level.arenaX-320);x+=16){
+      for(let x=Math.ceil(Math.max(384,level.arenaX*.38)/16)*16;x<Math.min(level.arenaX*.65,level.arenaX-320);x+=16){
         const floor=level.groundY(x)
         if(floor==null)continue
-        if(level.spawns.some(a=>['D','P','S'].includes(a.kind)&&Math.abs(a.col*16-x)<240))continue
+        if(level.spawns.some(a=>['D','P','S'].includes(a.kind)&&Math.abs(a.col*16-x)<192))continue
         let clear=true
         for(let dx=-64;dx<=224;dx+=16){
           const c=(x+dx)/16
           if(!level.isSolidTile(level.tile(c,floor/16)))clear=false
-          for(let r=floor/16-7;r<floor/16;r++)if(level.isLadder(c,r)||level.isSolidTile(level.tile(c,r)))clear=false
+          for(let r=floor/16-(level.def.id===12?3:6);r<floor/16;r++)if(level.isLadder(c,r)||(level.def.id!==12&&level.isSolidTile(level.tile(c,r))))clear=false
         }
         if(clear){this.site={x,floor};this.rockX=x-48;break}
       }
@@ -128,10 +128,10 @@ export class EnvironmentEvent {
     this.age+=dt
     if(this.phase==='TELEGRAPH'&&this.age>=2.8){this.phase='ACTIVE';this.age=0;g.sfx.playMusic('boss');g.shake(.15,1)}
     if(this.phase!=='ACTIVE')return
-    const t=this.age,id=this.level.def.id
+    const t=this.age
     // Temporary stepping stones over the original, intact dry floor.
     if(['rise','wave','platform'].includes(spec.kind))for(let i=0;i<3;i++){
-      const x=s.x+i*64,y=s.floor-24-(spec.kind==='platform'?Math.min(24,t*7)*(i===Math.floor(t)%3?1:0):0)
+      const x=s.x+i*64,y=s.floor-24+(spec.kind==='platform'?Math.min(24,t*7)*(i===Math.floor(t)%3?1:0):0)
       if(p.x+p.w>x&&p.x<x+40&&previous.y+p.h<=y+3&&p.y+p.h>=y&&p.vy>=0){p.y=y-p.h;p.vy=0;p.onGround=true}
     }
     let hit=false,source=s.x
@@ -151,7 +151,6 @@ export class EnvironmentEvent {
     if(hit&&this.pulse>=1.5){p.hurt(g,1,source);this.pulse=0}
     if(t>=spec.duration||p.cx>s.x+208)this.resolve(g)
     // No falling-through holes, permanent tile edits, item removal, or score hooks.
-    void id
   }
   private drawP2(ctx:CanvasRenderingContext2D,cx:number,cy:number){
     const s=this.site!,spec=P2[this.level.def.id]!,active=this.phase==='ACTIVE',t=this.age
@@ -160,7 +159,7 @@ export class EnvironmentEvent {
     ctx.setLineDash([4,4]);ctx.strokeRect(0,-18,192,18);ctx.setLineDash([])
     ctx.font='10px sans-serif';ctx.fillText('? SAFE',198,-28)
     if(['rise','wave','platform'].includes(spec.kind)){
-      for(let i=0;i<3;i++){const sink=active&&spec.kind==='platform'&&i===Math.floor(t)%3?Math.min(24,t*7):0;ctx.fillRect(i*64,-24-sink,40,7)}
+      for(let i=0;i<3;i++){const sink=active&&spec.kind==='platform'&&i===Math.floor(t)%3?Math.min(24,t*7):0;ctx.fillRect(i*64,-24+sink,40,7)}
       if(active&&spec.kind!=='platform'){ctx.globalAlpha=.5;const h=spec.kind==='rise'?Math.min(18,t*3):12+Math.sin(t*2)*5;ctx.fillRect(0,-h,192,h)}
     }else if(spec.kind==='fog'){
       if(active){ctx.globalAlpha=.18;for(let i=0;i<6;i++)ctx.fillRect(i*34+Math.sin(t+i)*8,-95,25,60)}
