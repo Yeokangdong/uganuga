@@ -3,6 +3,7 @@ import { sfx } from '../src/game/audio'
 import { drawArt, frameAt } from '../src/game/art'
 import { paintedLabel } from './journeyScene'
 import { loadPatternArt, updateStagePattern, drawStagePattern, patternState, bounds } from './patterns'
+import { loadSuukuret, SuukuretPopulation } from './suukuret'
 import { LudoHero } from './ludoHero'
 import { Player } from '../src/game/entities'
 import { Level } from '../src/game/level'
@@ -25,6 +26,7 @@ const neutral = (): PlayerInput => ({ left:false,right:false,up:false,down:false
  */
 export class MovementScene extends Phaser.Scene {
   private ludo = new LudoHero()
+  private suukuret = new SuukuretPopulation()
   private background = new Background()
   player!: Player
   level!: Level
@@ -68,7 +70,7 @@ export class MovementScene extends Phaser.Scene {
     const url=maps[`./maps/${String(stage).padStart(2,'0')}.tmj`]!
     const response=await fetch(url); if(!response.ok)throw new Error(`Map load: ${response.status}`)
     const data:MapData=await response.json()
-    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this)])
+    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this), loadSuukuret()])
     if(!this.scene.isActive())return
     const def=JSON.parse(data.properties[0]!.value) as StageDef
     this.level=new Level(def)
@@ -90,6 +92,7 @@ export class MovementScene extends Phaser.Scene {
       stageIdx:stage-1,saved:null,doors:[],ambushes:[],particles:[],popups:[],effects:[],introT:0,lastBeep:0,bannerT:0,bg:this.background,
       sfx,splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.player.spawnAt(this.runtime)
+    this.suukuret.place(this.level)
     if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
     // Same 384x216 world viewport and Player.draw dimensions as the original game.
@@ -164,6 +167,7 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
       updateStagePattern(this.runtime,STEP)
       this.ludo.advance(this.player,STEP)
+      this.suukuret.advance(this.runtime,STEP)
       this.runtime.time+=STEP
       this.accumulator=Math.max(0,this.accumulator-STEP);this.ticks++
     }
@@ -198,6 +202,7 @@ export class MovementScene extends Phaser.Scene {
       ctx.fillStyle='#ff615b';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48*boss.hp/boss.maxHp,5)
     }
     drawStagePattern(this.runtime,ctx,cx,cy)
+    this.suukuret.draw(this.runtime,ctx,cx,cy)
     this.ludo.draw(ctx,p,cx,cy);
     if(this.intro>0){drawArt(ctx,'p1.respawn',frameAt('p1.respawn',2.1-this.intro,false),p.cx-cx,p.y+p.h-cy,false);paintedLabel(ctx,'READY!',192,64,25)}
     paintedLabel(ctx,'??',30,14,10);paintedLabel(ctx,'??',285,14,10);paintedLabel(ctx,'??',348,14,10);

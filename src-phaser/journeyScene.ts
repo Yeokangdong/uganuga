@@ -1,3 +1,4 @@
+import { loadSuukuret, replaceOpeningAnimal } from './suukuret'
 ﻿import Phaser from 'phaser'
 import { loadStageArt, image, drawArt, frameAt, textArtKey, drawPaintedText } from '../src/game/art'
 import { drawOpening, OPENING_DURATION, OPENING_GRAB_START } from '../src/game/opening'
@@ -32,8 +33,9 @@ export class JourneyScene extends Phaser.Scene {
       if(this.textures.exists('journey-view'))this.textures.remove('journey-view')
     })
     const stage=data.kind==='opening'?1:data.stage??15
-    const load=()=>Promise.all([loadStageArt(stage),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
+    const load=()=>Promise.all([loadStageArt(stage),loadSuukuret(),...(data.kind==='travel'?[loadStageArt(stage+1)]:[])]).then(()=>{
       if(!this.scene.isActive())return
+      replaceOpeningAnimal()
       loading.destroy();this.background.setStage(STAGES[stage-1]!.theme.background)
       this.surface=this.textures.createCanvas('journey-view',384,216)!
       this.add.image(0,0,'journey-view').setOrigin(0).setDisplaySize(960,540)
