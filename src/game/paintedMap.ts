@@ -28,64 +28,28 @@ export function elevatedObject(stage:number,col:number):ElevatedObject {
   return choices[Math.floor(col/48)%choices.length]!
 }
 
-/** The support is local scenery behind the collision geometry, clipped to its bank. */
+/** Draw the complete authored support, including its crown and roots. */
 export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bottom:number,stage:number,left:number,right:number,object:ElevatedObject='local'):void {
-  // Mushroom ledges use their own thin platform art, without giant scenery below.
-  if(stage===10)return
-  const objectArt=object==='local'?undefined:image('world.elevated.'+object)
-  // Complete alternate structures are drawn once by terrainDeck, including
-  // their own lower supports. Never paint a second squeezed full silhouette.
-  if(objectArt)return
+  if(stage===10||object!=='local'&&image('world.elevated.'+object))return
   const im=part(stage,'support'),theme=terrainTheme(stage)
-  if(!im||bottom<=top||theme.floating)return
-  if(stage===1){
-    // Jungle ledges grow from narrow trunks, rather than stretched whole trees
-    // or repeated giant decorative arches competing with the playable path.
-    const ceiling=top+14,height=Math.max(1,bottom-ceiling+6),width=Math.min(34,16+height*.14)
-    g.save();g.beginPath();g.rect(left,ceiling,right-left,height);g.clip()
-    g.drawImage(im,im.width*.23,im.height*.4,im.width*.56,im.height*.6,x-width/2,ceiling,width,height)
-    g.restore();return
-  }
-  const h=Math.max(72,bottom-top+14)
-  const w=(theme.structure==='snow'||theme.structure==='ice')?h*im.width/im.height
-    :theme.organic?Math.min(132,h*im.width/im.height):Math.min(48,h*im.width/im.height)
-  const center=Math.max(left+w*.25,Math.min(right-w*.25,x))
-  g.save()
-  // The platform owns the walkable top. Scenery must stay underneath it.
-  const ceiling=top+14
-  const buried=6
-  g.beginPath();g.rect(left,ceiling,right-left,Math.max(0,bottom-ceiling+buried));g.clip()
-  g.drawImage(im,center-w/2,bottom-h+buried,w,h)
-  g.restore()
+  if(!im||bottom<=top||right<=left||theme.floating)return
+  const available=bottom-top+6
+  const limit=stage===1?34:theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
+  const scale=Math.min(available/im.height,Math.min(limit,right-left)/im.width)
+  const w=im.width*scale,h=im.height*scale
+  const center=Math.max(left+w/2,Math.min(right-w/2,x))
+  g.drawImage(im,center-w/2,bottom+6-h,w,h)
 }
 
 /** Paint only below the actual one-way platform top: no fake raised landing edge. */
 export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:number,width:number,object:ElevatedObject='local',bottom?:number):void {
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   if(objectArt){
-    if(object==='ice'){
-      // An ice arch is a complete silhouette: stretching its crown to a long
-      // ledge and its legs to another height squashes the whole structure.
-      // Fit the original uniformly; let the separate ledge own the full top.
-      const height=Math.max(1,(bottom??y+80)-y+6)
-      const naturalWidth=objectArt.width*height/objectArt.height
-      const support=naturalWidth<=width?objectArt:part(stage,'support')??objectArt
-      const supportWidth=support.width*height/support.height
-      g.save();g.beginPath();g.rect(x,y,width,height);g.clip()
-      g.drawImage(support,x+(width-supportWidth)/2,y,supportWidth,height)
-      g.restore()
-      terrainDeck(g,x,y,stage,width,'local')
-      return
-    }
-    // Keep the authored crown's proportions. Only the lower stem/pillars extend
-    // to the ground; drawing a second complete object made overlapping caps.
-    const sourceTop=objectArt.height*.28
-    const depth=sourceTop*width/objectArt.width
-    g.drawImage(objectArt,0,0,objectArt.width,sourceTop,x,y,width,depth)
-    if(bottom!==undefined&&bottom>y+depth){
-      g.drawImage(objectArt,0,sourceTop,objectArt.width,objectArt.height-sourceTop,
-        x,y+depth,width,bottom-y-depth+6)
-    }
+    // Fit the entire silhouette; no crown, root or side is clipped to a tile.
+    const height=Math.max(1,(bottom??y+80)-y+6)
+    const scale=Math.min(width/objectArt.width,height/objectArt.height)
+    g.drawImage(objectArt,x+(width-objectArt.width*scale)/2,y,objectArt.width*scale,objectArt.height*scale)
+    terrainDeck(g,x,y,stage,width,'local')
     return
   }
   const im=part(stage,'platform')
@@ -99,24 +63,11 @@ export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:n
   // otherwise a long platform becomes a row of disconnected miniature ledges.
   const unit=stage===15?44:64
   const depth=im.height*unit/im.width,edge=Math.min(8,width/2)
-  if(stage>=1&&stage<=5){
-    // Discard the authored transparent border so the painted top and ends
-    // coincide with the one-way collision span, including short stair treads.
-    const top=[2,3,2,3,2][stage-1]!,sourceWidth=im.width-4,sourceHeight=im.height-top-2
-    const cap=sourceWidth/8
-    g.drawImage(im,2,top,cap,sourceHeight,x,y,edge,depth)
-    for(let offset=edge;offset<width-edge;offset+=48){
-      const w=Math.min(48,width-edge-offset)
-      g.drawImage(im,2+cap,top,sourceWidth*w/unit,sourceHeight,x+offset,y,w,depth)
-    }
-    g.drawImage(im,im.width-2-cap,top,cap,sourceHeight,x+width-edge,y,edge,depth)
-    return
-  }
   const sourceEdge=im.width/8
   g.drawImage(im,0,0,sourceEdge,im.height,x,y,edge,depth)
   for(let offset=edge;offset<width-edge;offset+=48){
     const w=Math.min(48,width-edge-offset)
-    g.drawImage(im,sourceEdge,0,im.width*w/unit,im.height,x+offset,y,w,depth)
+    g.drawImage(im,sourceEdge,0,im.width-2*sourceEdge,im.height,x+offset,y,w,depth)
   }
   g.drawImage(im,im.width-sourceEdge,0,sourceEdge,im.height,x+width-edge,y,edge,depth)
 }
