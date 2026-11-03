@@ -33,7 +33,7 @@
   "57": {
     "class_type": "LoadImage",
     "inputs": {
-      "image": "uga_walk_210.png"
+      "image": "uga_walk_221.png"
     }
   },
   "55": {
@@ -43,9 +43,9 @@
         "39",
         0
       ],
-      "width": 160,
-      "height": 192,
-      "length": 41,
+      "width": 704,
+      "height": 704,
+      "length": 49,
       "batch_size": 1,
       "start_image": [
         "57",
@@ -60,7 +60,7 @@
         "38",
         0
       ],
-      "text": "The same cartoon caveman holding a wooden club, full body side view facing right, walking in place. Natural alternating left and right legs, a complete looping walk cycle. Solid bright green background. Locked camera. Preserve character design, size and illustration style."
+      "text": "same cartoon caveman character, side view facing right, walking in place, legs alternating, green screen background, static camera. He is actively marching with clear large alternating steps: left leg forward and right leg back, then right leg forward and left leg back, repeating a full walking cycle. Knees bend and feet lift off the ground with each step. One full body character stays centered, same face, orange hair, leopard tunic and wooden club, same cartoon illustration style."
     }
   },
   "7": {
@@ -70,7 +70,7 @@
         "38",
         0
       ],
-      "text": "camera movement, zoom, running, sliding, turning, extra legs, deformed, blurry, changing character, background scenery, text"
+      "text": "standing still, static pose, motionless legs, camera movement, zoom, running, sliding, turning, extra legs, deformed, blurry, changing character, background scenery, text, duplicate character, multiple people, shrinking, growing, moving across screen"
     }
   },
   "3": {
@@ -92,7 +92,7 @@
         "55",
         0
       ],
-      "seed": 210,
+      "seed": 223,
       "steps": 30,
       "cfg": 5,
       "sampler_name": "uni_pc",
@@ -120,7 +120,7 @@
         "8",
         0
       ],
-      "filename_prefix": "210_walk/raw",
+      "filename_prefix": "221_walk/attempt3_raw",
       "fps": 12,
       "lossless": true,
       "quality": 100,
@@ -144,7 +144,7 @@
         "60",
         0
       ],
-      "filename_prefix": "210_walk/rgba"
+      "filename_prefix": "221_walk/attempt3_rgba"
     }
   }
 }

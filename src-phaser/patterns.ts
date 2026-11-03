@@ -225,7 +225,12 @@ export function patternContact(id:number,p:PatternSite,t:number,b:Rect):boolean{
     if(id===11){for(let x=Math.max(p.x,b.x);x<=Math.min(p.x+110,b.x+b.w);x+=2){const q=(x-p.x)/110,top=p.y+(p.floor-64-p.y)*q,bottom=p.y+(p.floor-p.y)*q;if(b.y+b.h>=Math.min(top,bottom)&&b.y<=Math.max(top,bottom))return true}return false}
     return finalRects(id,p,t).some(r=>overlap(b,r))
   }
-  if(id===6){const c=soundCenter(p),radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-c.x,0,c.x-b.x-b.w),Math.max(b.y-c.y,0,c.y-b.y-b.h)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,b.y+b.h].map(y=>Math.hypot(x-c.x,y-c.y))));return near<=radius+3&&far>=radius-3}
+  if(id===6){
+    const bottom=Math.min(b.y+b.h,p.floor)
+    if(b.y>=bottom)return false
+    const c=soundCenter(p),radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-c.x,0,c.x-b.x-b.w),Math.max(b.y-c.y,0,c.y-bottom)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,bottom].map(y=>Math.hypot(x-c.x,y-c.y))))
+    return near<=radius+3&&far>=radius-3
+  }
   if(id===7){const q=t<.65?t/.65:(t-.65)/.95,x=t<.65?p.x:p.x+80*q,y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;return overlap(b,{x:x-10,y:y-10,w:20,h:20})}
   if(id===8){for(let i=0;i<=40;i++)if(overlap(b,{x:p.x-64+i*3.2-3,y:p.floor-24-i*1.6-3,w:6,h:6}))return true;return false}
   if(id===9)return overlap(b,{x:p.x+32+t/1.4*64,y:p.floor-18,w:26,h:18})

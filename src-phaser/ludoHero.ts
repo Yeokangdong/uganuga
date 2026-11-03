@@ -32,7 +32,7 @@ export class LudoHero {
     if(!this.wasGround&&p.onGround)this.landingAge=0
     else this.landingAge+=dt
     if(!p.onGround&&p.vy>=0)this.fallAge+=dt;else this.fallAge=0
-    const mode=p.climbing?'ladder':p.swingT>0?'attack':!p.onGround?'jump':this.landingAge<.5&&Math.abs(p.vx)<5?'landing':Math.abs(p.vx)>5?'walk':'idle'
+    const mode=p.climbing?'ladder':p.swingT>0?'attack':!p.onGround?'jump':this.landingAge<.5?'landing':Math.abs(p.vx)>5?'walk':'idle'
     if(mode!==this.mode){this.age=0;this.mode=mode}
     if(mode!=='ladder'||Math.abs(p.vy)>.5)this.age+=dt
     if(this.wasGround&&!p.onGround)this.jumpAge=0
