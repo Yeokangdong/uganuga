@@ -2,6 +2,88 @@ import assert from 'node:assert/strict'
 import {build} from 'esbuild'
 import {writeFileSync} from 'node:fs'
 process.on('uncaughtException',e=>{console.error(e.message);process.exit(1)})
+// Extend the 194 placement review with rendered opaque-sole contact (0..2 world px).
+// Run against Vite: PLAYWRIGHT_MODULE=<module path> node tools/check_stage_patterns.mjs --feet
+if(process.argv.includes('--feet')){
+  const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??'playwright')
+  const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})})
+  try{
+    const page=await browser.newPage()
+    await page.goto(process.env.FEET_URL??'http://127.0.0.1:5173')
+    const result=await page.evaluate(async()=>{
+      const {loadStageArt,art,drawArt,opaqueSole}=await import('/src/game/art.ts')
+      const {STAGES}=await import('/src/game/stages.ts')
+      const {Level,T}=await import('/src/game/level.ts')
+      const {patternState,drawStagePattern}=await import('/src/game/patternRuntime.ts')
+      const failures=[],summary=[];let frames=0,changed=0,actors=0
+      const cv=document.createElement('canvas');cv.width=1024;cv.height=1024
+      const ctx=cv.getContext('2d',{willReadFrequently:true})
+      const contact=(id,label,gap)=>{if(gap<-.001||gap>2.001)failures.push({id,label,gap})}
+      for(const def of STAGES.slice(0,15)){
+        await loadStageArt(def.id)
+        if(!art.images['stage.bg'+def.id])failures.push({id:def.id,label:'missing background'})
+        const l=new Level(def),keys=new Set([def.boss.key]);let placements=0,stageFrames=0
+        const surfaceGap=(x,floor)=>{
+          const scale=l.scale,pixels=l.canvas.getContext('2d').getImageData(Math.floor(x*scale),Math.round(floor*scale),1,Math.ceil(3*scale)).data
+          for(let row=0;row<pixels.length/4;row++)if(pixels[row*4+3]>24)return row/scale
+          return Infinity
+        }
+        for(const spawn of l.spawns){
+          const cfg=spawn.cfg??def.roles[spawn.kind]
+          if(!cfg||cfg.cls==='flyer')continue
+          keys.add(cfg.key)
+          const floor=l.floorBelow(spawn.col*16+8,spawn.row*16)
+          if(!l.combatFloor(spawn.col*16,floor,cfg.w*1.5,cfg.h*1.125))failures.push({id:def.id,label:'unsupported '+cfg.key})
+          contact(def.id,'painted floor '+cfg.key,surfaceGap(spawn.col*16+cfg.w*.75,floor));placements++
+        }
+        for(const [key,s] of Object.entries(art.sprites)){
+          if(!keys.has(key.split('.')[0])||/\.(fly|hang|dead|collapse)$/.test(key))continue
+          for(let frame=0;frame<s.frames.length;frame++){
+            const f=s.frames[frame],height=s.ppu?f[3]*s.ppu:s.h
+            if(Math.abs((opaqueSole(s,frame)-(f[5]??s.ay))*height)>.001)changed++
+            ctx.setTransform(4,0,0,4,0,0);ctx.clearRect(0,0,256,256)
+            drawArt(ctx,key,frame,128,192,false,{feet:true})
+            const px=ctx.getImageData(0,0,1024,1024).data
+            let last=-1
+            for(let y=1023;y>=0&&last<0;y--)for(let x=0;x<1024;x++)if(px[(y*1024+x)*4+3]>0){last=y;break}
+            contact(def.id,key+':'+frame,192-(last+1)/4);frames++;stageFrames++
+            ctx.clearRect(0,0,256,256);drawArt(ctx,key,frame,128,192,false)
+            const old=ctx.getImageData(0,768,1024,4).data
+            if(old.some((v,i)=>i%4===3&&v>0))changed++
+          }
+        }
+        const g={level:l,mode:'play',players:[],camX:0,camY:0},state=patternState(g)
+        if(![1,3,6,11,13,14].includes(def.id))for(const site of state.sites){
+          const floor=[7,8].includes(def.id)?site.y:site.floor,x=site.actorX??site.x
+          contact(def.id,'painted platform',surfaceGap(x,floor))
+          const tile=l.tile(Math.floor(x/16),Math.round(floor/16))
+          if(!l.isSolidTile(tile)&&tile!==T.Platform)failures.push({id:def.id,label:'unsupported pattern',x,floor})
+          for(const phase of ['idle','warn','active','recover'])for(let age=0;age<2;age+=.125){
+            state.site=site;state.phase=phase;state.age=age;let first=true
+            const proxy=new Proxy(ctx,{get(target,key){if(key==='drawImage')return(...args)=>{
+              if(first&&args[0] instanceof HTMLImageElement&&args[0].src.includes('/patterns-v1/')){
+                first=false;const [im,sx,sy,sw,sh,dx,dy,dw,dh]=args
+                const scan=document.createElement('canvas');scan.width=sw;scan.height=sh
+                const sg=scan.getContext('2d');sg.drawImage(im,sx,sy,sw,sh,0,0,sw,sh)
+                const pixels=sg.getImageData(0,0,sw,sh).data;let bottom=0
+                for(let y=sh-1;y>=0&&!bottom;y--)for(let x=0;x<sw;x++)if(pixels[(y*sw+x)*4+3]>0){bottom=y+1;break}
+                const matrix=target.getTransform(),sole=matrix.f+matrix.d*(dy+bottom*dh/sh)
+                contact(def.id,'pattern '+phase+':'+age,floor-sole);actors++
+              }
+              return target.drawImage(...args)
+            };const value=target[key];return typeof value==='function'?value.bind(target):value},set(target,key,value){target[key]=value;return true}})
+            ctx.setTransform(1,0,0,1,0,0);drawStagePattern(g,proxy,0,0)
+          }
+        }
+        summary.push({stage:def.id,placements,frames:stageFrames,sites:state.sites.length})
+      }
+      return {summary,frames,changed,actors,failures}
+    })
+    console.log(JSON.stringify({...result,failures:result.failures.slice(0,12),failureCount:result.failures.length}))
+    assert.equal(result.failures.length,0,'Opaque sole / terrain gap must be 0..2 px')
+  }finally{await browser.close()}
+  process.exit(0)
+}
 const root=new URL('../',import.meta.url).pathname.replace(/^\/(\w:)/,'$1')
 const bundle=await build({stdin:{contents:"export {Player} from './src/game/entities.ts'; export {Level,T} from './src/game/level.ts'; export {STAGES,makeCaveRoom} from './src/game/stages.ts'; export * from './src/game/stagePatterns.ts'; export {updateStagePattern} from './src/game/patternRuntime.ts';",resolveDir:root},bundle:true,platform:'node',format:'esm',write:false,define:{'import.meta.env.BASE_URL':JSON.stringify('/'),'import.meta.env.DEV':'false'}})
 const {Player,Level,T,STAGES,makeCaveRoom,STAGE_PATTERNS,patternZones,patternMovement,patternHazard,updateStagePattern}=await import('data:text/javascript;base64,'+Buffer.from(bundle.outputFiles[0].text).toString('base64'))

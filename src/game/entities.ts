@@ -1161,7 +1161,7 @@ export abstract class Enemy implements Body {
       ctx.restore()
       return true
     }
-    return drawArt(ctx, key, frame, this.cx - cx, this.y + this.h - cy, faceLeft, { white })
+    return drawArt(ctx, key, frame, this.cx - cx, this.y + this.h - cy, faceLeft, { white, feet: this.cfg.cls !== 'flyer' })
   }
 
   protected pixel(ctx: CanvasRenderingContext2D, s: Sprite, cx: number, cy: number, faceLeft: boolean): void {

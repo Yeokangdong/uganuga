@@ -137,6 +137,7 @@ export function has(key: string): boolean {
 }
 
 export interface DrawOpts {
+  feet?: boolean
   /** 하얗게 번쩍 (피격) */
   white?: boolean
   /** 회전 (라디안) — 회전 중심은 그림 중앙 */
@@ -165,6 +166,23 @@ export function frameAt(key: string, t: number, loop = true): number {
 const flameFrames = new WeakMap<FrameSet, Map<number, HTMLCanvasElement>>()
 
 /** 발 기준점(cx, bottom)에 그리기. 성공하면 true */
+const soleCache = new WeakMap<FrameSet, Map<number, number>>()
+/** Bottom edge of the last nontransparent pixel in the complete pose. */
+export function opaqueSole(s:FrameSet, frame:number):number {
+  const index=Math.max(0,frame)%s.frames.length
+  let poses=soleCache.get(s)
+  if(!poses){poses=new Map();soleCache.set(s,poses)}
+  const cached=poses.get(index);if(cached!==undefined)return cached
+  const [x,y,w,h]=s.frames[index]!
+  const cv=document.createElement('canvas');cv.width=w!;cv.height=h!
+  const g=cv.getContext('2d',{willReadFrequently:true})!
+  g.drawImage(s.img,x!,y!,w!,h!,0,0,w!,h!)
+  const pixels=g.getImageData(0,0,w!,h!).data
+  let bottom=0
+  for(let row=h!-1;row>=0&&!bottom;row--)for(let col=0;col<w!;col++)if(pixels[(row*w!+col)*4+3]!>0){bottom=row+1;break}
+  const sole=bottom/h!;poses.set(index,sole);return sole
+}
+
 export function drawArt(
   ctx: CanvasRenderingContext2D,
   key: string,
@@ -182,10 +200,12 @@ export function drawArt(
   const h = s.ppu ? fh * s.ppu * k : s.h * k
   const w = s.ppu ? fw * s.ppu * k : (fw / fh) * h
   const ax = f.length >= 6 ? f[4] : s.ax
-  const ay = f.length >= 6 ? f[5] : s.ay
+  const ay = o.feet ? opaqueSole(s,frame) : f.length >= 6 ? f[5] : s.ay
   ctx.save()
   ctx.imageSmoothingEnabled = !s.pixelArt
   ctx.translate(cx, bottom)
+  // Stop filtered atlas sampling at the physical sole plane.
+  if(o.feet){ctx.beginPath();ctx.rect(-w*2,-h*2,w*4,h*2);ctx.clip()}
   if (o.tilt) ctx.rotate(o.tilt)
   if (o.rot) {
     ctx.translate(0, -h / 2)

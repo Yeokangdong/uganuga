@@ -29,7 +29,7 @@ function sitesFor(l:Level):PatternSite[]{
       const width=id===13?224:160,height=id===13?184:24
       const spot=l.findCombatPlacement(a.x-width/2,a.floor,width,height,Math.max(300,a.x-160),a.x+80,a.floor)
       if(!spot||Math.abs(spot.x+width/2-a.x)>100)continue
-      result.push({...a,actorX:a.x,x:spot.x+width/2,dir:1})
+      result.push({...a,actorX:[12,15].includes(id)?spot.x+width/2:a.x,y:[12,15].includes(id)?spot.floor:a.y,x:spot.x+width/2,dir:1})
     }
     return result
   }
@@ -143,7 +143,7 @@ function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:num
       const scan=cv.getContext('2d',{willReadFrequently:true})!;scan.drawImage(pack.image,f.x,f.y,f.w,f.h,0,0,f.w,f.h)
       const data=scan.getImageData(0,0,f.w,f.h).data
       let left=f.w,top=f.h,right=0,bottom=0
-      for(let py=0;py<f.h;py++)for(let px=0;px<f.w;px++)if(data[(py*f.w+px)*4+3]!>24){left=Math.min(left,px);top=Math.min(top,py);right=Math.max(right,px);bottom=Math.max(bottom,py)}
+      for(let py=0;py<f.h;py++)for(let px=0;px<f.w;px++)if(data[(py*f.w+px)*4+3]!>0){left=Math.min(left,px);top=Math.min(top,py);right=Math.max(right,px);bottom=Math.max(bottom,py)}
       b={x:left,y:top,w:right-left+1,h:bottom-top+1};tongueBounds.set(f,b)
     }
     if(attach==='top')y-=(b.y-f.pivot.y)*size/f.h
