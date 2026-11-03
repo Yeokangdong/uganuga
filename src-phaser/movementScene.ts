@@ -199,7 +199,11 @@ export class MovementScene extends Phaser.Scene {
       r.updateTimer(STEP)
       r.updateCamera(STEP)
       if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20){r.startBoss();if(this.stageNumber===15&&this.runtime.boss){this.runtime.boss=new KingKong(this.runtime);this.runtime.showBanner('최종 보스 · 킹콩',1.2)}sfx.playMusic('boss')}
-      if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){this.player.score+=5000;this.runtime.popup(this.runtime.boss.cx,this.runtime.boss.y,'+5000','#ffe4a1');this.clearSeconds=Math.ceil(this.runtime.timeLeft/TIME_UNIT);r.completeStage();this.clearT=2.5}
+      if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){
+        // Legacy Boss.hit already awards 5000. KingKong owns a separate hit path.
+        if(this.runtime.boss instanceof KingKong){this.player.score+=5000;this.runtime.popup(this.runtime.boss.cx,this.runtime.boss.y,'+5000','#ffe4a1')}
+        this.clearSeconds=Math.ceil(this.runtime.timeLeft/TIME_UNIT);r.completeStage();this.clearT=2.5
+      }
       // Reuse the original pickup, contact immunity and projectile hit-set rules.
       const foodBefore=this.runtime.food
       const pickups=this.runtime.items.filter(i=>!i.dead)
