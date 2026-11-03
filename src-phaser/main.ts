@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { BootScene, TitleScene } from './scenes'
 import './style.css'
+import { MapScene } from './mapScene'
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -9,7 +10,7 @@ const game = new Phaser.Game({
   height: 540,
   backgroundColor: '#102d32',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [BootScene, TitleScene],
+  scene: [BootScene, TitleScene, MapScene],
   loader: { maxRetries: 0 },
 })
 

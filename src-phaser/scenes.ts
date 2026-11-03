@@ -84,8 +84,8 @@ export class TitleScene extends Phaser.Scene {
     this.add.sprite(480, 445, 'hero', 'idle-0').setScale(1.15).play('uga-idle')
     const start = this.add.image(480, 492, 'start')
     start.setScale(Math.min(285 / start.width, 34 / start.height))
-    // Step 1 only: input exercises Scene shutdown/re-entry, without implementing gameplay.
-    const restart = () => this.scene.start('Boot')
+    // Enter the Tiled stage atlas.
+    const restart = () => this.scene.start('Maps')
     this.input.once('pointerdown', restart)
     this.input.keyboard?.once('keydown-SPACE', restart)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
