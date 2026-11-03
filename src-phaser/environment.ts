@@ -212,7 +212,7 @@ export class EnvironmentEvent {
     if(this.phase==='TELEGRAPH')angle=this.age<TREE.leafSeconds?Math.sin(this.age*26)*.035:.12*(this.age-TREE.leafSeconds)/(TREE.telegraphSeconds-TREE.leafSeconds)
     if(this.phase==='ACTIVE')angle=.12+(Math.PI/2-.12)*Math.min(1,this.age/TREE.fallSeconds)**2
     ctx.save();ctx.translate(s.x-cx,s.floor-cy);ctx.rotate(angle)
-    ctx.fillStyle='#765039';ctx.fillRect(-6,-TREE.length,12,TREE.length)
+    ctx.fillStyle='#765039';ctx.fillRect(fallen?-TREE.height:-6,-TREE.length,fallen?TREE.height:12,TREE.length)
     if(!fallen){ctx.fillStyle='#5c9253';ctx.beginPath();ctx.ellipse(0,-72,22,15,0,0,Math.PI*2);ctx.fill()}
     ctx.restore()
     if(this.phase==='TELEGRAPH'||this.phase==='ACTIVE'){ctx.save();ctx.strokeStyle='#ffd87a';ctx.setLineDash([4,4]);ctx.strokeRect(s.x-cx,s.floor-cy-12,TREE.length,12);ctx.restore()}
