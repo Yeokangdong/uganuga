@@ -11,7 +11,7 @@ import { Player, Item } from '../src/game/entities'
 import { Level } from '../src/game/level'
 import { loadStageArt } from '../src/game/art'
 import { STEP, VIEW_W, VIEW_H } from '../src/game/constants'
-import { Game, TIME_UNIT } from '../src/game/game'
+import { Game, TIME_UNIT, TIME_LIMIT } from '../src/game/game'
 import { Background } from '../src/game/background'
 import { spawnCombat } from './combat'
 import { round, spawnRound } from './round'
@@ -102,11 +102,11 @@ export class MovementScene extends Phaser.Scene {
     const noop=()=>{}
     this.background.setStage(def.theme.background)
     this.runtime=Object.assign(Object.create(Game.prototype),{level:this.level,stage:def,players:[this.player],enemies:[],items:[],projectiles:[],boss:null,mode:'play',camX:0,camY:0,
-      food:0,foodMax:60,timeLeft:60*TIME_UNIT,time:0,
+      food:0,foodMax:60,timeLeft:TIME_LIMIT,time:0,
       stageIdx:stage-1,saved:null,doors:[],ambushes:[],particles:[],popups:[],effects:[],introT:0,lastBeep:0,bannerT:0,bg:this.background,
       sfx,splash:noop,burst:noop,fx:noop,shake:noop,popup:noop,showBanner:noop}) as Game
     this.runtime.popup=(x:number,y:number,text:string)=>{if(!text.startsWith('TIME BONUS'))this.feedback.push({x,y,text,t:.7})}
-    this.runtime.burst=(x:number,y:number)=>{this.impacts.push({x,y,t:.18});if(this.player.weapon!=='fire'){this.hitStop=.045}}
+    this.runtime.clubImpact=(x:number,y:number)=>{this.impacts.push({x,y,t:.18});this.hitStop=.045}
     this.runtime.shake=(seconds:number,power:number)=>{this.shakeUntil=this.runtime.time+Math.min(seconds,.3);this.shakePower=power}
     this.fullAt=-10
     this.runtime.showBanner=(text:string,duration=2)=>{this.notice={text,until:this.runtime.time+duration}}
@@ -196,9 +196,7 @@ export class MovementScene extends Phaser.Scene {
       for(const item of this.runtime.items)item.update(this.runtime,STEP)
       this.runtime.boss?.update(this.runtime,STEP)
       this.runtime.boss?.afterUpdate(this.runtime)
-      const expired=this.runtime.timeLeft<=STEP
       r.updateTimer(STEP)
-      if(expired)this.runtime.timeLeft=20*TIME_UNIT
       r.updateCamera(STEP)
       if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20){r.startBoss();if(this.stageNumber===15&&this.runtime.boss){this.runtime.boss=new KingKong(this.runtime);this.runtime.showBanner('최종 보스 · 킹콩',1.2)}sfx.playMusic('boss')}
       if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){this.player.score+=5000;this.runtime.popup(this.runtime.boss.cx,this.runtime.boss.y,'+5000','#ffe4a1');this.clearSeconds=Math.ceil(this.runtime.timeLeft/TIME_UNIT);r.completeStage();this.clearT=2.5}

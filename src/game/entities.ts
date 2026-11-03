@@ -533,7 +533,9 @@ export class Player implements Body {
       if (e.dying || e.invulnerable || this.swingHit.has(e)) continue
       if (overlap(hb, e)) {
         this.swingHit.add(e)
+        const hpBefore = e.hp
         e.hit(g, dmg, this.cx, this)
+        if (this.weapon !== 'fire' && e.hp < hpBefore) g.clubImpact(e.cx, e.y + e.h / 2)
         g.fx('fx.hit', e.cx, e.y + e.h * 0.7, false, 0.2)
         if (this.weapon === 'fire') g.burst(e.cx, e.y + e.h / 2, '#ff7a1a', 6)
         if (this.swingKind === 'air') this.vy = -220
@@ -542,7 +544,9 @@ export class Player implements Body {
     const b = g.boss
     if (b && !b.dying && !this.swingHit.has(b) && overlap(hb, b.hitbox)) {
       this.swingHit.add(b)
+      const hpBefore = b.hp
       b.hit(g, dmg, this)
+      if (this.weapon !== 'fire' && b.hp < hpBefore) g.clubImpact(b.cx, b.y + b.h / 2)
       g.fx('fx.hit', hb.x + hb.w / 2, hb.y + hb.h / 2, false, 0.2)
       if (this.swingKind === 'air') this.vy = -240
     }
