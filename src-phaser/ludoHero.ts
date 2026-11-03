@@ -39,17 +39,17 @@ export class LudoHero {
     if(!p.onGround)this.jumpAge+=dt
     this.wasGround=p.onGround
   }
-  draw(ctx:CanvasRenderingContext2D,p:Player,cx:number,cy:number){
-    if(p.dead||p.out||p.swimming||p.ropeAngle!==null){p.draw(ctx,cx,cy);return}
-    if(p.invuln>0&&p.spawnFireT<=0&&Math.floor(p.invuln*20)%2===0)return
-    const name=this.mode==='idle'?'walk':this.mode==='landing'?'jump':this.mode,pack=this.packs[name];if(!pack){p.draw(ctx,cx,cy);return}
+  draw(ctx:CanvasRenderingContext2D,p:Player,cx:number,cy:number,reducedMotion=false){
+    if(p.dead||p.out||p.swimming||p.ropeAngle!==null){p.draw(ctx,cx,cy,reducedMotion);return}
+    if(!reducedMotion&&p.invuln>0&&p.spawnFireT<=0&&Math.floor(p.invuln*20)%2===0)return
+    const name=this.mode==='idle'?'walk':this.mode==='landing'?'jump':this.mode,pack=this.packs[name];if(!pack){p.draw(ctx,cx,cy,reducedMotion);return}
     let index=0
     if(name==='walk'&&this.mode!=='idle')index=Math.floor(this.age/.082)%20
     if(name==='ladder')index=Math.floor(this.age/.085)%20
     if(name==='attack')index=Math.min(8,Math.floor((1-p.swingT/Math.max(.001,p.swingDur))*9))
     if(name==='jump')index=this.mode==='landing'?Math.min(24,15+Math.floor(this.landingAge*20)):p.vy<0?Math.min(7,Math.floor(this.jumpAge*50)):Math.min(14,12+Math.floor(this.fallAge*12))
     const f=pack.frames[index]!,scale=24.75/pack.height
-    ctx.save();ctx.translate(p.cx-cx,p.y+p.h-cy);if(p.facing<0&&name!=='ladder')ctx.scale(-1,1)
+    ctx.save();if(reducedMotion&&p.invuln>0&&p.spawnFireT<=0)ctx.globalAlpha*=.55;ctx.translate(p.cx-cx,p.y+p.h-cy);if(p.facing<0&&name!=='ladder')ctx.scale(-1,1)
     ctx.drawImage(pack.image,f.x,f.y,f.w,f.h,-f.w*scale/2,-f.h*scale,f.w*scale,f.h*scale);ctx.restore()
   }
 }

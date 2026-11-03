@@ -280,7 +280,7 @@ export class MovementScene extends Phaser.Scene {
     }
     drawStagePattern(this.runtime,ctx,cx,cy)
     this.suukuret.draw(this.runtime,ctx,cx,cy)
-    this.ludo.draw(ctx,p,cx,cy);
+    this.ludo.draw(ctx,p,cx,cy,this.reducedMotion);
     for(const f of this.impacts){for(let i=0;i<5;i++){const a=i*Math.PI*2/5+f.t*4,r=5+( .18-f.t)*45;paintedLabel(ctx,'★',f.x-cx+Math.cos(a)*r,f.y-cy+Math.sin(a)*r,5)}}
     for(const f of this.feedback){ctx.save();ctx.globalAlpha=Math.min(1,f.t/.18);paintedLabel(ctx,f.text,Math.max(65,Math.min(319,f.x-cx)),Math.max(54,f.y-cy-(.7-f.t)*25),9);ctx.restore()}
     ctx.restore()

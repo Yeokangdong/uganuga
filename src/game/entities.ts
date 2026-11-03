@@ -657,7 +657,15 @@ export class Player implements Body {
     return { key: idleKey, frame: this.poseFrame(idleKey) }
   }
 
-  draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+  draw(ctx: CanvasRenderingContext2D, cx: number, cy: number, reducedMotion = false): void {
+    ctx.save()
+    try {
+      if (reducedMotion && !this.dead && this.invuln > 0 && this.spawnFireT <= 0) ctx.globalAlpha *= .55
+      this.drawBody(ctx, cx, cy, reducedMotion)
+    } finally { ctx.restore() }
+  }
+
+  private drawBody(ctx: CanvasRenderingContext2D, cx: number, cy: number, reducedMotion: boolean): void {
     if (this.out) return
     const left = this.facing < 0
     const bx = this.cx - cx
@@ -681,7 +689,7 @@ export class Player implements Body {
         drawArt(ctx, key, this.poseFrame(key,false), bx, by, left, { rot: has(`${this.key}.dead`) ? 0 : this.deathRot })
         return
       }
-      if (this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
+      if (!reducedMotion && this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
       const { key, frame } = this.paintedKey()
       const flash = this.chargeReady && Math.floor(this.anim * 16) % 2 === 0
       drawArt(ctx, key, frame, bx, by, this.climbing||this.ropeAngle!==null?false:left, { feet: !this.climbing && this.ropeAngle===null, white: flash, glow: this.chargeReady ? '#ffd23a' : undefined })
@@ -697,7 +705,7 @@ export class Player implements Body {
       drawSpriteRot(ctx, s.jump, bx, by - 10, this.deathRot, left)
       return
     }
-    if (this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
+    if (!reducedMotion && this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
     let f: Sprite
     if (this.swingT > 0) f = this.swingKind === 'up' ? s.throwUp : s.throw
     else if (!this.onGround || this.climbing) f = s.jump
