@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+﻿import Phaser from 'phaser'
 
 const assets = [
   ['title', 'painted-v6/title-scene-costume-v2.webp'],
@@ -85,7 +85,7 @@ export class TitleScene extends Phaser.Scene {
     const start = this.add.image(480, 492, 'start')
     start.setScale(Math.min(285 / start.width, 34 / start.height))
     // Enter the Tiled stage atlas.
-    const restart = () => this.scene.start('Maps')
+    const restart = () => this.scene.start(new URLSearchParams(location.search).has('maps') || new URLSearchParams(location.search).has('convert') ? 'Maps' : 'Play')
     this.input.once('pointerdown', restart)
     this.input.keyboard?.once('keydown-SPACE', restart)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -95,3 +95,4 @@ export class TitleScene extends Phaser.Scene {
     })
   }
 }
+

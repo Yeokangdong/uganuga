@@ -1,7 +1,8 @@
-import Phaser from 'phaser'
+﻿import Phaser from 'phaser'
 import { BootScene, TitleScene } from './scenes'
 import './style.css'
 import { MapScene } from './mapScene'
+import { MovementScene } from './movementScene'
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -10,7 +11,8 @@ const game = new Phaser.Game({
   height: 540,
   backgroundColor: '#102d32',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [BootScene, TitleScene, MapScene],
+  physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 } } },
+  scene: [BootScene, TitleScene, MapScene, MovementScene],
   loader: { maxRetries: 0 },
 })
 
@@ -22,3 +24,4 @@ const dispose = () => {
 }
 window.addEventListener('pagehide', dispose)
 if (import.meta.hot) import.meta.hot.dispose(dispose)
+
