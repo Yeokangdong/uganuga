@@ -1,4 +1,6 @@
 import Phaser from 'phaser'
+import { loadPatternArt, updateStagePattern, drawStagePattern, patternState, bounds } from './patterns'
+import { LudoHero } from './ludoHero'
 import { Player } from '../src/game/entities'
 import { Level } from '../src/game/level'
 import { loadStageArt } from '../src/game/art'
@@ -19,6 +21,7 @@ const neutral = (): PlayerInput => ({ left:false,right:false,up:false,down:false
  * Tiled supplies collision geometry; Phaser owns input, lifecycle and presentation.
  */
 export class MovementScene extends Phaser.Scene {
+  private ludo = new LudoHero()
   private background = new Background()
   player!: Player
   level!: Level
@@ -61,7 +64,7 @@ export class MovementScene extends Phaser.Scene {
     const url=maps[`./maps/${String(stage).padStart(2,'0')}.tmj`]!
     const response=await fetch(url); if(!response.ok)throw new Error(`Map load: ${response.status}`)
     const data:MapData=await response.json()
-    await loadStageArt(stage)
+    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this)])
     if(!this.scene.isActive())return
     const def=JSON.parse(data.properties[0]!.value) as StageDef
     this.level=new Level(def)
@@ -71,6 +74,10 @@ export class MovementScene extends Phaser.Scene {
     this.level.ladders.fill(0)
     const ladders=data.layers.find(l=>l.name==='Ladders')!
     if('objects' in ladders)for(const o of ladders.objects)this.level.ladders[o.y/16*data.width+o.x/16]=JSON.parse(o.properties[0]!.value)
+    for(const [name,key] of [['Anchors','patternAnchors'],['Cliffs','patternCliffs']] as const){
+      const layer=data.layers.find(l=>l.name===name)
+      if(layer&&'objects' in layer)this.level[key]=layer.objects.map(o=>JSON.parse(o.properties[0]!.value))
+    }
     this.player=new Player(0,'우가','#ffe7a4')
     const noop=()=>{}
     this.background.setStage(def.theme.background)
@@ -88,7 +95,7 @@ export class MovementScene extends Phaser.Scene {
     this.body=this.marker.body as Phaser.Physics.Arcade.Body
     this.body.setAllowGravity(false); this.body.moves=false
     this.ready=true; this.draw()
-    Object.assign(window,{__movement:this})
+    Object.assign(window,{__movement:this,__patternState:()=>patternState(this.runtime)})
   }
   /** Called once per display frame; edge inputs survive frames with no physics tick. */
   update(_time:number,delta:number) {
@@ -150,6 +157,8 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
       this.runtime.items=this.runtime.items.filter(i=>!i.dead)
       this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
+      updateStagePattern(this.runtime,STEP)
+      this.ludo.advance(this.player,STEP)
       this.runtime.time+=STEP
       this.accumulator=Math.max(0,this.accumulator-STEP);this.ticks++
     }
@@ -160,7 +169,11 @@ export class MovementScene extends Phaser.Scene {
   draw() {
     const p=this.player,lv=this.level
     const cx=round(this.runtime).saved?0:this.runtime.mode==='boss'?this.level.arenaX:Math.max(0,Math.min(lv.width-VIEW_W,p.cx-VIEW_W*.4))
-    const cy=Math.max(0,Math.min(lv.height-VIEW_H,p.y-VIEW_H*.5))
+    let cy=Math.max(0,Math.min(lv.height-VIEW_H,p.y-VIEW_H*.5))
+    if(!round(this.runtime).saved&&this.runtime.mode==='play'){
+      const state=patternState(this.runtime),site=state.site??state.sites.find(a=>Math.abs(a.x-p.cx)<160&&Math.abs(a.floor-p.y-p.h)<60)
+      if(site){const b=bounds(site,lv.def.id);if(b.h<=VIEW_H-8)cy=Math.max(0,Math.min(lv.height-VIEW_H,Math.max(b.y+b.h-VIEW_H+4,Math.min(cy,b.y-4))))}
+    }
     this.runtime.camX=cx;this.runtime.camY=cy
     const ctx=this.surface.context
     this.background.draw(ctx,cx,this.runtime.time,cy,lv.height-VIEW_H)
@@ -179,7 +192,8 @@ export class MovementScene extends Phaser.Scene {
       ctx.fillStyle='#261c22';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48,5)
       ctx.fillStyle='#ff615b';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48*boss.hp/boss.maxHp,5)
     }
-    p.draw(ctx,cx,cy);this.surface.refresh()
+    drawStagePattern(this.runtime,ctx,cx,cy)
+    this.ludo.draw(ctx,p,cx,cy);this.surface.refresh()
     this.hud.setText(`${this.paused?'PAUSED ? Esc resume':this.runtime.mode==='clear'?(this.stageNumber===15?'ALL CLEAR':'STAGE CLEAR'):round(this.runtime).saved?'CAVE ? Down at entrance to return':'Esc pause'}\nSTAGE ${this.stageNumber}  ← → move · ↑ jump / ladder · ↓ descend · Space swing\n${p.out?'OUT - Enter: retry stage':p.dead?'RESPAWNING':p.climbing?'LADDER':p.swimming?'WATER':p.onGround?'GROUNDED':'AIR'}  O₂ ${p.oxygen.toFixed(1)}/20  HP ${p.hp}  LIFE ${p.lives}\nFOOD ${this.runtime.food}/60  SCORE ${p.score}  WEAPON ${p.weapon}  CLOCK ${Math.ceil(this.runtime.timeLeft/3.6)}`)
   }
 }
