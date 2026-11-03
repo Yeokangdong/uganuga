@@ -41,7 +41,7 @@ export function themeKey(base: string, n: string): string {
 
 export class Level {
   patternAnchors: {x:number;y:number;floor:number;left:number;right:number}[]=[]
-  patternCliffs: {x:number;top:number;bottom:number}[]=[]
+  patternCliffs: {x:number;y:number;top:number;bottom:number}[]=[]
   cols: number
   rows = ROWS
   tiles: Uint8Array
@@ -114,6 +114,7 @@ export class Level {
       this.spawns.push({col:encounter.col,row:encounter.row,kind:'A',cfg:encounter.cfg,group:encounter.group,facing:encounter.facing})
     }
     if(def.cave)this.cave.fill(1)
+    this.placeCombatSpawns()
     this.buildCaveRects()
     this.spawns.sort((a, b) => a.col - b.col)
     this.canvas = this.prerender()
@@ -188,6 +189,48 @@ export class Level {
       if ((this.isSolidTile(t) || t === T.Platform) && up1 === T.Empty && up2 === T.Empty && !this.isCave(c, r - 1)) return r * TILE
     }
     return null
+  }
+
+  /** Require the whole body and edge margin to fit a dry collision surface. */
+  combatFloor(x:number,floor:number,w:number,h:number):boolean {
+    if(x<16||x+w>this.width-16||floor-h<8||floor>=this.height)return false
+    for(let c=Math.floor((x-4)/TILE);c<=Math.floor((x+w+4)/TILE);c++){
+      const r=Math.round(floor/TILE),t=this.tile(c,r)
+      if(!(this.isSolidTile(t)||t===T.Platform)||this.isLadder(c,r)||this.isLadder(c,r-1))return false
+      for(let y=Math.floor((floor-h)/TILE);y<r;y++)
+        if(this.tile(c,y)!==T.Empty||this.isLadder(c,y)||this.waterAt(c*TILE+8,y*TILE+8))return false
+    }
+    return true
+  }
+
+  findCombatPlacement(x:number,y:number,w:number,h:number,minX=this.def.cave?32:256,maxX=this.arenaX-64,requiredFloor?:number):{x:number;floor:number}|null {
+    let best:{x:number;floor:number}|null=null,score=Infinity
+    for(let c=Math.max(1,Math.floor(minX/TILE));c<=Math.min(this.cols-2,Math.floor(maxX/TILE));c++){
+      const px=c*TILE
+      if(this.spawns.some(s=>s.kind==='D'&&s.col*TILE>px-144&&s.col*TILE<px+w+144))continue
+      for(let r=3;r<this.rows;r++){
+        const floor=r*TILE
+        if(requiredFloor!==undefined&&floor!==requiredFloor)continue
+        const cost=Math.abs(px-x)+Math.abs(floor-y)*.35
+        if(cost>=score||!this.combatFloor(px,floor,w,h))continue
+        best={x:px,floor};score=cost
+      }
+    }
+    return best
+  }
+
+  private placeCombatSpawns():void {
+    if(this.def.id>15)return
+    for(const s of this.spawns){
+      if(!['A','E','M','U','F','S','X','^'].includes(s.kind))continue
+      const cfg=s.cfg??this.def.roles[s.kind as 'E'|'M'|'U'|'F']
+      const w=cfg?cfg.w*1.5: s.kind==='^'?26:16
+      const h=cfg?cfg.h*1.125:s.kind==='S'?14:40
+      const target=this.floorBelow(s.col*TILE+8,s.row*TILE)
+      const p=this.findCombatPlacement(s.col*TILE,target,w,h)
+      if(!p)throw new Error(`No safe combat placement: stage ${this.def.id} ${s.kind}`)
+      s.col=p.x/TILE;s.row=p.floor/TILE-1
+    }
   }
 
   /** (px, py) 아래로 처음 만나는 바닥 y */
@@ -295,7 +338,13 @@ export class Level {
         const scale=Math.min((tree.bottom-tree.top+6)/im.height,(tree.right-tree.left)/im.width)
         const width=im.width*scale,height=im.height*scale
         const center=Math.max(tree.left+width/2,Math.min(tree.right-width/2,tree.x))
-        this.patternCliffs.push({x:center+width/2,top:tree.bottom+6-height,bottom:tree.bottom})
+        const scan=document.createElement('canvas');scan.width=im.width;scan.height=im.height
+        const sg=scan.getContext('2d',{willReadFrequently:true})!;sg.drawImage(im,0,0)
+        const pixels=sg.getImageData(0,0,im.width,im.height).data
+        let row=Math.max(0,Math.min(im.height-1,Math.round(im.height-38/scale))),edge=-1
+        for(;row>=0&&edge<0;row--)for(let col=im.width-1;col>=0;col--)
+          if(pixels[(row*im.width+col)*4+3]!>24){edge=col;break}
+        if(edge>=0)this.patternCliffs.push({x:center-width/2+(edge+1)*scale,y:tree.bottom+6-height+(row+1)*scale,top:tree.bottom+6-height,bottom:tree.bottom})
       }
     }
     // Anchors share the authored scenery geometry, never invent terrain for an actor.

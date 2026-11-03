@@ -624,8 +624,9 @@ export class Game {
     if(this.boss||this.mode!=='play'||this.saved)return
     this.mode = 'boss'
     const cfg = this.stage.boss
-    const floor = this.level.floorBelow(this.level.arenaX + VIEW_W - 40, 0)
-    this.boss = new Boss(cfg, this.level.arenaX + VIEW_W + 10, floor - cfg.h)
+    const placement=this.level.findCombatPlacement(this.level.arenaX+VIEW_W-cfg.w-24, this.level.floorBelow(this.level.arenaX+VIEW_W-40,0),cfg.w,cfg.h,this.level.arenaX+VIEW_W/2,this.level.arenaX+VIEW_W-cfg.w-16)
+    if(!placement){this.mode='play';return}
+    this.boss = new Boss(cfg, placement.x, placement.floor - cfg.h)
     this.bg.setBoss(true)
     this.sfx.playMusic('boss')
     this.showBanner('보스 등장!', 2.2, cfg.name)
@@ -637,9 +638,9 @@ export class Game {
     this.level.spawns.forEach((s) => (s.done = true))
   }
 
-  private makeEnemy(cfg: EnemyCfg, x: number, floorY: number, row: number): Enemy {
+  private makeEnemy(cfg: EnemyCfg, x: number, floorY: number, _row: number): Enemy {
     const resolved=has(cfg.key+'.walk')?cfg:{...cfg,key:cfg.fallbackKey??'dino1_0'}
-    return new ContactAnimal(resolved,x,cfg.cls==='flyer'?row*TILE:floorY-cfg.h)
+    return new ContactAnimal(resolved,x,cfg.cls==='flyer'&&this.stage.id>15?_row*TILE:floorY-cfg.h)
   }
 
   private spawn(): void {
@@ -648,11 +649,13 @@ export class Game {
     const n = this.stage.theme.n
     for (const s of lv.spawns) {
       if (s.done || s.col * TILE > edge) continue
-      if(['A','E','M','U','F','S','P'].includes(s.kind)){
-        const x=s.col*TILE
-        if(x<this.camX-48||x>this.camX+VIEW_W-32)continue
+      if(['A','E','M','U','F','S','P','X','^'].includes(s.kind)){
+        const x=s.col*TILE,cfg=s.cfg??this.stage.roles[s.kind as 'E'|'M'|'U'|'F']
+        const w=cfg?cfg.w*1.5:s.kind==='^'?32:24,h=cfg?cfg.h*1.125:40
+        const floor=lv.floorBelow(x+8,s.row*TILE)
+        if(x<this.camX+8||x+w>this.camX+VIEW_W-8||floor-h<this.camY+4||floor>this.camY+VIEW_H-4)continue
         const visible=this.enemies.filter(e=>!e.dead&&!e.dying&&e.cfg.hp<999&&e.x+e.w>this.camX-16&&e.x<this.camX+VIEW_W+16)
-        if(visible.length>=2||this.players.some(p=>p.alive&&Math.abs(p.cx-x)<40))continue
+        if(visible.length>=2||this.players.some(p=>p.alive&&(Math.abs(p.cx-x)<96||p.invuln>0&&Math.abs(p.cx-x)<160)))continue
       }
       s.done = true
       const x = s.col * TILE
@@ -720,8 +723,9 @@ export class Game {
         if (cfg) {
           for (const dx of [-36, 40]) {
             const ex = a.x + dx
-            if (this.level.solidAt(ex + 4, a.y - 8)) continue
-            const e = this.makeEnemy(cfg.cls === 'flyer' ? this.stage.roles.U ?? cfg : cfg, ex, a.y, 0)
+            const placed=this.level.findCombatPlacement(ex,a.y,cfg.w*1.5,cfg.h*1.125)
+            if(!placed||this.players.some(p=>p.alive&&Math.abs(p.cx-placed.x)<96))continue
+            const e = this.makeEnemy(cfg, placed.x, placed.floor, 0)
             e.flash = 0.3
             this.enemies.push(e)
             this.burst(ex + 6, a.y - 10, '#c9a77a', 8)

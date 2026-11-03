@@ -20,10 +20,20 @@ const states=new WeakMap<Level,Runtime>()
 /** Select only continuous, generous foreground surfaces; preserve ladder exits and both landing ends. */
 function sitesFor(l:Level):PatternSite[]{
   const id=l.def.id,result:PatternSite[]=[]
+  if(id>10)return result
   const safe=(x:number,y:number)=>x>240&&x<l.arenaX-240&&!l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-x)<128)&&!Array.from({length:7},(_,i)=>Math.floor(x/TILE)-3+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(y/TILE)-3+i).some(r=>l.isLadder(c,r)))
   if([1,6,7,8,9,10].includes(id)){
-    for(const a of l.patternAnchors){
+    for(const anchor of l.patternAnchors){
+      const a={...anchor}
       if(!safe(a.x,a.floor)||!safe(a.x,a.y)||a.right-a.left<80||result.some(p=>Math.abs(p.x-a.x)<384))continue
+      if(![1,6].includes(id)){
+        const target=id===7||id===8?a.y-4:a.floor
+        const width=id===7?32:id===9||id===10?40:68,height=id===7?32:id===9||id===10?40:64
+        const spot=l.findCombatPlacement(a.x-width/2,target,width,height,Math.max(256,id===9?a.x-192:a.left+4),id===9?a.x+192:a.right-width-4,target)
+        if(!spot||spot.floor!==target)continue
+        a.x=spot.x+width/2
+        if(id===7||id===8)a.y=target
+      }
       if(a.floor-a.y>120||a.floor-a.y<24&&id!==9)continue
       const row=Math.round(a.floor/TILE)
       if(id!==9&&!Array.from({length:15},(_,i)=>Math.floor(a.x/TILE)-7+i).every(c=>l.isSolidTile(l.tile(c,row))))continue
@@ -36,7 +46,7 @@ function sitesFor(l:Level):PatternSite[]{
       const floor=cliff.bottom,x=cliff.x
       if(cliff.top>floor-40||!safe(x,floor)||result.some(p=>Math.abs(p.x-x)<480))continue
       if(!Array.from({length:9},(_,i)=>Math.floor(x/TILE)+i).every(c=>l.isSolidTile(l.tile(c,Math.round(floor/TILE)))))continue
-      result.push({x,y:floor-27,floor,dir:1,left:x,right:x+144})
+      result.push({x,y:cliff.y,floor,dir:1,left:x,right:x+144})
     }
     return result
   }
@@ -49,10 +59,14 @@ function sitesFor(l:Level):PatternSite[]{
     let x=(left+right)/2,dir=1,actorY=y
     if(id===5){
       const nearWater=(edge:number)=>Array.from({length:7},(_,i)=>r+i-2).some(row=>l.tile(edge,row)===5)
-      if(nearWater(end)){x=right-16;dir=-1}else if(nearWater(start-1)){x=left+16}else continue
+      if(nearWater(end)){x=right-48;dir=-1}else if(nearWater(start-1)){x=left+48}else continue
     }
     const floor=id===1?(l.groundY(x)??y):y
     if(id===1&&(floor-y<64||floor-y>120||!Array.from({length:9},(_,i)=>Math.floor(x/TILE)-2+i).every(c=>l.isSolidTile(l.tile(c,Math.round(floor/TILE))))))continue
+    const bodyWidth=id===5?48:84,bodyHeight=id===5?48:64
+    const spot=l.findCombatPlacement(x-bodyWidth/2,y,bodyWidth,bodyHeight,Math.max(256,left+4),right-bodyWidth-4,y)
+    if(!spot||spot.floor!==y)continue
+    x=spot.x+bodyWidth/2
     if(!safe(x,y)||result.some(s=>Math.abs(s.x-x)<VIEW_W+96))continue
     // A branch is part of the authored jungle platform painting. Other actors sit on their biome's surface/edge.
     result.push({x,y:actorY,floor,dir,left,right})
@@ -106,9 +120,24 @@ export function updateStagePattern(g:Game,dt:number):void{
     if(t>=(id===1?(p.right-p.x-12)/32:durations[id]!)){s.phase='recover';s.age=0;s.rect=null}
   }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=id>=6?5:6;s.site=null}
 }
-function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:number,y:number,flip=false,size=128):void{
+function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:number,y:number,flip=false,size=128,attach?:'top'|'bottom'|'left'|'center'):void{
   const a=pack.animations[key];if(!a)return
   const i=Math.floor(t*a.fps),f=a.frames[a.loop?i%a.frames.length:Math.min(i,a.frames.length-1)]!
+  if(attach){
+    let b=tongueBounds.get(f)
+    if(!b){
+      const cv=document.createElement('canvas');cv.width=f.w;cv.height=f.h
+      const scan=cv.getContext('2d',{willReadFrequently:true})!;scan.drawImage(pack.image,f.x,f.y,f.w,f.h,0,0,f.w,f.h)
+      const data=scan.getImageData(0,0,f.w,f.h).data
+      let left=f.w,top=f.h,right=0,bottom=0
+      for(let py=0;py<f.h;py++)for(let px=0;px<f.w;px++)if(data[(py*f.w+px)*4+3]!>24){left=Math.min(left,px);top=Math.min(top,py);right=Math.max(right,px);bottom=Math.max(bottom,py)}
+      b={x:left,y:top,w:right-left+1,h:bottom-top+1};tongueBounds.set(f,b)
+    }
+    if(attach==='top')y-=(b.y-f.pivot.y)*size/f.h
+    if(attach==='bottom')y-=(b.y+b.h-f.pivot.y)*size/f.h
+    if(attach==='left')x-=(b.x-f.pivot.x)*size/f.w
+    if(attach==='center'){x-=((b.x+b.w/2)-f.pivot.x)*size/f.w;y-=((b.y+b.h/2)-f.pivot.y)*size/f.h}
+  }
   ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1)
   ctx.drawImage(pack.image,f.x,f.y,f.w,f.h,-f.pivot.x*size/f.w,-f.pivot.y*size/f.h,size,size);ctx.restore()
 }
@@ -144,13 +173,13 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   if(!site){ctx.restore();return}
   const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=site.floor-cy
   let ax=x,ay=y
-  if(id===1||id>=6){ax=x;ay=site.y-cy}
-  if(id===1)ay+=34
+  if(id===1||[6,7,8].includes(id)){ax=x;ay=site.y-cy}
+  if(id===1)ay+=4
   if(id===2)ax=x-32
-  if(id===3){ax=x;ay=y-20}
+  if(id===3){ax=x;ay=site.y-cy}
   if(id===5)ax=x
   const key=phase==='warn'?warn[id]:phase==='active'?active[id]:phase==='recover'?recover[id]:idle[id]
-  if(!(id===4&&phase==='active'))sprite(ctx,pack,key!,t,ax,ay,id===5&&site.dir<0)
+  if(!(id===4&&phase==='active'))sprite(ctx,pack,key!,t,ax,ay,id===5&&site.dir<0,id===7?48:id===5||id===9||id===10?64:[2,4,8].includes(id)?96:128,id===1?'top':id===3?'left':id===6?'center':'bottom')
   const color=['','#ffe6a2','#ffb34d','#a6efff','#ffe29b','#a8e3b5','#bcefff','#ffbb88','#e0b8ff','#9ceaff','#e6f3ad'][id]!
   if(id>=6){drawLater(ctx,pack,id,site,phase,t,cx,cy,state.rect);ctx.restore();return}
   if(phase==='warn'){
@@ -166,7 +195,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
     if(id===1&&r)sprite(ctx,pack,'coconut_spin',t,r.x+6-cx,r.y+6-cy,false,32)
     if(id===2){if(t<.85){const q=t/.85;sprite(ctx,pack,'lava_drop',t,x-32+q*64,y-6-Math.sin(q*Math.PI)*64,false,40)}else sprite(ctx,pack,'extinguish',t-.85,x+32,y,false,48)}
     if(id===3&&r){ctx.save();ctx.beginPath();ctx.rect(r.x-cx,r.y-cy,r.w,r.h);ctx.clip();sprite(ctx,pack,'wall_spear',t,x,y-20);ctx.restore()}
-    if(id===4)sprite(ctx,pack,t>.32?'jaw_close':'jaw_rise',t,x,y+8,false,80)
+    if(id===4)sprite(ctx,pack,t>.32?'jaw_close':'jaw_rise',t,x,y,false,80,'bottom')
     if(id===5&&r){
       const key=t<.25?'tongue_extend':t>=.85?'tongue_retract':'tongue_hold'
       const local=t<.25?t:t>=.85?t-.85:t-.25
