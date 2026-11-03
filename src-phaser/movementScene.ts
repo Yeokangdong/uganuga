@@ -1,3 +1,5 @@
+import { EnvironmentEvent, TREE } from './environment'
+import { KingKong, drawCaptive } from './kingKong'
 import Phaser from 'phaser'
 import { sfx } from '../src/game/audio'
 import { drawArt, frameAt, art } from '../src/game/art'
@@ -28,6 +30,7 @@ export class MovementScene extends Phaser.Scene {
   private ludo = new LudoHero()
   private suukuret = new SuukuretPopulation()
   private background = new Background()
+  environment!: EnvironmentEvent
   player!: Player
   level!: Level
   body!: Phaser.Physics.Arcade.Body
@@ -67,7 +70,7 @@ export class MovementScene extends Phaser.Scene {
     const reset=()=>{this.held=neutral();this.previous=neutral();this.pending=neutral();this.accumulator=0;this.input.keyboard?.resetKeys()}
     this.game.events.on(Phaser.Core.Events.BLUR,reset)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
-      sfx.stopMusic(); this.ready=false; this.game.events.off(Phaser.Core.Events.BLUR,reset)
+      this.environment?.cancel(); sfx.stopMusic(); this.ready=false; this.game.events.off(Phaser.Core.Events.BLUR,reset)
       this.input.keyboard?.removeAllKeys(true)
       if(this.textures.exists('movement-view'))this.textures.remove('movement-view'); if(this.level){this.level.canvas.width=1;this.level.canvas.height=1}
     })
@@ -110,6 +113,7 @@ export class MovementScene extends Phaser.Scene {
       const site=this.level.findCombatPlacement(304,this.player.y+this.player.h,24,32,256,352)
       if(first&&site){first.col=site.x/16;first.row=site.floor/16-1;first.cfg={...def.roles.E!,behavior:'hopper',speed:18}}
     }
+    this.environment=new EnvironmentEvent(this.level)
     this.suukuret.place(this.level)
     if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
@@ -175,7 +179,9 @@ export class MovementScene extends Phaser.Scene {
       if(!r.saved)spawnCombat(this.runtime)
       spawnRound(this.runtime)
       for(const enemy of this.runtime.enemies)enemy.score=100
+      const previousPosition={x:this.player.x,y:this.player.y}
       this.player.update(this.runtime,STEP,state,STEP)
+      this.environment.update(this.runtime,STEP,previousPosition)
       for(const enemy of this.runtime.enemies){enemy.advanceStatus(STEP);enemy.update(this.runtime,STEP)}
       for(const projectile of this.runtime.projectiles)projectile.update(this.runtime,STEP)
       for(const item of this.runtime.items)item.update(this.runtime,STEP)
@@ -185,7 +191,7 @@ export class MovementScene extends Phaser.Scene {
       r.updateTimer(STEP)
       if(expired)this.runtime.timeLeft=20*TIME_UNIT
       r.updateCamera(STEP)
-      if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20){r.startBoss();sfx.playMusic('boss')}
+      if(!r.saved&&this.runtime.mode==='play'&&this.runtime.food>=60&&this.player.alive&&this.player.onGround&&this.player.cx>=this.level.arenaX+20){r.startBoss();if(this.stageNumber===15&&this.runtime.boss){this.runtime.boss=new KingKong(this.runtime);this.runtime.showBanner('최종 보스 · 킹콩',1.2)}sfx.playMusic('boss')}
       if(this.runtime.boss?.dead&&this.runtime.mode==='boss'){this.player.score+=5000;this.runtime.popup(this.runtime.boss.cx,this.runtime.boss.y,'+5000','#ffe4a1');this.clearSeconds=Math.ceil(this.runtime.timeLeft/TIME_UNIT);r.completeStage();this.clearT=2.5}
       // Reuse the original pickup, contact immunity and projectile hit-set rules.
       const foodBefore=this.runtime.food
@@ -200,6 +206,7 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
       this.runtime.items=this.runtime.items.filter(i=>!i.dead)
       this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
+      if(this.environment.busy){const pattern=patternState(this.runtime);pattern.wait=Math.max(pattern.wait,TREE.monkeyGap)}
       updateStagePattern(this.runtime,STEP)
       this.ludo.advance(this.player,STEP)
       this.suukuret.advance(this.runtime,STEP)
@@ -237,6 +244,7 @@ export class MovementScene extends Phaser.Scene {
     }
     // Reserve the upper 44 pixels for the HUD, including nearby upper ledges.
     cy=Math.max(0,Math.min(cy,p.y-48))
+    if(this.stageNumber===15&&this.runtime.boss)cy=Math.max(0,Math.min(lv.height-VIEW_H,(this.runtime.boss as KingKong).floor-194))
     this.runtime.camX=cx;this.runtime.camY=cy
     const ctx=this.surface.context
     this.background.draw(ctx,cx,this.runtime.time,cy,lv.height-VIEW_H)
@@ -244,6 +252,7 @@ export class MovementScene extends Phaser.Scene {
     ctx.save()
     if(this.impacts.length)ctx.translate(Math.sin(this.visualTime*110)*1.2,Math.cos(this.visualTime*95)*.7)
     ctx.drawImage(lv.canvas,cx*lv.scale,cy*lv.scale,VIEW_W*lv.scale,VIEW_H*lv.scale,0,0,VIEW_W,VIEW_H)
+    this.environment.draw(this.runtime,ctx,cx,cy)
     for(const item of this.runtime.items)item.draw(ctx,cx,cy)
     for(const enemy of this.runtime.enemies){enemy.draw(ctx,cx,cy);enemy.drawStars(ctx,cx,cy)}
     for(const projectile of this.runtime.projectiles)projectile.draw(ctx,cx,cy)
@@ -257,10 +266,9 @@ export class MovementScene extends Phaser.Scene {
       if(open&&elapsed<2){ctx.strokeStyle='#fff1a5';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x+2,floor-24,8+elapsed*28,0,Math.PI*2);ctx.stroke()}
     }
     const boss=this.runtime.boss
+    if(this.stageNumber===15&&boss)drawCaptive(this.runtime,ctx,cx,cy)
     if(boss){
       boss.draw(ctx,cx,cy)
-      ctx.fillStyle='#261c22';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48,5)
-      ctx.fillStyle='#ff615b';ctx.fillRect(boss.cx-cx-24,boss.y-cy-9,48*boss.hp/boss.maxHp,5)
     }
     drawStagePattern(this.runtime,ctx,cx,cy)
     this.suukuret.draw(this.runtime,ctx,cx,cy)
@@ -310,3 +318,4 @@ function drawCaveTracks(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:number)
     ctx.strokeStyle='#ead9ae';ctx.beginPath();ctx.moveTo(d.x-16-cx,d.floor-4-cy);ctx.lineTo(d.x-10-cx,d.floor-6-cy);ctx.stroke()
   }
 }
+
