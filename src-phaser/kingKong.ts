@@ -128,7 +128,7 @@ export class KingKong extends Boss {
     const key=`kingkong.${action}`
     ctx.save()
     if(this.phase2)ctx.filter='sepia(1) saturate(6) hue-rotate(315deg)'
-    drawArt(ctx,key,frame,x,this.y+this.h-cy,this.facing<0,{white:this.flash>.15,scale:art.sprites[key]!.frames[frame]![6]})
+    drawArt(ctx,key,frame,x,this.y+this.h-cy,this.facing<0,{white:this.flash>.15})
     ctx.restore()
     for(const wave of this.waves){ctx.strokeStyle='#ffd07b';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(wave.x-cx,floor-4,7,4,0,Math.PI,Math.PI*2);ctx.stroke()}
     if(this.phase==='dizzy'){
