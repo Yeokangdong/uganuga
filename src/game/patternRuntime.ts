@@ -57,7 +57,7 @@ export function patternState(g:Game):Runtime{
 const warnings=[0,2,1.9,1.8,1.7,1.6]
 const durations=[0,3.6,1.1,.85,.65,1.15]
 function bounds(s:PatternSite,id:number):Rect{
-  if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:208,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
+  if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:s.right-s.x+64,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
   if(id===2)return{x:s.x-48,y:s.floor-110,w:120,h:120}
   if(id===3)return{x:s.x-50,y:s.floor-100,w:164,h:110}
   if(id===4)return{x:s.x-48,y:s.floor-100,w:96,h:110}
@@ -69,7 +69,7 @@ export function updateStagePattern(g:Game,dt:number):void{
   const s=patternState(g);s.elapsed+=dt;s.rect=null
   if(s.phase==='idle'){
     s.wait=Math.max(0,s.wait-dt);if(s.wait>0)return
-    const site=s.sites.find(p=>visible(g,bounds(p,id))&&g.players.some(b=>b.alive&&Math.abs(b.x-p.x)<240&&Math.abs(b.y+b.h-p.floor)<60)&&!g.players.some(b=>b.alive&&b.invuln>0&&Math.abs(b.x-p.x)<150))
+    const site=s.sites.map(p=>id===1?{...p,right:g.camX+VIEW_W-4}:p).find(p=>visible(g,bounds(p,id))&&g.players.some(b=>b.alive&&Math.abs(b.x-p.x)<240&&Math.abs(b.y+b.h-p.floor)<60)&&!g.players.some(b=>b.alive&&b.invuln>0&&Math.abs(b.x-p.x)<150))
     if(!site)return
     s.site={...site};s.phase='warn';s.age=0;return
   }
@@ -81,12 +81,12 @@ export function updateStagePattern(g:Game,dt:number):void{
   if(s.phase==='active'){
     const t=s.age
     if(id===1)s.rect={x:p.x+t*32,y:p.floor-22,w:12,h:12}
-    if(id===2){const q=Math.min(1,t/.85);s.rect={x:p.x-32+q*64-7,y:p.floor-12-Math.sin(q*Math.PI)*64,w:14,h:12};if(t>.85)s.rect=null}
+    if(id===2&&t>=.85&&t<.95)s.rect={x:p.x+23,y:p.floor-12,w:18,h:12}
     if(id===3){const reach=64*Math.min(1,t/.2,(.85-t)/.25);s.rect={x:p.x,y:p.floor-27,w:Math.max(0,reach),h:14}}
     if(id===4)s.rect={x:p.x-20,y:p.floor-25,w:40,h:25}
     if(id===5){const reach=64*Math.max(0,Math.min(1,t/.25,(1.15-t)/.3));s.rect={x:p.dir===1?p.x+25:p.x-25-reach,y:p.floor-13,w:reach,h:9}}
     if(s.rect)for(const player of g.players)if(player.alive&&overlap(player,s.rect))player.hurt(g,1,p.x)
-    if(t>=durations[id]!){s.phase='recover';s.age=0;s.rect=null}
+    if(t>=(id===1?(p.right-p.x-12)/32:durations[id]!)){s.phase='recover';s.age=0;s.rect=null}
   }else if(s.phase==='recover'&&s.age>=.8){s.phase='idle';s.age=0;s.wait=6;s.site=null}
 }
 function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:number,y:number,flip=false,size=128):void{
@@ -94,6 +94,25 @@ function sprite(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,x:num
   const i=Math.floor(t*a.fps),f=a.frames[a.loop?i%a.frames.length:Math.min(i,a.frames.length-1)]!
   ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1)
   ctx.drawImage(pack.image,f.x,f.y,f.w,f.h,-f.pivot.x*size/f.w,-f.pivot.y*size/f.h,size,size);ctx.restore()
+}
+const tongueBounds=new WeakMap<Frame,Rect>()
+function tongue(ctx:CanvasRenderingContext2D,pack:Pack,key:string,t:number,r:Rect,cx:number,cy:number,flip:boolean):void{
+  if(r.w<=0)return
+  const a=pack.animations[key];if(!a)return
+  const f=a.frames[Math.min(Math.floor(t*a.fps),a.frames.length-1)]!
+  let b=tongueBounds.get(f)
+  if(!b){
+    const canvas=document.createElement('canvas');canvas.width=f.w;canvas.height=f.h
+    const scan=canvas.getContext('2d',{willReadFrequently:true})!
+    scan.drawImage(pack.image,f.x,f.y,f.w,f.h,0,0,f.w,f.h)
+    const pixels=scan.getImageData(0,0,f.w,f.h).data
+    let left=f.w,top=f.h,right=-1,bottom=-1
+    for(let y=0;y<f.h;y++)for(let x=0;x<f.w;x++)if(pixels[(y*f.w+x)*4+3]!>0){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y)}
+    b={x:left,y:top,w:right-left+1,h:bottom-top+1};tongueBounds.set(f,b)
+  }
+  if(b.w<=0||b.h<=0)return
+  ctx.save();ctx.translate(r.x-cx+(flip?r.w:0),r.y-cy);if(flip)ctx.scale(-1,1)
+  ctx.drawImage(pack.image,f.x+b.x,f.y+b.y,b.w,b.h,0,0,r.w,r.h);ctx.restore()
 }
 export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,cy:number):void{
   const id=g.level.def.id,pack=packs.get(id);if(!pack||g.level.def.cave||g.mode!=='play')return
@@ -104,7 +123,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   const recover=['','return','recover','retract','bury','idle']
   ctx.save()
   // One selected actor only, so adjacent sites cannot produce concurrent attacks.
-  const site=p??state.sites.find(s=>visible(g,bounds(s,id)))
+  const site=p??state.sites.map(s=>id===1?{...s,right:g.camX+VIEW_W-4}:s).find(s=>visible(g,bounds(s,id)))
   if(!site){ctx.restore();return}
   const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=site.floor-cy
   let ax=x,ay=y
@@ -118,7 +137,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   if(phase==='warn'){
     ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.setLineDash([3,3])
     const rx=id===1?x:id===3?x:id===2?x+23:id===5?x+site.dir*25+(site.dir<0?-64:0):x-20
-    const width=id===1?128:id===3||id===5?64:id===2?18:40
+    const width=id===1?site.right-site.x:id===3||id===5?64:id===2?18:40
     const height=id===3?14:id===5?9:id===1?12:6
     ctx.strokeRect(rx,y-(id===1?22:id===3?27:id===5?13:6),width,height);ctx.setLineDash([])
     if(id===5)sprite(ctx,pack,'water_ring',t,x,y)
@@ -126,11 +145,14 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   if(phase==='active'){
     const r=state.rect
     if(id===1&&r)sprite(ctx,pack,'coconut_spin',t,r.x+6-cx,r.y+6-cy,false,32)
-    if(id===2){if(r)sprite(ctx,pack,'lava_drop',t,r.x+7-cx,r.y+6-cy,false,40);else sprite(ctx,pack,'extinguish',t-.85,x+32,y,false,48)}
+    if(id===2){if(t<.85){const q=t/.85;sprite(ctx,pack,'lava_drop',t,x-32+q*64,y-6-Math.sin(q*Math.PI)*64,false,40)}else sprite(ctx,pack,'extinguish',t-.85,x+32,y,false,48)}
     if(id===3&&r){ctx.save();ctx.beginPath();ctx.rect(r.x-cx,r.y-cy,r.w,r.h);ctx.clip();sprite(ctx,pack,'wall_spear',t,x,y-20);ctx.restore()}
     if(id===4)sprite(ctx,pack,t>.32?'jaw_close':'jaw_rise',t,x,y+8,false,80)
-    if(id===5&&r)sprite(ctx,pack,t<.25?'tongue_extend':'tongue_hold',t,x+site.dir*25,y-17,site.dir<0)
+    if(id===5&&r){
+      const key=t<.25?'tongue_extend':t>=.85?'tongue_retract':'tongue_hold'
+      const local=t<.25?t:t>=.85?t-.85:t-.25
+      tongue(ctx,pack,key,local,r,cx,cy,site.dir<0)
+    }
   }
-  if(id===5&&phase==='recover')sprite(ctx,pack,'tongue_retract',t,x+site.dir*25,y-17,site.dir<0)
   ctx.restore()
 }
