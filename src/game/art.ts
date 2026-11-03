@@ -81,7 +81,7 @@ async function loadAnimationPack(stage:number):Promise<void>{
     if(/^proj3\.|^item3\./.test(key))return STAGES[stage-1]!.theme.n==='3'
     if(regional.has(prefix)&&!local.has(prefix))return false
     const numbered=key.match(/^(?:terrain\.|stage\.bg|ui\.biome_sign_|ui\.stage_sign_)(\d+)(?:\.|$)/)
-    if(numbered)return /^(?:terrain\.|stage\.bg)/.test(key)&&Number(numbered[1])<=15 || Number(numbered[1])===stage
+    if(numbered)return Number(numbered[1])===stage || key==='terrain.3.support'
     if(prefix.startsWith('stage')&&/^stage\d+_/.test(prefix))return local.has(prefix)
     if(/^dino[123]_/.test(prefix))return local.has(prefix)
     if(/^boss[23]?$/.test(prefix))return local.has(prefix)

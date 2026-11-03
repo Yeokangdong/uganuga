@@ -4,12 +4,12 @@ import type { Game } from '../src/game/game'
 import type { Player } from '../src/game/entities'
 import { VIEW_W, overlap } from '../src/game/constants'
 
-const files=import.meta.glob('./assets/kingkong_*',{query:'?url',import:'default',eager:true}) as Record<string,string>
+const files=import.meta.glob('./assets/runtime/kingkong_*',{query:'?url',import:'default',eager:true}) as Record<string,string>
 const actions=['pound','charge','dizzy','slam','defeat'] as const
 let loading:Promise<void>|undefined
 export function loadKingKong(){
   return loading??=Promise.all(actions.map(async action=>{
-    const base=`./assets/kingkong_${action}`
+    const base=`./assets/runtime/kingkong_${action}`
     const data=await (await fetch(files[base+'.json']!)).json()
     const img=new Image();img.src=files[base+'.png']!;await img.decode()
     // Body landmarks exclude dust, shock waves and overhead status effects.

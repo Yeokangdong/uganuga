@@ -84,7 +84,11 @@ export class MovementScene extends Phaser.Scene {
     const url=maps[`./maps/${String(stage).padStart(2,'0')}.tmj`]!
     const response=await fetch(url); if(!response.ok)throw new Error(`Map load: ${response.status}`)
     const data:MapData=await response.json()
-    await Promise.all([loadStageArt(stage), loadPatternArt(stage), this.ludo.load(this), loadSuukuret(), ...(stage===15?[loadKingKong()]:[])])
+    const bar=this.add.rectangle(200,310,0,12,0xe9bf65).setOrigin(0,.5)
+    const tasks=[loadStageArt(stage),loadPatternArt(stage),this.ludo.load(this),loadSuukuret(),sfx.prepareStage(),...(stage===15?[loadKingKong()]:[])]
+    let loaded=0
+    await Promise.all(tasks.map(task=>task.then(()=>{if(this.scene.isActive()){bar.width=560*++loaded/tasks.length;this.hud.setText(`Loading movement... ${Math.round(loaded/tasks.length*100)}%`)}})))
+    bar.destroy()
     if(!this.scene.isActive())return
     const def=JSON.parse(data.properties[0]!.value) as StageDef
     this.level=new Level(def)

@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import type { Player } from '../src/game/entities'
-const files=import.meta.glob('./assets/*',{query:'?url',import:'default',eager:true}) as Record<string,string>
+const files=import.meta.glob('./assets/runtime/*',{query:'?url',import:'default',eager:true}) as Record<string,string>
 type Box={x:number;y:number;w:number;h:number}
 type Pack={image:HTMLImageElement;frames:Box[];height:number}
 /** Atlas cells keep their source files; alpha bounds supply a shared foot pivot. */
@@ -13,9 +13,10 @@ export class LudoHero {
   private landingAge=1
   private fallAge=0
   async load(scene:Phaser.Scene){
+    if(Object.keys(this.packs).length===4)return
     for(const [name,file] of Object.entries({walk:'uga_walk_ludo',attack:'uga_attack_ludo',jump:'uga_jump_ludo',ladder:'uga_ladder_ludo_v2'})){
-      const data=await (await fetch(files[`./assets/${file}.json`]!)).json()
-      const image=new Image();image.src=files[`./assets/${file}.png`]!;await image.decode()
+      const data=await (await fetch(files[`./assets/runtime/${file}.json`]!)).json()
+      const image=new Image();image.src=files[`./assets/runtime/${file}.png`]!;await image.decode()
       const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height
       const ctx=canvas.getContext('2d',{willReadFrequently:true})!;ctx.drawImage(image,0,0)
       const pixels=ctx.getImageData(0,0,image.width,image.height).data

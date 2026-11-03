@@ -2,7 +2,7 @@ import { art } from '../src/game/art'
 import type { Game } from '../src/game/game'
 import type { Level } from '../src/game/level'
 
-const files=import.meta.glob('./assets/suukuret_*',{query:'?url',import:'default',eager:true}) as Record<string,string>
+const files=import.meta.glob('./assets/runtime/suukuret_*',{query:'?url',import:'default',eager:true}) as Record<string,string>
 const actions=['idle','flee','lunge','swim','dangle','burn','freeze','slip','hug'] as const
 type Action=typeof actions[number]
 type Box={x:number;y:number;w:number;h:number}
@@ -11,7 +11,7 @@ const packs={} as Record<Action,Pack>
 let loading:Promise<void>|undefined
 export function loadSuukuret(){
   return loading??=Promise.all(actions.map(async action=>{
-    const base=`./assets/suukuret_${action}`
+    const base=`./assets/runtime/suukuret_${action}`
     const data=await (await fetch(files[base+'.json']!)).json()
     const image=new Image();image.src=files[base+'.png']!;await image.decode()
     const frames=Object.values(data.frames as Record<string,{frame:Box}>).map(v=>v.frame)

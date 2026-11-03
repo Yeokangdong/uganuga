@@ -48,8 +48,6 @@ export class Sfx {
         this.musicGain = this.ctx.createGain()
         this.musicGain.gain.value = this.musicEnabled ? 0.46 : 0
         this.musicGain.connect(this.master)
-        for(const key of ['hit','jump','stun','kill','pickup','hurt','throw','big','roar','fanfare','sad','scrat'])void this.load(key)
-        if(this.musicEnabled)void this.load('jungle')
       }
       if (this.ctx.state === 'suspended') void this.ctx.resume()
     } catch {
@@ -71,7 +69,12 @@ export class Sfx {
     return request
   }
 
+  prepareStage():Promise<unknown[]> {
+    return Promise.all(['hit','jump','stun','kill','pickup','hurt','throw','big'].map(key=>this.load(key)))
+  }
+
   private sample(key:string,volume=.85):boolean {
+    if(this.ctx&&!this.buffers.has(key))void this.load(key)
     const c=this.ctx,buffer=this.buffers.get(key)
     if(!c||!this.master||!buffer)return false
     if(c.currentTime-(this.lastEffects.get(key)??-10)<.075||this.voices>=8)return true
