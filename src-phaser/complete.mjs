@@ -74,17 +74,36 @@ if(process.argv.includes('--qa')){
  const soak=[];
  const seconds=process.argv.includes('--soak')?600:3;
  const cdp=await page.context().newCDPSession(page);
+ await page.evaluate(()=>{
+  const q={samples:0,playSamples:0,bossSamples:0,restarts:0,stages:[],deaths:[],fps:[],last:null,loading:false};window.__liveQA=q;
+  window.__liveQAInput=setInterval(()=>{
+   const s=window.__movement;
+   if(!window.__phaserGame.scene.isActive('Play')){
+    if(!q.loading){q.loading=true;q.restarts++;window.__phaserGame.scene.start('Play',{stage:(q.stages.at(-1)??0)%15+1})}return;
+   }
+   if(!s?.ready)return;q.loading=false;
+   if(!q.stages.includes(s.stageNumber))q.stages.push(s.stageNumber);
+   const p=s.player,g=s.runtime,phase=s.environment.phase,pattern=window.__patternState().phase;
+   if(q.last&&q.last.stage===s.stageNumber&&p.lives<q.last.lives)q.deaths.push({stage:s.stageNumber,before:q.last.phase,pattern:q.last.pattern,after:phase,afterPattern:pattern});
+   q.last={stage:s.stageNumber,lives:p.lives,phase,pattern};q.samples++;
+   if(p.alive&&g.mode==='play')q.playSamples++;if(p.alive&&g.mode==='boss')q.bossSamples++;
+   if(p.alive&&['play','boss'].includes(g.mode))q.fps.push(window.__phaserGame.loop.actualFps);
+   const on=q.samples%2===0;
+   for(const [code,held] of [['ArrowRight',true],['ArrowUp',on],['Space',on]])window.dispatchEvent(new KeyboardEvent(held?'keydown':'keyup',{key:code==='Space'?' ':code,code,keyCode:{ArrowRight:39,ArrowUp:38,Space:32}[code],which:{ArrowRight:39,ArrowUp:38,Space:32}[code],bubbles:true}));
+  },150);
+ });
  for(let elapsed=0;elapsed<seconds;elapsed+=Math.min(30,seconds)){
   await page.waitForTimeout(Math.min(30,seconds)*1000);
   await cdp.send('HeapProfiler.collectGarbage');
   soak.push(await page.evaluate(()=>({fps:window.__phaserGame.loop.actualFps,heap:performance.memory?.usedJSHeapSize,textures:Object.keys(window.__phaserGame.textures.list).length,blur:window.__phaserGame.events.listenerCount('blur')})));
  }
- console.log(JSON.stringify({qa:{pauseFrozen,timer,restart:true,sizes,lifecycle,soak}}))
+ const live=await page.evaluate(()=>{clearInterval(window.__liveQAInput);const q=window.__liveQA,f=q.fps.sort((a,b)=>a-b);return {...q,fps:undefined,last:undefined,minFPS:f[0],p05FPS:f[Math.floor(f.length*.05)],medianFPS:f[Math.floor(f.length/2)],activeSeconds:(q.playSamples+q.bossSamples)*.15}});
+ console.log(JSON.stringify({qa:{pauseFrozen,timer,restart:true,sizes,lifecycle,soak,live}}))
 } else {
 for(let currentStage=Number(process.argv[2]||1);currentStage<=15;currentStage++){
 await page.evaluate(()=>window.__phaserGame.loop.stop())
 const result=await page.evaluate(async({stage,policy})=>{
- const adaptive=policy===9||policy===10, explorer=policy===10;if(adaptive)policy=2;
+ const survival=policy===12, adaptive=policy===9||policy===10||survival, explorer=policy===10||survival;if(adaptive)policy=2;
  const s=window.__movement,g=s.runtime,p=s.player,lv=s.level;
  const nodes=[],byCell=new Map();
  for(let c=1;c<lv.cols-1;c++)for(let r=2;r<lv.rows;r++){
@@ -115,10 +134,11 @@ const result=await page.evaluate(async({stage,policy})=>{
  let furthest=p.x,progressAt=0,lastRecovery=-1;const foes=new WeakMap();
  const transitions=[],recoveries=[];let previousMode=g.mode,previousPhase='',previousHp=p.hp;
  let caveEntered=false,caveReturned=false,airTarget=null,routeTarget=null,caveDoor=null;
- const deathEvents=[];let pendingDeath=null;
+ const deathEvents=[];let pendingDeath=null,respawnRelease=0;
  const keys={left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',attack:'Space'};
  for(let tick=0;tick<36000;tick++){
-  if(adaptive&&g.food>=60)policy=explorer?(g.mode==='boss'?8:2):stage===7?6:8;
+  if(survival&&g.food<60)policy=stage===8||stage===4?6:2;
+  if(adaptive&&g.food>=60)policy=explorer?(g.mode==='boss'||survival&&p.hp<8?8:2):stage===7?6:8;
   if(explorer&&g.mode==='play'&&g.food>=60&&g.time-progressAt>5){
    const recovery=Math.floor((g.time-progressAt-5)/4);
    policy=[0,2,6,3][recovery%4];
@@ -190,6 +210,8 @@ const result=await page.evaluate(async({stage,policy})=>{
     if(policy===11&&g.saved&&deaths===0){input.left=false;input.right=false;input.up=false;input.down=false;}
    }
   }
+  // Immediate pit respawns need a released jump edge and time to regain ground.
+  if(respawnRelease>0){for(const action of Object.keys(input))input[action]=false;respawnRelease--;}
   for(const [action,code] of Object.entries(keys))if(input[action]!==!!prev[action]){
    window.dispatchEvent(new KeyboardEvent(input[action]?'keydown':'keyup',{key:code==='Space'?' ':code,code,keyCode:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],which:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],bubbles:true}));
   }
@@ -198,7 +220,7 @@ const result=await page.evaluate(async({stage,policy})=>{
   s.input.keyboard.update(); s.input.keyboard.manager.queue.length=0; s.update(tick*1000/60,1000/60);
   if(g.saved){caveEntered=true;caveDoor??={x:g.saved.door.x,floor:g.saved.door.floor};}else if(caveEntered)caveReturned=true;
   if(g.timeLeft>before+.1){if(items.some(i=>i.dead))clocks++;else extended++;}
-  if(p.lives<previousLives){deaths+=previousLives-p.lives;pendingDeath={time:+g.time.toFixed(2),lost:previousLives-p.lives,immediate:p.alive,...eventBefore,afterEnvironment:s.environment.phase,afterPattern:window.__patternState().phase};deathEvents.push(pendingDeath);}
+  if(p.lives<previousLives){respawnRelease=12;deaths+=previousLives-p.lives;pendingDeath={time:+g.time.toFixed(2),lost:previousLives-p.lives,immediate:p.alive,...eventBefore,afterEnvironment:s.environment.phase,afterPattern:window.__patternState().phase};deathEvents.push(pendingDeath);}
   if(pendingDeath&&p.alive){pendingDeath.respawn={time:+g.time.toFixed(2),environment:s.environment.phase,pattern:window.__patternState().phase};pendingDeath=null;}
   previousLives=p.lives;
   const phase=g.boss?.phase??'';
@@ -211,6 +233,9 @@ const result=await page.evaluate(async({stage,policy})=>{
   if(tick%600===0)trace.push([+g.time.toFixed(1),Math.round(p.x),Math.round(p.y),g.food,p.hp,p.lives,g.mode,g.boss?.hp,...g.enemies.filter(e=>Math.abs(e.cx-p.cx)<100).map(e=>[e.hp,Math.round(e.x),Math.round(e.y),e.stunT,e.finishHits])]);
   prev=input;
  }
+ // Release the runner's final held keys before the next scene takes ownership.
+ for(const code of Object.values(keys))window.dispatchEvent(new KeyboardEvent('keyup',{key:code==='Space'?' ':code,code,keyCode:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],which:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],bubbles:true}));
+ s.input.keyboard.resetKeys();
  s.draw=draw;s.draw();
  return {stage,policy,food:g.food,elapsed:+g.time.toFixed(2),hud:Math.ceil(g.timeLeft/3.6),extended,clocks,fullAt,bossAt,mode:g.mode,out:p.out,deaths,x:p.x,y:p.y,caveEntered,caveReturned,caveDoor,deathEvents,trace,transitions,recoveries,verdict:caveReturned?'cave-returned':g.mode==='clear'||g.mode==='rescue'?'completed':recoveries.length?'input-route-unresolved':'not-completed'};
 },{stage:currentStage,policy:Number(process.argv[3]||0)})
