@@ -114,6 +114,8 @@ export class MovementScene extends Phaser.Scene {
       if(first&&site){first.col=site.x/16;first.row=site.floor/16-1;first.cfg={...def.roles.E!,behavior:'hopper',speed:18}}
     }
     this.environment=new EnvironmentEvent(this.level)
+    const treeSite=this.environment.site
+    if(treeSite)for(let i=0;i<4;i++)this.runtime.items.push(new RouteFood('fruit',treeSite.x+100+i*18,treeSite.floor-24,false,def.theme.n))
     this.suukuret.place(this.level)
     if(this.carry){this.player.score=this.carry.score;this.player.lives=this.carry.lives}
     this.surface=this.textures.createCanvas('movement-view',VIEW_W,VIEW_H)!
@@ -206,7 +208,7 @@ export class MovementScene extends Phaser.Scene {
       this.runtime.enemies=this.runtime.enemies.filter(e=>!e.dead)
       this.runtime.items=this.runtime.items.filter(i=>!i.dead)
       this.runtime.projectiles=this.runtime.projectiles.filter(p=>!p.dead)
-      if(this.environment.busy){const pattern=patternState(this.runtime);pattern.wait=Math.max(pattern.wait,TREE.monkeyGap)}
+      if(this.environment.busy){const pattern=patternState(this.runtime);pattern.phase='idle';pattern.site=null;pattern.rect=null;pattern.age=0;pattern.wait=Math.max(pattern.wait,TREE.monkeyGap)}
       updateStagePattern(this.runtime,STEP)
       this.ludo.advance(this.player,STEP)
       this.suukuret.advance(this.runtime,STEP)
