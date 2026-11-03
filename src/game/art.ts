@@ -158,6 +158,10 @@ export function frameAt(key: string, t: number, loop = true): number {
   return loop ? i % n : Math.min(i, n - 1)
 }
 
+// The unpadded fire atlas has touching frame edges. Give each pose its own
+// transparent sampling border so scaling cannot pull in the next flame.
+const flameFrames = new WeakMap<FrameSet, Map<number, HTMLCanvasElement>>()
+
 /** 발 기준점(cx, bottom)에 그리기. 성공하면 true */
 export function drawArt(
   ctx: CanvasRenderingContext2D,
@@ -193,7 +197,25 @@ export function drawArt(
   if (o.white) filters.push('brightness(2.6) saturate(0.2)')
   if (o.glow) filters.push(`drop-shadow(0 0 2px ${o.glow})`)
   if (filters.length) ctx.filter = filters.join(' ')
-  ctx.drawImage(s.img, fx, fy, fw, fh, -w * ax, -h * ay, w, h)
+  if (key === 'fire.pillar') {
+    const index = Math.max(0, frame) % s.frames.length
+    let frames = flameFrames.get(s)
+    if (!frames) { frames = new Map(); flameFrames.set(s, frames) }
+    let pose = frames.get(index)
+    const px = Math.ceil(fw * 3 / 14), py = Math.ceil(fh * 3 / 14)
+    if (!pose) {
+      pose = document.createElement('canvas')
+      pose.width = fw + px * 2; pose.height = fh + py * 2
+      const g = pose.getContext('2d')!
+      g.imageSmoothingEnabled = false
+      g.drawImage(s.img, fx, fy, fw, fh, px, py, fw, fh)
+      frames.set(index, pose)
+    }
+    ctx.drawImage(pose, -w * ax - px * w / fw, -h * ay - py * h / fh,
+      pose.width * w / fw, pose.height * h / fh)
+  } else {
+    ctx.drawImage(s.img, fx, fy, fw, fh, -w * ax, -h * ay, w, h)
+  }
   ctx.restore()
   return true
 }
