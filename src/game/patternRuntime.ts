@@ -66,7 +66,9 @@ export function patternState(g:Game):Runtime{
 }
 const warnings=[0,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.3,1.2]
 const durations=[0,3.6,1.1,.85,.65,1.15,1.5,1.6,.9,1.4,2.2]
+function soundCenter(p:PatternSite):{x:number;y:number}{return{x:p.x,y:p.y}}
 function bounds(s:PatternSite,id:number):Rect{
+  if(id===6){const c=soundCenter(s),radius=107;return{x:c.x-radius,y:c.y-radius,w:radius*2,h:radius*2}}
   if(id>=6)return{x:s.x-132,y:Math.min(s.y-50,s.floor-136),w:264,h:s.floor-Math.min(s.y-50,s.floor-136)+8}
   if(id===1)return{x:s.x-64,y:Math.min(s.y-24,s.floor-100),w:s.right-s.x+64,h:s.floor-Math.min(s.y-24,s.floor-100)+10}
   if(id===2)return{x:s.x-48,y:s.floor-110,w:120,h:120}
@@ -176,7 +178,7 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
 
 // Shared geometry drives both the visible warning and exact active contact.
 function patternContact(id:number,p:PatternSite,t:number,b:Rect):boolean{
-  if(id===6){const radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-p.x,0,p.x-b.x-b.w),Math.max(b.y-(p.floor-35),0,p.floor-35-b.y-b.h)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,b.y+b.h].map(y=>Math.hypot(x-p.x,y-p.floor+35))));return near<=radius+3&&far>=radius-3}
+  if(id===6){const c=soundCenter(p),radius=12+92*t/1.5,near=Math.hypot(Math.max(b.x-c.x,0,c.x-b.x-b.w),Math.max(b.y-c.y,0,c.y-b.y-b.h)),far=Math.max(...[b.x,b.x+b.w].flatMap(x=>[b.y,b.y+b.h].map(y=>Math.hypot(x-c.x,y-c.y))));return near<=radius+3&&far>=radius-3}
   if(id===7){const q=t<.65?t/.65:(t-.65)/.95,x=t<.65?p.x:p.x+80*q,y=t<.65?p.y+(p.floor-p.y-12)*q:p.floor-12-Math.sin(q*Math.PI)*48;return overlap(b,{x:x-10,y:y-10,w:20,h:20})}
   if(id===8){for(let i=0;i<=40;i++)if(overlap(b,{x:p.x-64+i*3.2-3,y:p.floor-24-i*1.6-3,w:6,h:6}))return true;return false}
   if(id===9)return overlap(b,{x:p.x+32+t/1.4*64,y:p.floor-18,w:26,h:18})
@@ -187,7 +189,7 @@ function drawLater(c:CanvasRenderingContext2D,pack:Pack,id:number,p:PatternSite,
   if(phase!=='warn'&&phase!=='active')return
   const x=p.x-cx,y=p.floor-cy,active=phase==='active'
   c.strokeStyle=active?'#fff2bc':'#ffd876';c.fillStyle='rgba(242,213,143,.22)';c.lineWidth=active?5:2;c.setLineDash(active?[]:[4,3])
-  if(id===6){const radius=active?12+92*t/1.5:104;c.beginPath();c.arc(x,y-35,radius,0,Math.PI*2);c.stroke();if(active)sprite(c,pack,'sound_ring_expand',t,x,y-35,false,radius*2)}
+  if(id===6){const center=soundCenter(p),sx=center.x-cx,sy=center.y-cy,radius=active?12+92*t/1.5:104;c.beginPath();c.arc(sx,sy,radius,0,Math.PI*2);c.stroke();if(active)sprite(c,pack,'sound_ring_expand',t,sx,sy,false,radius*2)}
   if(id===7){for(const dx of [0,80])c.strokeRect(x+dx-12,y-5,24,5);if(active&&r){sprite(c,pack,'stone_rotate',t,r.x+10-cx,r.y+10-cy,false,40);if(t>.65&&t<.9)sprite(c,pack,'first_impact_dust',t-.65,x,y,false,56)}}
   if(id===8){c.beginPath();c.moveTo(x-64,y-24);c.lineTo(x+64,y-88);c.stroke();if(active)for(const [dx,dy] of [[-64,-24],[64,-88]])sprite(c,pack,'endpoint_refraction',t,x+dx!,y+dy!,false,40)}
   if(id===9){if(active&&r)tongue(c,pack,'low_wave',t,r,cx,cy,false);else c.strokeRect(x+32,y-18,90,18)}
