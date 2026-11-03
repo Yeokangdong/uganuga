@@ -13,6 +13,7 @@ import {
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
 import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt, drawPaintedText } from './art'
 import { sfx, type Sfx } from './audio'
+import { terrainDrawAudit } from './paintedMap'
 import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
 
 /** Compact in place to avoid six temporary arrays per simulation step. */
@@ -960,6 +961,7 @@ export class Game {
     const sy = this.shakeMag > 0 ? (Math.random() - 0.5) * this.shakeMag * 2 : 0
     const cx = this.camX - sx
     const cy = this.camY - sy
+    if(import.meta.env.DEV){terrainDrawAudit.stage=this.stage.id;terrainDrawAudit.cameraX=cx;terrainDrawAudit.cameraY=cy}
 
     ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0)
     ctx.imageSmoothingEnabled = true

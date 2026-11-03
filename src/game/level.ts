@@ -1,7 +1,7 @@
 import { SCALE, TILE } from './constants'
 import { has, image } from './art'
 import { ROWS, type StageDef, type EnemyCfg } from './stages'
-import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, type ElevatedObject } from './paintedMap'
+import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, terrainDrawAudit, type ElevatedObject } from './paintedMap'
 import { terrainTheme } from './terrainThemes'
 import { cloudFloor } from './cloudTerrain'
 import {drawStageSign} from './stageSign'
@@ -55,6 +55,7 @@ export class Level {
   fallbackTint: string | null = null
 
   constructor(public def: StageDef) {
+    if(import.meta.env.DEV){terrainDrawAudit.stage=def.id;terrainDrawAudit.cameraX=0;terrainDrawAudit.cameraY=0}
     const map = def.map
     this.rows=map.length
     this.cols = Math.max(...map.map((r) => r.length))

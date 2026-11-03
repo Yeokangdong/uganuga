@@ -1,5 +1,53 @@
-import { image } from './art'
+import { art, image } from './art'
 import { terrainTheme } from './terrainThemes'
+import { SCALE } from './constants'
+
+/** Opt-in source-edge audit. Production builds never install the hook. */
+export const terrainDrawAudit = {
+  stage: 0,
+  cameraX: 0,
+  cameraY: 0,
+  records: [] as {image:string; side:string; stage:number; x:number; y:number}[],
+  enable(): () => void {
+    if (!import.meta.env.DEV) return () => {}
+    const prototype=CanvasRenderingContext2D.prototype, original=prototype.drawImage
+    const cache=new WeakMap<object,ImageData>()
+    const audit=this
+    prototype.drawImage=function(this:CanvasRenderingContext2D,...args:unknown[]) {
+      const im=args[0] as HTMLImageElement
+      if(args.length===9 && im instanceof HTMLImageElement){
+        const [sx,sy,sw,sh,dx,dy]=args.slice(1) as number[]
+        const width=im.naturalWidth,height=im.naturalHeight
+        if(sx!==0||sy!==0||sw!==width||sh!==height){
+          let pixels=cache.get(im)
+          if(!pixels){
+            const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
+            const g=canvas.getContext('2d')!;(original as (...args:unknown[])=>void).call(g,im,0,0)
+            pixels=g.getImageData(0,0,width,height);cache.set(im,pixels)
+          }
+          const opaque=(x:number,y:number)=>x>=0&&x<width&&y>=0&&y<height&&pixels!.data[(y*width+x)*4+3]!>0
+          const l=Math.max(0,Math.floor(sx)),r=Math.min(width-1,Math.ceil(sx+sw)-1)
+          const t=Math.max(0,Math.floor(sy)),b=Math.min(height-1,Math.ceil(sy+sh)-1)
+          const sides:string[]=[]
+          for(const [side,col] of [['left',l],['right',r]] as const){
+            if(side==='left'?sx<=0:sx+sw>=width)continue
+            for(let y=t;y<=b;y++)if(opaque(col,y)){sides.push(side);break}
+          }
+          for(const [side,row] of [['top',t],['bottom',b]] as const){
+            if(side==='top'?sy<=0:sy+sh>=height)continue
+            for(let x=l;x<=r;x++)if(opaque(x,row)){sides.push(side);break}
+          }
+          const name=Object.keys(art.images).find(key=>art.images[key]===im)
+            ??Object.keys(art.sprites).find(key=>art.sprites[key]?.img===im)??im.src
+          const matrix=this.getTransform(),point=matrix.transformPoint({x:dx,y:dy})
+          for(const side of sides)audit.records.push({image:name,side,stage:audit.stage,x:point.x/SCALE+audit.cameraX,y:point.y/SCALE+audit.cameraY})
+        }
+      }
+      return (original as (...args:unknown[])=>void).apply(this,args)
+    } as typeof original
+    return ()=>{prototype.drawImage=original}
+  },
+}
 
 const part=(stage:number,name:string)=>{
   const local=image(`terrain.${stage}.${name}`)
@@ -95,11 +143,11 @@ export function rockPattern(g:CanvasRenderingContext2D,stage:number,size=64):Can
   return pattern
 }
 
-export function surface(g:CanvasRenderingContext2D,stage:number,x:number,y:number,col:number):void {
+export function surface(g:CanvasRenderingContext2D,stage:number,x:number,y:number,_col:number):void {
   const im=part(stage,'surface')
   if(!im)return
-  const section=im.width/4
-  g.drawImage(im,(col%4)*section,0,section,im.height,x,y,16,9)
+  // Each exposed tile owns a complete silhouette, including isolated ledges.
+  g.drawImage(im,x,y,16,9)
 }
 
 export function ladder(g:CanvasRenderingContext2D,stage:number,x:number,top:number,end:number):void {
