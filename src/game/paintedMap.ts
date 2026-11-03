@@ -155,14 +155,11 @@ export function ladder(g:CanvasRenderingContext2D,stage:number,x:number,top:numb
   if(!im)return
   const width=12,span=end-top
   if(span<=0)return
-  const scale=width/im.width,capSource=im.height*.12
-  const cap=Math.min(capSource*scale,span/2)
-  g.drawImage(im,0,0,im.width,capSource,x-width/2,top,width,cap)
-  // Repeat the shaft at its original aspect ratio so rung spacing stays fixed.
-  const sourceBody=im.height-2*capSource,body=sourceBody*scale
-  for(let y=top+cap;y<end-cap;y+=body){
-    const h=Math.min(body,end-cap-y)
-    g.drawImage(im,0,capSource,im.width,h/scale,x-width/2,y,width,h)
+  // Fit complete authored sections, including both ends. Uniform scaling keeps
+  // their proportions and avoids cutting a rung at the final partial section.
+  const count=Math.max(1,Math.ceil(span/(im.height*width/im.width)))
+  const height=span/count,sectionWidth=im.width*height/im.height
+  for(let i=0;i<count;i++){
+    g.drawImage(im,x-sectionWidth/2,top+i*height,sectionWidth,height)
   }
-  g.drawImage(im,0,im.height-capSource,im.width,capSource,x-width/2,end-cap,width,cap)
 }
