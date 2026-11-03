@@ -795,7 +795,7 @@ export class Game {
         if(e.contactDmg>0&&e.stunT<=0&&e.flash<=0)p.hurt(this,e.contactDmg,e.cx)
       }
       const b = this.boss
-      if (b && !b.dying && b.state !== 'enter' && b.state!=='stun' && overlap(p, b.hitbox)) p.hurt(this, b.contactDmg, b.cx)
+      if (b && b.contactDmg > 0 && !b.dying && b.state !== 'enter' && b.state!=='stun' && overlap(p, b.hitbox)) p.hurt(this, b.contactDmg, b.cx)
 
       for (const it of this.items) {
         if (it.dead || it.t < it.pickupDelay || !overlap(p, it)) continue
