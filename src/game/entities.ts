@@ -680,7 +680,7 @@ export class Player implements Body {
       if (this.invuln > 0 && this.spawnFireT<=0 && Math.floor(this.invuln * 20) % 2 === 0) return
       const { key, frame } = this.paintedKey()
       const flash = this.chargeReady && Math.floor(this.anim * 16) % 2 === 0
-      drawArt(ctx, key, frame, bx, by, this.climbing||this.ropeAngle!==null?false:left, { white: flash, glow: this.chargeReady ? '#ffd23a' : undefined })
+      drawArt(ctx, key, frame, bx, by, this.climbing||this.ropeAngle!==null?false:left, { feet: !this.climbing && this.ropeAngle===null, white: flash, glow: this.chargeReady ? '#ffd23a' : undefined })
       this.drawHeldWeapon(ctx,bx,by)
       if((key.endsWith('.idle')||key.endsWith('.boneIdle'))&&this.onGround&&!this.celebrating&&this.charge<=.1&&this.spawnFireT<=0&&Math.abs(this.vx)<1)
         this.drawThought(ctx,bx,by)

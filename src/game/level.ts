@@ -423,7 +423,20 @@ export class Level {
         draw(this.def.cave?9:theme*3+1,x,y,TILE,TILE)
         if(exposed&&this.def.cave&&r>=this.rows-2)surface(g,theme,x,y,c)
         if(exposed&&!this.def.cave){
-          if(t===T.Solid)surface(g,theme,x,y,c)
+          if(t===T.Solid){
+            surface(g,theme,x,y,c)
+            if(tl||tr){
+              // Carry the turf and soil bands around each exposed shoulder.
+              for(const [color,inset,line] of [[material.base,3,5],[material.edge,1,2]] as const){
+                g.strokeStyle=color;g.lineWidth=line
+                g.beginPath();g.moveTo(x+inset,y+tl)
+                if(tl)g.quadraticCurveTo(x+inset,y+inset,x+tl,y+inset)
+                g.lineTo(x+TILE-tr,y+inset)
+                if(tr)g.quadraticCurveTo(x+TILE-inset,y+inset,x+TILE-inset,y+tr)
+                g.stroke()
+              }
+            }
+          }
           else{
             g.strokeStyle=material.edge;g.lineWidth=1.3
             g.beginPath();g.moveTo(x+tl,y+.7);g.lineTo(x+TILE-tr,y+.7);g.stroke()
