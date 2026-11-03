@@ -28,7 +28,7 @@ export function elevatedObject(stage:number,col:number):ElevatedObject {
   return choices[Math.floor(col/48)%choices.length]!
 }
 
-/** Draw the complete authored support, including its crown and roots. */
+/** Preserve the crown and roots; repeat the trunk to reach tall ledges. */
 export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bottom:number,stage:number,left:number,right:number,object:ElevatedObject='local'):void {
   if(stage===10||object!=='local'&&image('world.elevated.'+object))return
   const im=part(stage,'support'),theme=terrainTheme(stage)
@@ -38,7 +38,22 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
   const scale=Math.min(available/im.height,Math.min(limit,right-left)/im.width)
   const w=im.width*scale,h=im.height*scale
   const center=Math.max(left+w/2,Math.min(right-w/2,x))
-  g.drawImage(im,center-w/2,bottom+6-h,w,h)
+  const drawX=center-w/2
+  // Snow and ice keep their complete authored proportions (DECISIONS).
+  if(h>=available||theme.structure==='snow'||theme.structure==='ice'){
+    g.drawImage(im,drawX,bottom+6-h,w,h)
+    return
+  }
+  const crownSource=im.height*.45,rootSource=im.height*.35
+  const trunkSource=im.height-crownSource-rootSource
+  const crown=crownSource*scale,root=rootSource*scale,trunk=trunkSource*scale
+  g.drawImage(im,0,0,im.width,crownSource,drawX,top,w,crown)
+  const rootTop=bottom+6-root
+  for(let y=top+crown;y<rootTop;y+=trunk){
+    const height=Math.min(trunk,rootTop-y)
+    g.drawImage(im,0,crownSource,im.width,height/scale,drawX,y,w,height)
+  }
+  g.drawImage(im,0,im.height-rootSource,im.width,rootSource,drawX,rootTop,w,root)
 }
 
 /** Paint only below the actual one-way platform top: no fake raised landing edge. */
