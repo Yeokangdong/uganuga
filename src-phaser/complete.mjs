@@ -1,5 +1,5 @@
 ﻿// Development-only headless input runner. Never writes player or rule state.
-// node src-phaser/complete.mjs [stage] [policy]
+// node src-phaser/complete.mjs [stage] [policy] [--continuous|--qa|--soak]
 import { chromium } from 'playwright'
 import { writeFile } from 'node:fs/promises'
 const browser=await chromium.launch({channel:'msedge',headless:true,args:['--mute-audio']})
@@ -71,12 +71,20 @@ if(process.argv.includes('--qa')){
   await page.evaluate(()=>window.__phaserGame.scene.start('Play',{stage:1}));await page.waitForFunction(()=>window.__movement?.ready);
   lifecycle.push(await page.evaluate(()=>({textures:Object.keys(window.__phaserGame.textures.list).length,blur:window.__phaserGame.events.listenerCount('blur'),keys:window.__movement.input.keyboard.keys.filter(Boolean).length})))
  }
- await page.waitForTimeout(3000)
- console.log(JSON.stringify({qa:{pauseFrozen,timer,restart:true,sizes,lifecycle,fps:await page.evaluate(()=>window.__phaserGame.loop.actualFps)}}))
+ const soak=[];
+ const seconds=process.argv.includes('--soak')?600:3;
+ const cdp=await page.context().newCDPSession(page);
+ for(let elapsed=0;elapsed<seconds;elapsed+=Math.min(30,seconds)){
+  await page.waitForTimeout(Math.min(30,seconds)*1000);
+  await cdp.send('HeapProfiler.collectGarbage');
+  soak.push(await page.evaluate(()=>({fps:window.__phaserGame.loop.actualFps,heap:performance.memory?.usedJSHeapSize,textures:Object.keys(window.__phaserGame.textures.list).length,blur:window.__phaserGame.events.listenerCount('blur')})));
+ }
+ console.log(JSON.stringify({qa:{pauseFrozen,timer,restart:true,sizes,lifecycle,soak}}))
 } else {
+for(let currentStage=Number(process.argv[2]||1);currentStage<=15;currentStage++){
 await page.evaluate(()=>window.__phaserGame.loop.stop())
 const result=await page.evaluate(async({stage,policy})=>{
- const adaptive=policy===9;if(adaptive)policy=2;
+ const adaptive=policy===9||policy===10, explorer=policy===10;if(adaptive)policy=2;
  const s=window.__movement,g=s.runtime,p=s.player,lv=s.level;
  const nodes=[],byCell=new Map();
  for(let c=1;c<lv.cols-1;c++)for(let r=2;r<lv.rows;r++){
@@ -103,12 +111,19 @@ const result=await page.evaluate(async({stage,policy})=>{
  // Render at 10Hz while preserving every 60Hz gameplay/input tick.
  const draw=s.draw.bind(s);let renderTick=0;
  s.draw=()=>{if(renderTick++%6===0)draw()};
- let prev={},extended=0,clocks=0,bossAt=null,fullAt=null,lastX=p.x,lastY=p.y,stuck=0,trace=[],deaths=0,wasDead=false;
- let furthest=p.x,progressAt=0;const foes=new WeakMap();
- let caveEntered=false,caveReturned=false,airTarget=null,routeTarget=null;
+ let prev={},extended=0,clocks=0,bossAt=null,fullAt=null,lastX=p.x,lastY=p.y,stuck=0,trace=[],deaths=0,previousLives=p.lives;
+ let furthest=p.x,progressAt=0,lastRecovery=-1;const foes=new WeakMap();
+ const transitions=[],recoveries=[];let previousMode=g.mode,previousPhase='',previousHp=p.hp;
+ let caveEntered=false,caveReturned=false,airTarget=null,routeTarget=null,caveDoor=null;
+ const deathEvents=[];let pendingDeath=null;
  const keys={left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',attack:'Space'};
  for(let tick=0;tick<36000;tick++){
-  if(adaptive&&g.food>=60)policy=stage===7?6:8;
+  if(adaptive&&g.food>=60)policy=explorer?(g.mode==='boss'?8:2):stage===7?6:8;
+  if(explorer&&g.mode==='play'&&g.food>=60&&g.time-progressAt>5){
+   const recovery=Math.floor((g.time-progressAt-5)/4);
+   policy=[0,2,6,3][recovery%4];
+   if(recovery!==lastRecovery){routeTarget=null;airTarget=null;recoveries.push([+g.time.toFixed(2),Math.round(p.x),Math.round(p.y),policy]);lastRecovery=recovery;}
+  }else lastRecovery=-1;
   if(!s.ready||p.out||g.mode==='clear'||g.mode==='rescue'||caveReturned)break;
   const input={left:false,right:false,up:false,down:false,attack:false};
   if(p.alive){
@@ -165,37 +180,57 @@ const result=await page.evaluate(async({stage,policy})=>{
    }
    if(p.climbing&&stuck>100){input.up=false;input.right=true;}
    if(policy>=6&&!p.climbing&&g.enemies.some(e=>!e.dead&&!e.dying&&Math.abs(e.cx-p.cx)<e.w/2+35&&Math.abs(e.y+e.h-feet)<24))input.attack=p.swingT<=0&&!prev.attack;
-   if(policy===5){
-    const clock=g.saved?g.items.find(i=>i.kind==='clock'&&!i.dead):null;
+   if(policy===5||policy===11){
+    const clock=policy===5&&g.saved?g.items.find(i=>i.kind==='clock'&&!i.dead):null;
     const door=g.saved?{x:64,floor:p.y+p.h}:g.doors.find(d=>!d.used);
     if(door){input.left=door.x<p.cx-3;input.right=door.x>p.cx+3;input.attack=false;
      if(Math.abs(door.x-p.cx)<8&&p.onGround){input.up=false;input.down=!prev.down}
     }
     if(clock){input.left=clock.x<p.cx-3;input.right=clock.x>p.cx+3;input.down=false;}
+    if(policy===11&&g.saved&&deaths===0){input.left=false;input.right=false;input.up=false;input.down=false;}
    }
   }
   for(const [action,code] of Object.entries(keys))if(input[action]!==!!prev[action]){
    window.dispatchEvent(new KeyboardEvent(input[action]?'keydown':'keyup',{key:code==='Space'?' ':code,code,keyCode:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],which:{ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40,Space:32}[code],bubbles:true}));
   }
   const before=g.timeLeft,items=g.items.filter(i=>i.kind==='clock'&&!i.dead);
+  const eventBefore={environment:s.environment.phase,pattern:window.__patternState().phase};
   s.input.keyboard.update(); s.input.keyboard.manager.queue.length=0; s.update(tick*1000/60,1000/60);
-  if(g.saved)caveEntered=true;else if(caveEntered)caveReturned=true;
+  if(g.saved){caveEntered=true;caveDoor??={x:g.saved.door.x,floor:g.saved.door.floor};}else if(caveEntered)caveReturned=true;
   if(g.timeLeft>before+.1){if(items.some(i=>i.dead))clocks++;else extended++;}
-  if(p.dead&&!wasDead)deaths++;wasDead=p.dead;
+  if(p.lives<previousLives){deaths+=previousLives-p.lives;pendingDeath={time:+g.time.toFixed(2),lost:previousLives-p.lives,immediate:p.alive,...eventBefore,afterEnvironment:s.environment.phase,afterPattern:window.__patternState().phase};deathEvents.push(pendingDeath);}
+  if(pendingDeath&&p.alive){pendingDeath.respawn={time:+g.time.toFixed(2),environment:s.environment.phase,pattern:window.__patternState().phase};pendingDeath=null;}
+  previousLives=p.lives;
+  const phase=g.boss?.phase??'';
+  if(g.mode!==previousMode||phase!==previousPhase||p.hp!==previousHp){
+   transitions.push({time:+g.time.toFixed(2),hud:Math.ceil(g.timeLeft/3.6),mode:g.mode,hp:p.hp,lives:p.lives,x:Math.round(p.x),y:Math.round(p.y),bossHp:g.boss?.hp,phase,move:g.boss?.move,environment:s.environment.phase});
+   previousMode=g.mode;previousPhase=phase;previousHp=p.hp;
+  }
   if(g.food>=60&&fullAt===null)fullAt=g.time;
   if(g.mode==='boss'&&bossAt===null)bossAt=g.time;
   if(tick%600===0)trace.push([+g.time.toFixed(1),Math.round(p.x),Math.round(p.y),g.food,p.hp,p.lives,g.mode,g.boss?.hp,...g.enemies.filter(e=>Math.abs(e.cx-p.cx)<100).map(e=>[e.hp,Math.round(e.x),Math.round(e.y),e.stunT,e.finishHits])]);
   prev=input;
  }
  s.draw=draw;s.draw();
- return {stage,policy,food:g.food,elapsed:+g.time.toFixed(2),hud:Math.ceil(g.timeLeft/3.6),extended,clocks,fullAt,bossAt,mode:g.mode,out:p.out,deaths,x:p.x,y:p.y,caveEntered,caveReturned,trace};
-},{stage:Number(process.argv[2]||1),policy:Number(process.argv[3]||0)})
+ return {stage,policy,food:g.food,elapsed:+g.time.toFixed(2),hud:Math.ceil(g.timeLeft/3.6),extended,clocks,fullAt,bossAt,mode:g.mode,out:p.out,deaths,x:p.x,y:p.y,caveEntered,caveReturned,caveDoor,deathEvents,trace,transitions,recoveries,verdict:caveReturned?'cave-returned':g.mode==='clear'||g.mode==='rescue'?'completed':recoveries.length?'input-route-unresolved':'not-completed'};
+},{stage:currentStage,policy:Number(process.argv[3]||0)})
  if(result.mode==='clear'||result.mode==='rescue'){
   await page.evaluate(()=>window.__phaserGame.loop.wake())
   await page.waitForFunction(stage=>stage<15?window.__movement?.ready&&window.__movement.level.def.id===stage+1:window.__phaserGame.scene.getScene('Journey').journey?.kind==='rescue',result.stage)
   result.next=result.stage<15?result.stage+1:'rescue';
+  if(result.stage===15){
+   await page.waitForFunction(()=>{const s=window.__phaserGame.scene.getScene('Journey');return s.ready&&s.journey.kind==='rescue'});
+   result.rescueReady=true;
+   await page.waitForFunction(()=>{const s=window.__phaserGame.scene.getScene('Journey');return s.ready&&s.journey.kind==='result'&&s.journey.clear&&s.elapsed>.6});
+   result.clearResult=true;
+   await page.keyboard.press('Enter');
+   await page.waitForFunction(()=>window.__phaserGame.scene.getScene('Journey').journey.kind==='opening');
+   result.endingRestart=true;
+  }
  }
  console.log(JSON.stringify(result))
+ if(!process.argv.includes('--continuous')||!result.next||result.next==='rescue')break;
+}
 }
 }
 } finally { await Promise.race([browser.close(),new Promise(resolve=>setTimeout(resolve,2000))]) }
