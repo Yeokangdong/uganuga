@@ -17,6 +17,7 @@ if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
 const port=option('--port','5306')
 const floodCheck = args.includes('--environment13')
 const chaseCheck = args.includes('--environment7')
+const storyCheck = args.includes('--story325')
 const limit = Number(option('--timeout', '240'))
 if (!Number.isFinite(limit) || limit <= 0) throw new Error('--timeout: 양수(초) 필요')
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -77,7 +78,7 @@ try {
       await page.waitForFunction(() => window.__game?.players?.length, null, { timeout: 60000 })
       while (!args.includes('--branches323') && Date.now() - started < limit * 1000) {
         // Observation only: do not call engine methods, set fields, or alter clocks.
-        snapshot = await page.evaluate(() => {
+        snapshot = await page.evaluate(async (argsStory) => {
           const g = window.__game, p = g.players[0], lv = g.level
           const foods = g.items.filter(i => !i.dead && ['fruit', 'meat', 'bigmeat'].includes(i.kind))
             .map(i => ({ x: i.x, y: i.y }))
@@ -85,7 +86,8 @@ try {
             .map(e => ({ x: e.cx, y: e.y, w: e.w, h: e.h }))
           const dir = p.facing || 1, feet = p.y + p.h
           const x = p.cx + dir * (p.w/2+7), row = Math.floor((feet + 4) / 16), col = Math.floor(x / 16)
-          return { stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
+          const story=argsStory?(await import('/src/game/journey.ts')).storyTraceAnchor(lv,g.doors.map(d=>d.x)):null
+          return { story,stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
             climbing: p.climbing, facing: p.facing, swing: p.swingT, vx: p.vx,
@@ -97,8 +99,19 @@ try {
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
               state: g.boss.state, vx: g.boss.vx } : null }
-        })
+        },storyCheck)
         const s = snapshot
+        if(storyCheck&&s.story&&!s.intro&&s.mode==='play'){
+          if(!captured.has('STORY')&&s.cx>s.story.x-90&&s.cx<s.story.x+40&&s.ground){
+            await page.screenshot({path:path.join(root,'shots/325_story.png')})
+            captured.add('STORY');events.push({branch:'real-keyboard-story',x:s.cx,anchor:s.story,alive:s.alive,hp:s.hp})
+          }
+          if(captured.has('STORY')&&s.cx>s.story.x+100&&s.alive){
+            await input(['ArrowRight']);await page.waitForTimeout(250);await input()
+            const moved=await page.evaluate(x=>window.__game.players[0].cx>x+5,s.cx)
+            events.push({branch:'post-trace-control',moved});complete=moved&&errors.length===0;break
+          }
+        }
         if(floodCheck&&stage===13){
           const phase=s.environment.phase
           if(['TELEGRAPH','ACTIVE','RESOLVED'].includes(phase)&&!captured.has(phase)
@@ -214,7 +227,7 @@ try {
         await page.waitForTimeout(100)
       }
       if(args.includes('--branches323')){
-        const branch=await page.evaluate(async()=>{
+        const branch=await page.evaluate(async(argsStory)=>{
           const {STAGES}=await import('/src/game/stages.ts'),{Level}=await import('/src/game/level.ts')
           const g=window.__game,p=g.players[0],checks=[]
           const check=(name,ok)=>{checks.push({name,ok:!!ok})}
@@ -253,16 +266,44 @@ try {
               check('tree-resolved',tree.phase==='RESOLVED')
             }
           }
+          if(argsStory){
+            const {storyTraceAnchor,drawStoryTrace}=await import('/src/game/journey.ts')
+            for(let i=0;i<15;i++){
+              p.lives=3;p.out=false;p.alive=true
+              g.stageIdx=i;g.stage=STAGES[i];g.level=new Level(g.stage);g.beginStage();g.introT=0
+              const blocked=g.doors.map(d=>d.x),a=storyTraceAnchor(g.level,blocked)
+              check(`story-selection-${i+1}`,!!a===[4,9,12,14].includes(i+1))
+              if(!a)continue
+              check(`story-safe-${i+1}`,blocked.every(x=>Math.abs(x-a.x)>=176)&&g.level.groundY(a.x)===a.y&&!g.level.waterAt(a.x,a.y+1))
+              const state=()=>JSON.stringify([g.score,g.food,g.timeLeft,g.enemies.length,g.items.length,g.doors.length,p.hp,g.environmentEvents.phase])
+              const before=state(),ctx=document.createElement('canvas').getContext('2d')
+              for(let n=0;n<3;n++)for(const back of [true,false])drawStoryTrace(ctx,g.level,blocked,0,0,n,back)
+              check(`story-pure-${i+1}`,before===state())
+              p.die(g);check(`story-death-${i+1}`,!p.alive);g.beginStage()
+              check(`story-restart-${i+1}`,JSON.stringify(a)===JSON.stringify(storyTraceAnchor(g.level,g.doors.map(d=>d.x))))
+              const door=g.doors[0]
+              if(door){const main=g.level;g.enterCave(door);check(`story-cave-${i+1}`,storyTraceAnchor(g.level,[])===null);g.exitCave();check(`story-return-${i+1}`,g.level===main&&JSON.stringify(a)===JSON.stringify(storyTraceAnchor(g.level,blocked)))}
+            }
+          }
           return checks
-        })
+        },storyCheck)
         events.push({branch:'state-injection-only',checks:branch});complete=branch.every(c=>c.ok);reason=complete?'':'상태 분기 실패'
+        if(storyCheck){
+          await page.evaluate(async()=>{
+            const {STAGES}=await import('/src/game/stages.ts'),{Level}=await import('/src/game/level.ts'),{storyTraceAnchor}=await import('/src/game/journey.ts')
+            const g=window.__game;g.players[0].lives=3;g.players[0].out=false;g.players[0].alive=true;g.stageIdx=11;g.stage=STAGES[11];g.level=new Level(g.stage);g.beginStage();g.introT=0
+            const a=storyTraceAnchor(g.level,g.doors.map(d=>d.x)),p=g.players[0]
+            if(a){p.x=a.x-60;p.y=a.y-p.h;g.camX=Math.max(0,a.x-180);g.camY=a.y-160;g.render()}
+          })
+          await page.screenshot({path:path.join(root,'shots/325_late.png')})
+        }
       }
       if (!complete && !reason) reason = `실시간 ${limit}초 제한`
     } catch (error) { reason = `실행 오류: ${error.message}` }
     await input()
-    const screenshot = path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
-    if(!chaseCheck&&!floodCheck)await page.screenshot({ path: screenshot, fullPage: true })
-    const result = { stage, target:floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
+    const screenshot = storyCheck?path.join(root,args.includes('--branches323')?'shots/325_late.png':'shots/325_story.png'):path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
+    if(!chaseCheck&&!floodCheck&&!storyCheck&&!args.includes('--branches323'))await page.screenshot({ path: screenshot, fullPage: true })
+    const result = { stage, target:storyCheck?'story-trace-real-input-and-control':floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }
     results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))

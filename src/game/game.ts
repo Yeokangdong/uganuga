@@ -17,7 +17,7 @@ import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
 import { drawArt, frameAt, progressFrame, image, has, loadStageArt, drawPaintedText, art } from './art'
 import { sfx, type Sfx } from './audio'
 import { terrainDrawAudit } from './paintedMap'
-import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
+import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit, drawStoryTrace } from './journey'
 
 /** Compact in place to avoid six temporary arrays per simulation step. */
 function removeDead<T extends {dead:boolean}>(items:T[]):void {
@@ -1041,6 +1041,9 @@ export class Game {
       ctx.fillStyle = '#000'
       ctx.fillRect(0, 0, VIEW_W, VIEW_H)
     } else this.bg.draw(ctx, this.camX, this.time,this.camY,this.level.height-VIEW_H)
+    const storyVisible=!this.saved&&this.mode==='play'&&this.players[0]?.alive
+    const storyBlocked=this.doors.map(d=>d.x)
+    if(storyVisible)drawStoryTrace(ctx,this.level,storyBlocked,cx,cy,this.time,true)
     const ls = this.level.scale
     ctx.drawImage(this.level.canvas, cx * ls, cy * ls, VIEW_W * ls, VIEW_H * ls, 0, 0, VIEW_W, VIEW_H)
     if(this.level.def.cave){
@@ -1055,6 +1058,7 @@ export class Game {
         ctx.restore()
       }
     }
+    if(storyVisible)drawStoryTrace(ctx,this.level,storyBlocked,cx,cy,this.time,false)
     drawStagePattern(this,ctx,cx,cy)
     if(!this.saved&&[1,7,13].includes(this.stage.id))this.environmentEvents.draw(ctx,cx,cy)
     this.drawWater(ctx, cx, cy)

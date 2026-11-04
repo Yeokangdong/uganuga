@@ -1,0 +1,380 @@
+[
+  {
+    "stage": 4,
+    "target": "story-trace-real-input-and-control",
+    "complete": true,
+    "blocked": "",
+    "seconds": 6.08,
+    "position": null,
+    "snapshot": null,
+    "events": [
+      {
+        "branch": "state-injection-only",
+        "checks": [
+          {
+            "name": "start1",
+            "ok": true
+          },
+          {
+            "name": "gate59-1",
+            "ok": true
+          },
+          {
+            "name": "gate60-1",
+            "ok": true
+          },
+          {
+            "name": "start2",
+            "ok": true
+          },
+          {
+            "name": "gate59-2",
+            "ok": true
+          },
+          {
+            "name": "gate60-2",
+            "ok": true
+          },
+          {
+            "name": "start3",
+            "ok": true
+          },
+          {
+            "name": "gate59-3",
+            "ok": true
+          },
+          {
+            "name": "gate60-3",
+            "ok": true
+          },
+          {
+            "name": "start4",
+            "ok": true
+          },
+          {
+            "name": "gate59-4",
+            "ok": true
+          },
+          {
+            "name": "gate60-4",
+            "ok": true
+          },
+          {
+            "name": "start5",
+            "ok": true
+          },
+          {
+            "name": "gate59-5",
+            "ok": true
+          },
+          {
+            "name": "gate60-5",
+            "ok": true
+          },
+          {
+            "name": "start6",
+            "ok": true
+          },
+          {
+            "name": "gate59-6",
+            "ok": true
+          },
+          {
+            "name": "gate60-6",
+            "ok": true
+          },
+          {
+            "name": "start7",
+            "ok": true
+          },
+          {
+            "name": "gate59-7",
+            "ok": true
+          },
+          {
+            "name": "gate60-7",
+            "ok": true
+          },
+          {
+            "name": "start8",
+            "ok": true
+          },
+          {
+            "name": "gate59-8",
+            "ok": true
+          },
+          {
+            "name": "gate60-8",
+            "ok": true
+          },
+          {
+            "name": "start9",
+            "ok": true
+          },
+          {
+            "name": "gate59-9",
+            "ok": true
+          },
+          {
+            "name": "gate60-9",
+            "ok": true
+          },
+          {
+            "name": "start10",
+            "ok": true
+          },
+          {
+            "name": "gate59-10",
+            "ok": true
+          },
+          {
+            "name": "gate60-10",
+            "ok": true
+          },
+          {
+            "name": "start11",
+            "ok": true
+          },
+          {
+            "name": "gate59-11",
+            "ok": true
+          },
+          {
+            "name": "gate60-11",
+            "ok": true
+          },
+          {
+            "name": "start12",
+            "ok": true
+          },
+          {
+            "name": "gate59-12",
+            "ok": true
+          },
+          {
+            "name": "gate60-12",
+            "ok": true
+          },
+          {
+            "name": "start13",
+            "ok": true
+          },
+          {
+            "name": "gate59-13",
+            "ok": true
+          },
+          {
+            "name": "gate60-13",
+            "ok": true
+          },
+          {
+            "name": "start14",
+            "ok": true
+          },
+          {
+            "name": "gate59-14",
+            "ok": true
+          },
+          {
+            "name": "gate60-14",
+            "ok": true
+          },
+          {
+            "name": "start15",
+            "ok": true
+          },
+          {
+            "name": "gate59-15",
+            "ok": true
+          },
+          {
+            "name": "gate60-15",
+            "ok": true
+          },
+          {
+            "name": "protected-route",
+            "ok": true
+          },
+          {
+            "name": "water-boundary",
+            "ok": true
+          },
+          {
+            "name": "swim",
+            "ok": true
+          },
+          {
+            "name": "oxygen",
+            "ok": true
+          },
+          {
+            "name": "death-clears-water",
+            "ok": true
+          },
+          {
+            "name": "respawn-clears",
+            "ok": true
+          },
+          {
+            "name": "restart-clears",
+            "ok": true
+          },
+          {
+            "name": "cave-clears",
+            "ok": true
+          },
+          {
+            "name": "cave-return",
+            "ok": true
+          },
+          {
+            "name": "rules60-20-10",
+            "ok": true
+          },
+          {
+            "name": "environment1-reset",
+            "ok": true
+          },
+          {
+            "name": "tree-warning",
+            "ok": true
+          },
+          {
+            "name": "tree-resolved",
+            "ok": true
+          },
+          {
+            "name": "environment7-reset",
+            "ok": true
+          },
+          {
+            "name": "story-selection-1",
+            "ok": true
+          },
+          {
+            "name": "story-selection-2",
+            "ok": true
+          },
+          {
+            "name": "story-selection-3",
+            "ok": true
+          },
+          {
+            "name": "story-selection-4",
+            "ok": true
+          },
+          {
+            "name": "story-safe-4",
+            "ok": true
+          },
+          {
+            "name": "story-pure-4",
+            "ok": true
+          },
+          {
+            "name": "story-death-4",
+            "ok": true
+          },
+          {
+            "name": "story-restart-4",
+            "ok": true
+          },
+          {
+            "name": "story-selection-5",
+            "ok": true
+          },
+          {
+            "name": "story-selection-6",
+            "ok": true
+          },
+          {
+            "name": "story-selection-7",
+            "ok": true
+          },
+          {
+            "name": "story-selection-8",
+            "ok": true
+          },
+          {
+            "name": "story-selection-9",
+            "ok": true
+          },
+          {
+            "name": "story-safe-9",
+            "ok": true
+          },
+          {
+            "name": "story-pure-9",
+            "ok": true
+          },
+          {
+            "name": "story-death-9",
+            "ok": true
+          },
+          {
+            "name": "story-restart-9",
+            "ok": true
+          },
+          {
+            "name": "story-selection-10",
+            "ok": true
+          },
+          {
+            "name": "story-selection-11",
+            "ok": true
+          },
+          {
+            "name": "story-selection-12",
+            "ok": true
+          },
+          {
+            "name": "story-safe-12",
+            "ok": true
+          },
+          {
+            "name": "story-pure-12",
+            "ok": true
+          },
+          {
+            "name": "story-death-12",
+            "ok": true
+          },
+          {
+            "name": "story-restart-12",
+            "ok": true
+          },
+          {
+            "name": "story-selection-13",
+            "ok": true
+          },
+          {
+            "name": "story-selection-14",
+            "ok": true
+          },
+          {
+            "name": "story-safe-14",
+            "ok": true
+          },
+          {
+            "name": "story-pure-14",
+            "ok": true
+          },
+          {
+            "name": "story-death-14",
+            "ok": true
+          },
+          {
+            "name": "story-restart-14",
+            "ok": true
+          },
+          {
+            "name": "story-selection-15",
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\325_late.png"
+  }
+]

@@ -1,0 +1,85 @@
+[
+  {
+    "stage": 4,
+    "target": "story-trace-real-input-and-control",
+    "complete": true,
+    "blocked": "",
+    "seconds": 15.46,
+    "position": {
+      "x": 706.25,
+      "y": 313.5
+    },
+    "snapshot": {
+      "story": {
+        "x": 608,
+        "y": 336
+      },
+      "stage": 4,
+      "mode": "play",
+      "food": 0,
+      "time": 7.712500000000076,
+      "timeLeft": 205.71666666665848,
+      "x": 706.25,
+      "cx": 713,
+      "y": 313.5,
+      "h": 22.5,
+      "hp": 9,
+      "lives": 3,
+      "alive": true,
+      "out": false,
+      "ground": true,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "vx": 90,
+      "environment": {
+        "phase": "IDLE",
+        "elapsed": 0,
+        "rockX": 0,
+        "water": null
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6400,
+      "wall": false,
+      "waterAhead": false,
+      "gap": false,
+      "foods": [],
+      "foes": [
+        {
+          "x": 802,
+          "y": 266.625,
+          "w": 27,
+          "h": 21.375
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 3.02,
+        "stage": 4,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "branch": "real-keyboard-story",
+        "x": 532.9765625,
+        "anchor": {
+          "x": 608,
+          "y": 336
+        },
+        "alive": true,
+        "hp": 9
+      },
+      {
+        "branch": "post-trace-control",
+        "moved": true
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\325_story.png"
+  }
+]

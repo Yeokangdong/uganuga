@@ -2,6 +2,7 @@ import { drawArt, frameAt, walkFrame } from './art'
 import { Background } from './background'
 import { VIEW_H, VIEW_W } from './constants'
 import { terrainTheme } from './terrainThemes'
+import type { Level } from './level'
 
 export const JOURNEY_DURATION=1.8
 type Passage='ridge'|'descent'|'river'|'forest'|'cave'|'ruins'|'dive'|'updraft'
@@ -41,6 +42,54 @@ function bone(g:CanvasRenderingContext2D,x:number,y:number):void {
   g.save();g.translate(x,y);g.rotate(-.35);g.strokeStyle='#75654b';g.lineWidth=1
   g.fillStyle='#eee0bc';g.beginPath();g.roundRect(-4,-1,8,2,1);g.fill();g.stroke()
   for(const dx of [-4,4])for(const dy of [-1,1]){g.beginPath();g.arc(dx,dy,1.2,0,Math.PI*2);g.fill();g.stroke()}
+  g.restore()
+}
+
+/** Pure scenery: no spawns, timers, collision bodies, rewards or visit state. */
+export function storyTraceAnchor(level:Level,blocked:number[]):{x:number;y:number}|null {
+  if(level.def.cave||![4,9,12,14].includes(level.def.id))return null
+  for(let x=320;x<Math.min(960,level.arenaX-384);x+=16){
+    const y=level.groundY(x)
+    if(y==null||blocked.some(b=>Math.abs(b-x)<176))continue
+    let safe=true
+    for(let dx=-64;dx<=96;dx+=8){
+      if(level.groundY(x+dx)!==y||level.waterAt(x+dx,y+1))safe=false
+      for(let dy=-112;dy<0;dy+=16){
+        if(level.solidAt(x+dx,y+dy)||level.isLadder(Math.floor((x+dx)/16),Math.floor((y+dy)/16))||level.caveAt(x+dx,y+dy))safe=false
+      }
+    }
+    if(safe)return {x,y}
+  }
+  return null
+}
+
+/** Background pass precedes terrain; ground pass stays below the walk surface. */
+export function drawStoryTrace(g:CanvasRenderingContext2D,level:Level,blocked:number[],cx:number,cy:number,time:number,background:boolean):void {
+  const anchor=storyTraceAnchor(level,blocked);if(!anchor)return
+  const x=anchor.x-cx,y=anchor.y-cy
+  if(x<-100||x>VIEW_W+100||y<64||y>VIEW_H+12)return
+  g.save()
+  if(background){
+    if(level.def.id===4||level.def.id===9){
+      g.globalAlpha=.24;g.filter='brightness(.2)'
+      drawArt(g,'kingkong.carry',0,x+38,y-88,false,{scale:.55})
+      g.filter='none';g.strokeStyle='#34454b';g.lineWidth=.8
+      // Temporary V shapes; the existing NEXT flock artwork request remains open.
+      for(let i=0;i<4;i++){
+        const bx=x-35+i*12+Math.sin(time*.5+i)*2,by=y-105-(i%2)*7
+        g.beginPath();g.moveTo(bx-3,by-1);g.lineTo(bx,by+1);g.lineTo(bx+3,by-1);g.stroke()
+      }
+    }
+  }else{
+    g.beginPath();g.rect(x-40,y+1,100,9);g.clip()
+    if(level.def.id===4||level.def.id===9){
+      for(let i=0;i<3;i++)footprint(g,x+i*17,y+4+i%2,1.35)
+    }else{
+      g.globalAlpha=.7;g.fillStyle='#bd718b'
+      g.beginPath();g.moveTo(x,y+5);g.lineTo(x-8,y+1);g.lineTo(x-7,y+8);g.lineTo(x,y+5);g.lineTo(x+8,y+1);g.lineTo(x+7,y+8);g.closePath();g.fill()
+      g.fillRect(x-1,y+4,2,3)
+    }
+  }
   g.restore()
 }
 
