@@ -45,3 +45,4 @@
 - 11-04 18:58 | Codex 팀장 | vite.config.ts·playthrough기동1줄·AGENTS·STATUS/NEXT | 대표 「니가 직접 고쳐」:브라우저자동열림직접수정·324대기작업중단 (Codex 판단) | server.open=false boolean·HTTP200·빌드성공,323미커밋보존해도구1줄만부분스테이징 | 다음:323결과직접검수후9번
 
 - 11-04 19:03 | 323 구현 | environmentEvents·stages·level·game·playthrough·구현_323.md·shots/323_* | 13판 실제 수위/안전발판/배수·패턴중첩 억제(Codex 판단) | 빌드1회·입력21.38초/피신실패복구29.28초/7판추격94.19초·상태분기59개 통과, 독립13판완주/입력사망·동굴 미검증, Pages 보존복사 배포 | 다음: 팀장 323_flood.png·결과 직접검수
+- 11-04 19:14 | Codex 팀장 | STATUS/NEXT·queue325 | 323보고서/실제입력JSON/수위화면/diff직접검수·직접빌드성공,8번완료·9번서사흔적배정 (Codex 판단) | 21.38초HP10/배수·오류0,독립13판전체/자연FOOD/입력사망·동굴미검증유지 | 다음:325결과·325_story.png직접검수후10번또는수정1건
