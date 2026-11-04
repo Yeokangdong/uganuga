@@ -10,7 +10,8 @@
 |---|---|---|
 | 대표(사용자) | 결정 | — |
 | 실장(Claude) | 대표와 대화, 작업 지시서를 `codex\queue\`에 넣음, 결과 확인·보고, 인계 문서 갱신 | `codex\queue\`, `docs\handoff\`, `AGENTS.md`, `CODEX_CONTINUE.md` |
-| 팀원·개발팀장(Codex, 작업 관리자) | queue 지시서 구현 / 자동 검수 | 지시서에 적힌 파일만 |
+| 팀원(Codex, 작업 관리자) | queue 지시서 구현 + **자체 검증**(개발팀장 없음, 11-04 대표 지시 「코덱스 팀장도 없애」) | 지시서에 적힌 파일만 |
+| 정리 담당(Codex, 1시간마다 자동) | 토큰 점검, `docs\handoff\요약_실장용.md` 작성, 기록·보고서 정리 | `codex\RULES.md`, `codex\reports`, `docs\handoff` |
 | **Codex 실장**(Claude가 없을 때 Codex 앱 채팅이 실장 역할 승계) | `CODEX_CONTINUE.md` 절차대로: NEXT.md 순서로 지시서를 queue에 하나씩 넣고, 검수 결과 확인, handoff 문서 갱신 | `codex\queue\`, `docs\handoff\` (게임 코드는 직접 고치지 않고 작업 관리자에게 맡김) |
 | Codex 앱 채팅(대표가 직접 한 가지를 시킬 때) | 그 지시만 | 지시받은 파일 |
 

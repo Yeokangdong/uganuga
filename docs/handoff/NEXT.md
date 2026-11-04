@@ -21,9 +21,9 @@
   - 참고 수치: `backup/phaser-main` 브랜치의 `src-phaser/environment.ts`(잎 1.2초·예고 2.4초·낙하 0.8초) — 수치만 참고, 코드 복사 금지
   - 그림: 나무 쓰러짐은 임시 도형 + Ludo 요청 표
 - [x] **4. A P1 미어캣 수우쿠렛** — 신규 `src\game\suukuret.ts`, `game.ts`, `art.ts`, 그림은 `codex\inbox\suukuret_*`. 판마다 처음부터 1~2마리, 다가오면 놀라 도망·재등장 없음, 피해·점수 0, 판별 반응(용암·얼음·물·낭떠러지). 기존 다람쥐 그림 재사용 금지
-- [ ] **5. A P1 점수 팝업·타격감·잔잔한 생태 — 작업 318 진행** — `entities.ts`, `game.ts`, `background.ts`, `art.ts`
-- [ ] **6. A P1 누가 구출 표식·짧은 컷** — `GameHud.vue`, `journey.ts`, `opening.ts`, `game.ts`, `art.ts`. 취소된 경로 배너·말풍선·지역 이름표 다시 넣지 말 것
-- [ ] **7. B P1 7판 바위 추격**
+- [x] **5. A P1 점수 팝업·타격감·잔잔한 생태 — 318 완료(실장 확인)** — `entities.ts`, `game.ts`, `background.ts`, `art.ts`
+- [x] **6. A P1 누가 구출 표식·짧은 컷 — 319→320 통과** (키 입력1판→실제2판260.12초, 화면 직접 확인, main2ec9221·Pages9da2014) — `GameHud.vue`, `journey.ts`, `opening.ts`, `game.ts`, `art.ts`. 취소된 경로 배너·말풍선·지역 이름표 다시 넣지 말 것
+- [ ] **7. B P1 7판 바위 추격 — 321 진행** (다음: 구현_321.md·321_chase.png 확인 후8번)
 - [ ] **8. B P1 13판 수위 상승**
 - [ ] **9. B P1 맵 서사 흔적**
 - [ ] **10. 킹콩 최종전 + Ludo 우가** — `boss.ts`, `stages.ts`, `game.ts`, `art.ts`, 그림 `codex\inbox\kingkong_*`, `uga_*`(걷기 20, 공격 앞 9, 점프 8~11장 제외, 사다리 v2)
