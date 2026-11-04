@@ -66,7 +66,7 @@ try {
     page.on('pageerror', onError)
     try {
       await input()
-      await page.goto(`http://127.0.0.1:5306/?stage=${stage}`)
+      await page.goto(`http://127.0.0.1:5306/?stage=${stage}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
       await page.waitForFunction(() => !document.querySelector('.loading'), null, { timeout: 60000 })
       await page.keyboard.press('Space')
       await page.waitForFunction(() => window.__game?.players?.length, null, { timeout: 60000 })
@@ -79,7 +79,7 @@ try {
           const foes = g.enemies.filter(e => !e.dead && !e.dying && !e.invulnerable)
             .map(e => ({ x: e.cx, y: e.y, w: e.w, h: e.h }))
           const dir = p.facing || 1, feet = p.y + p.h
-          const x = p.cx + dir * 14, row = Math.floor((feet + 4) / 16), col = Math.floor(x / 16)
+          const x = p.cx + dir * 27, row = Math.floor((feet + 4) / 16), col = Math.floor(x / 16)
           return { stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
@@ -98,7 +98,7 @@ try {
           previousSignature = signature
         }
         if (s.stage > stage || stage === 15 && s.mode === 'clear') {
-          complete = events.some(e => e.food >= 60) && events.some(e => e.mode === 'boss')
+          complete = events.some(e => e.food >= 60) && events.some(e => e.mode === 'boss' && e.bossHp > 0) && events.some(e => e.bossHp === 0)
             && events.some(e => e.mode === 'clear' || e.mode === 'rescue')
           reason = complete ? '' : '전환 관측했으나 필수 진행 증거 부족'
           break
@@ -114,8 +114,8 @@ try {
           if (stuck > 22) { reason = s.food < 60 ? '먹이 수집/경로 정체' : s.mode === 'boss' ? '보스 전투 정체' : '보스 문 접근 정체'; break }
           const foods = s.food < 60 ? s.foods.filter(f => Math.abs(f.y - s.y) < 85 && f.x > s.x - 100)
             .sort((a, b) => Math.hypot(a.x - s.cx, (a.y - s.y) * 2) - Math.hypot(b.x - s.cx, (b.y - s.y) * 2)) : []
-          const foe = s.mode === 'boss' ? s.boss : s.food < 60 ? s.foes.filter(e => Math.abs(e.y + e.h - s.y - s.h) < 40 && Math.abs(e.x - s.cx) < 125)
-            .sort((a, b) => Math.abs(a.x - s.cx) - Math.abs(b.x - s.cx))[0] : null
+          const foe = s.mode === 'boss' ? s.boss : s.foes.filter(e => Math.abs(e.y + e.h - s.y - s.h) < 40 && Math.abs(e.x - s.cx) < 125)
+            .sort((a, b) => Math.abs(a.x - s.cx) - Math.abs(b.x - s.cx))[0]
           let target = foods[0]?.x ?? foe?.x ?? s.arena + 64
           if (foe) target = foe.x - Math.sign(foe.x - s.cx || 1) * (foe.w / 2 + 14)
           const wanted = []
@@ -128,7 +128,7 @@ try {
             }
             if (s.swing <= 0 && !held.has('Space')) wanted.push('Space')
           }
-          if (s.climbing || s.ground && tick % 3 === 0 && (s.wall || s.gap || stuck > 2 ||
+          if (s.climbing || s.ground && !held.has('ArrowUp') && (s.wall || s.gap || stuck > 2 ||
             foods[0] && foods[0].y < s.y - 5 && Math.abs(foods[0].x - s.cx) < 35)) wanted.push('ArrowUp')
           if (!s.alive) wanted.length = 0
           await input(wanted)
