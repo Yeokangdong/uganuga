@@ -215,7 +215,7 @@ export class Level {
     let best:{x:number;floor:number}|null=null,score=Infinity
     for(let c=Math.max(1,Math.floor(minX/TILE));c<=Math.min(this.cols-2,Math.floor(maxX/TILE));c++){
       const px=c*TILE
-      if(this.spawns.some(s=>s.kind==='D'&&s.col*TILE>px-144&&s.col*TILE<px+w+144))continue
+      if(this.spawns.some(s=>s.kind==='D'&&s.col*TILE>px-144&&s.col*TILE<px+w+144&&(!this.def.jungleCanopy||Math.abs(this.floorBelow(s.col*TILE+8,s.row*TILE)-y)<64)))continue
       for(let r=3;r<this.rows;r++){
         const floor=r*TILE
         if(requiredFloor!==undefined&&floor!==requiredFloor)continue

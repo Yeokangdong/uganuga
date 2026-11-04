@@ -1,0 +1,53 @@
+{
+  "stateInjection": true,
+  "scope": "isolated policy/collection state checks, not normal key completion",
+  "collected": {
+    "food": 120,
+    "consumed": true,
+    "values": [
+      5,
+      20,
+      40
+    ]
+  },
+  "duplicate": {
+    "food": 120,
+    "unchanged": true
+  },
+  "death": {
+    "food": 120,
+    "consumed": true
+  },
+  "gate": {
+    "food": 0,
+    "before": 6289.25,
+    "after": 6289.25,
+    "notClamped": true,
+    "bossStartsAtZero": true
+  },
+  "transition": {
+    "stage": 2,
+    "food": 125,
+    "preserved": true
+  },
+  "end": [
+    {
+      "kind": "over",
+      "scores": [
+        125
+      ],
+      "stage": 2
+    }
+  ],
+  "fresh": {
+    "food": 0,
+    "zero": true
+  },
+  "hud": {
+    "food": "FOOD0000125",
+    "central": false,
+    "full": false,
+    "foodMeter": false
+  },
+  "errors": []
+}

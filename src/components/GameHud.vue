@@ -18,11 +18,6 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
   <div class="hud">
     <div class="rescue-goal"><canvas ref="nuga" width="48" height="48" aria-label="누가 얼굴" role="img"/><span>누가 구출 · {{hud.stage}}/15<small>{{hud.stage===15?'누가를 구해줘!':'마지막 판까지 '+(15-hud.stage)+'판'}}</small></span></div>
     <div v-if="hud.trail&&!hud.paused&&!hud.boss" class="trail-clue" role="status">{{hud.trail}}</div>
-    <div class="stage-score" v-if="hud.players[0]">
-      <span :aria-label="'스테이지 '+hud.stage"><CartoonText :text="'STAGE '+hud.stage"/></span>
-      <span :aria-label="'점수 '+hud.players[0].score"><CartoonText text="SCORE"/> <CartoonText :text="digits(hud.players[0].score)"/></span>
-    </div>
-    <div v-if="hud.foodFullNotice && !hud.paused" class="food-full" role="status"><strong>FOOD FULL!</strong><span>{{hud.foodFullNotice}}</span></div>
     <div class="status" v-for="p in hud.players.slice(0, 1)" :key="p.name" :class="{out:p.out}" :aria-label="p.name+' 캐릭터 정보'" :style="{'--panel-image':`url(${art.images['ui.status_panel']?.src})`}">
       <img :src="art.images['ui.portrait']?.src" class="portrait" alt="우가"/>
       <div class="status-content">
@@ -32,7 +27,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
         <div class="vitals">
           <span class="health"><CartoonText text="HP"/>
           <span class="energy" role="meter" aria-label="체력" :aria-valuenow="p.hp" aria-valuemin="0" :aria-valuemax="p.maxHp"><i v-for="n in p.maxHp" :key="n" :class="{on:n<=p.hp}"/></span></span>
-          <span class="food"><CartoonText text="FOOD"/><CartoonText :text="Math.round(hud.food*60)+'/60'"/><span class="meter" role="meter" aria-label="먹이" aria-valuemin="0" aria-valuemax="60" :aria-valuenow="Math.round(hud.food*60)"><i :style="{width:hud.food*100+'%'}"/></span></span>
+          <span class="food" :aria-label="'먹이 점수 '+hud.food"><CartoonText text="FOOD"/><CartoonText :text="digits(hud.food)"/></span>
           <span class="weapon" :aria-label="p.weapon" :title="p.weapon"><img v-if="weaponIcon(p.weaponKey)" :src="weaponIcon(p.weaponKey)" alt="" class="weapon-icon"/><CartoonText :text="weaponLabel(p.weaponKey)"/></span>
         </div>
       </div>
@@ -47,7 +42,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
     <div v-if="hud.paused" class="pause">
       <div class="pause-card"><h2>잠깐 쉬어가기</h2>
         <p>빛나는 몽둥이에 다가가면 바로 장착합니다.<br>나무 · 돌 · 뼈 · 불 몽둥이는 위력과 공격 속도가 다릅니다.</p>
-        <p>← → 이동　↑ 점프·사다리　↓ 동굴·내려가기</p><p>Space 공격 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모아 깃발로 이동하세요. 지나온 길로 돌아갈 수 있습니다.</p>
+        <p>← → 이동　↑ 점프·사다리　↓ 동굴·내려가기</p><p>Space 공격 · 길게 눌렀다 놓으면 강공격</p><p>별이 도는 적을 세 번 더 때리면 고기로 변합니다.</p><p>먹이를 모을수록 FOOD 점수가 높아집니다. 먹이 수와 관계없이 깃발로 진행할 수 있습니다.</p>
         <button @click="$emit('resume')" aria-label="계속하기">계속하기 <kbd>Esc</kbd></button>
         <button @click="$emit('quit')" aria-label="시작 화면">시작 화면 <kbd>Q</kbd></button>
       </div>
@@ -70,13 +65,10 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 .energy{display:flex;flex:none;width:calc(var(--pixel)*33);gap:calc(var(--pixel)*.5);padding:calc(var(--pixel)*.6);height:calc(var(--pixel)*6);background:#292016;border:calc(var(--pixel)*.7) solid #ba945d;border-radius:calc(var(--pixel)*.7)}
 .energy i{flex:1;min-width:0;border-radius:calc(var(--pixel)*.25);background:#504332}
 .energy i.on{background:#ca6543;box-shadow:inset 0 calc(var(--pixel)*.7) #f0ae70}
-.meter{display:block;flex:none;width:calc(var(--pixel)*25);height:calc(var(--pixel)*6);padding:calc(var(--pixel)*.6);border:calc(var(--pixel)*.7) solid #b29965;border-radius:calc(var(--pixel)*.4);background:#29291e;overflow:hidden}
-.meter i{display:block;height:100%;max-width:100%;background:#d1a64f;box-shadow:inset 0 calc(var(--pixel)*.7) #f0d18b}
 .weapon{justify-self:end}
 .weapon{display:flex;align-items:center;gap:.3cqw}.weapon-icon{width:2.3cqw;height:2.3cqw;object-fit:contain}
 .pattern-description{color:#ffdfa4}
 .breath{position:absolute;left:calc(var(--pixel)*40);top:calc(var(--pixel)*39);display:flex;align-items:center;gap:.5cqw;padding:.4cqw .7cqw;border:.1cqw solid #86d7d6;border-radius:.6cqw;background:#102c3ce6;color:#dcffff;font-size:1.1cqw;white-space:nowrap}.breath-meter{width:9cqw;height:.7cqw;border-radius:1cqw;background:#203e4d;overflow:hidden}.breath-meter i{display:block;height:100%;background:linear-gradient(90deg,#32a9d6,#9af5db);transition:width .15s linear}.breath small{font-size:.85cqw;color:#aadbe2}.breath.recovering .breath-meter i{background:#8be8a4}.breath.low{border-color:#ffac70;color:#ffcf9b}.breath.low .breath-meter i{background:#ff805b;animation:pulse .7s alternate infinite}
-.stage-score{position:absolute;top:2cqw;left:60%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6cqw;font-size:1.65cqw;line-height:1.1}.stage-score>span{display:flex;gap:.5cqw;align-items:center}.food-full{position:absolute;top:40%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6cqw;font-size:2cqw;color:#ffe898}.food-full strong{animation:full-flash .5s ease-in-out 6}@keyframes full-flash{50%{filter:brightness(1.8);text-shadow:0 0 1cqw #ffd34e}}
 .timer{position:absolute;right:2.6cqw;top:1.4cqw;display:flex;justify-content:center;min-width:2.1em;padding:.4em .4em .45em;color:#fff0bd;background-color:transparent;background-size:100% 100%;border:0;box-shadow:none;font-size:3.65cqw;line-height:1;text-shadow:none;image-rendering:auto}
 .timer.warning{color:#ffbd84;border-color:#ba6245}.boss{position:absolute;bottom:1.8cqw;left:30cqw;width:40cqw;display:flex;flex-direction:column;gap:.55cqw;align-items:center;font-size:1.4cqw}.boss-meter{width:100%;height:.8cqw;background:#1c100c;border:.18cqw solid #b89357;border-radius:1cqw;overflow:hidden}.boss-meter i{display:block;height:100%;background:linear-gradient(#ffac70,#ce3930);transition:width .15s}.banner{position:absolute;left:15%;right:15%;top:24%;text-align:center;font-size:3.2cqw;color:#ffe3a0;filter:drop-shadow(2px 3px 1px #27160d);animation:appear .25s ease-out}.banner small{display:block;font-size:1.9cqw;margin-top:1cqw}.help{position:absolute;bottom:1cqw;left:50%;transform:translateX(-50%);padding:.55cqw 1cqw;border-radius:2cqw;background:#17130cba;font-size:.95cqw;white-space:nowrap}.pause{position:absolute;inset:0;display:grid;place-items:center;background:#0d0b08b0;pointer-events:auto}.pause-card{width:44cqw;padding:2.6cqw;background:linear-gradient(135deg,#443325,#201911);border:.2cqw solid #b28e52;border-radius:.7cqw;box-shadow:0 1cqw 4cqw #0008;text-align:center}.pause h2{font-size:3cqw;margin:0 0 1.8cqw}.pause p{font-size:1.15cqw;line-height:1.6}.pause button{display:inline-flex;align-items:center;gap:1cqw;margin:1.5cqw .5cqw 0;padding:.9cqw 1.5cqw;background:#b48a47;border:1px solid #f0d19b;border-radius:.3cqw;color:#20160e;font-weight:700;font-size:1.3cqw;cursor:pointer}.pause button:hover{background:#e0b765}kbd{opacity:.6;font-size:.9cqw}.mute{position:absolute;right:2cqw;top:5cqw;font-size:.8cqw}.out{opacity:.4}@keyframes pulse{to{opacity:.4}}@keyframes appear{from{transform:scale(1.2);opacity:0}to{transform:scale(1);opacity:1}}
 </style>

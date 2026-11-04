@@ -1,0 +1,1312 @@
+{
+  "complete": true,
+  "reason": "",
+  "seconds": 47.93,
+  "stateInjection": false,
+  "dodged": true,
+  "phase": 12,
+  "snapshot": {
+    "x": 1196.0625,
+    "feet": 160,
+    "y": 137.5,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.00500000000000014,
+    "food": 80,
+    "mode": "play",
+    "enemies": [
+      {
+        "key": "jungleSnake",
+        "x": 1306.2125000000003,
+        "y": 151.5625,
+        "w": 40.5,
+        "h": 8.4375,
+        "hp": 2,
+        "stun": 0,
+        "finish": 0,
+        "phase": "patrol"
+      }
+    ],
+    "items": [],
+    "environment": "CANCELLED",
+    "pattern": {
+      "phase": "idle",
+      "age": 0,
+      "site": null,
+      "rect": null
+    }
+  },
+  "events": [
+    {
+      "t": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "food": 0,
+      "hp": 10
+    },
+    {
+      "t": 0.08,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 262.9562499999999,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 3,
+      "stun": 0,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 0.64,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 249.1749999999995,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 3,
+      "stun": 0,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 2.61,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 203.96874999999994,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 3.05,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 216.4000000000002,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 3.45,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 227.20000000000044,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 3.9,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 239.68750000000074,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 4.31,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 248.36875000000094,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 4.73,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 257.9812500000012,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 5.13,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 268.27500000000146,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 5.6,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 275.0637500000017,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 6.02,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 281.53250000000185,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 6.08,
+      "event": "food",
+      "from": 0,
+      "to": 5,
+      "x": 283.9512500000019,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "t": 6.42,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 290.3012500000021,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 6.84,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 283.8325000000019,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 7.28,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 273.9387500000017,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 7.68,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 264.10125000000147,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 8.08,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 253.8075000000012,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 8.49,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 245.32000000000096,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 8.94,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 232.83250000000066,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 9.39,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 222.57625000000047,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 9.81,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 214.7950000000003,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 10.25,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 201.745,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 10.67,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 198.91999999999996,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 11.09,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 208.93250000000023,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 11.27,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 238.77024999999912,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 1,
+      "stun": 0,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 11.6,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 215.8900000000004,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 12,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 250.03424999999942,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 1,
+      "stun": 0,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 12,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 224.04625000000064,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 12.46,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 236.53375000000094,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 12.88,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 244.70875000000112,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 13.11,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.976666666666667,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 13.17,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.91,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 13.23,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.843333333333334,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 13.37,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.710000000000001,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 13.37,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 249.69750000000124,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 13.45,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.626666666666668,
+      "finish": 0,
+      "phase": 0
+    },
+    {
+      "t": 13.59,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.543333333333335,
+      "finish": 1,
+      "phase": 0
+    },
+    {
+      "t": 13.73,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.420000000000002,
+      "finish": 1,
+      "phase": 0
+    },
+    {
+      "t": 13.85,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.286666666666669,
+      "finish": 1,
+      "phase": 0
+    },
+    {
+      "t": 13.85,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 249.69750000000124,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 13.93,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.220000000000002,
+      "finish": 1,
+      "phase": 0
+    },
+    {
+      "t": 14.01,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.136666666666669,
+      "finish": 1,
+      "phase": 0
+    },
+    {
+      "t": 14.07,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.120000000000003,
+      "finish": 2,
+      "phase": 0
+    },
+    {
+      "t": 14.2,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 4.013333333333336,
+      "finish": 2,
+      "phase": 0
+    },
+    {
+      "t": 14.27,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 3.9300000000000033,
+      "finish": 2,
+      "phase": 0
+    },
+    {
+      "t": 14.35,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 3.8466666666666702,
+      "finish": 2,
+      "phase": 0
+    },
+    {
+      "t": 14.35,
+      "event": "attack-key",
+      "phase": 0,
+      "x": 249.69750000000124,
+      "enemy": "dino1_0"
+    },
+    {
+      "t": 14.49,
+      "event": "enemy",
+      "key": "dino1_0",
+      "x": 274.0530000000001,
+      "y": 313.5,
+      "w": 15.75,
+      "h": 22.5,
+      "hp": 0,
+      "stun": 3.7133333333333374,
+      "finish": 2,
+      "phase": 0
+    },
+    {
+      "t": 14.57,
+      "event": "drop",
+      "kind": "meat",
+      "x": 274.0530000000001,
+      "y": 326,
+      "phase": 0,
+      "food": 5
+    },
+    {
+      "t": 15.09,
+      "event": "food",
+      "from": 5,
+      "to": 25,
+      "x": 272.6362500000014,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "t": 15.16,
+      "event": "phase",
+      "phase": 1,
+      "x": 273.9487500000014,
+      "feet": 336,
+      "food": 25,
+      "hp": 10
+    },
+    {
+      "t": 19.94,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "food": 25,
+      "hp": 10
+    },
+    {
+      "t": 20.42,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 474.8875,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 2,
+      "stun": 0,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 20.96,
+      "event": "food",
+      "from": 25,
+      "to": 30,
+      "x": 396.0625,
+      "feet": 224,
+      "phase": 2
+    },
+    {
+      "t": 21.4,
+      "event": "attack-key",
+      "phase": 2,
+      "x": 425.3125,
+      "enemy": "jungleSnake"
+    },
+    {
+      "t": 21.56,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 467.5124999999992,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 1,
+      "stun": 0,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 21.93,
+      "event": "attack-key",
+      "phase": 2,
+      "x": 432.60875000000016,
+      "enemy": "jungleSnake"
+    },
+    {
+      "t": 22.13,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.983333333333333,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 22.2,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.943333333333333,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 22.35,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.793333333333334,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 22.42,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.7266666666666675,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 22.42,
+      "event": "attack-key",
+      "phase": 2,
+      "x": 432.60875000000016,
+      "enemy": "jungleSnake"
+    },
+    {
+      "t": 22.49,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.643333333333334,
+      "finish": 0,
+      "phase": 2
+    },
+    {
+      "t": 22.65,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.553333333333335,
+      "finish": 1,
+      "phase": 2
+    },
+    {
+      "t": 22.72,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.486666666666668,
+      "finish": 1,
+      "phase": 2
+    },
+    {
+      "t": 22.8,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.403333333333335,
+      "finish": 1,
+      "phase": 2
+    },
+    {
+      "t": 22.89,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.320000000000002,
+      "finish": 1,
+      "phase": 2
+    },
+    {
+      "t": 22.89,
+      "event": "attack-key",
+      "phase": 2,
+      "x": 432.60875000000016,
+      "enemy": "jungleSnake"
+    },
+    {
+      "t": 22.96,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.236666666666669,
+      "finish": 1,
+      "phase": 2
+    },
+    {
+      "t": 23.11,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.146666666666669,
+      "finish": 2,
+      "phase": 2
+    },
+    {
+      "t": 23.24,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 4.030000000000003,
+      "finish": 2,
+      "phase": 2
+    },
+    {
+      "t": 23.36,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 3.89666666666667,
+      "finish": 2,
+      "phase": 2
+    },
+    {
+      "t": 23.36,
+      "event": "attack-key",
+      "phase": 2,
+      "x": 432.60875000000016,
+      "enemy": "jungleSnake"
+    },
+    {
+      "t": 23.44,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 3.813333333333337,
+      "finish": 2,
+      "phase": 2
+    },
+    {
+      "t": 23.52,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 468.2014999999991,
+      "y": 215.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 0,
+      "stun": 3.7466666666666706,
+      "finish": 2,
+      "phase": 2
+    },
+    {
+      "t": 23.6,
+      "event": "drop",
+      "kind": "meat",
+      "x": 468.2014999999991,
+      "y": 214,
+      "phase": 2,
+      "food": 30
+    },
+    {
+      "t": 24.16,
+      "event": "food",
+      "from": 30,
+      "to": 50,
+      "x": 458.7650000000003,
+      "feet": 224,
+      "phase": 2
+    },
+    {
+      "t": 24.22,
+      "event": "phase",
+      "phase": 3,
+      "x": 460.0775000000003,
+      "feet": 224,
+      "food": 50,
+      "hp": 10
+    },
+    {
+      "t": 25.32,
+      "event": "phase",
+      "phase": 4,
+      "x": 530.5775000000003,
+      "feet": 224,
+      "food": 50,
+      "hp": 10
+    },
+    {
+      "t": 26.15,
+      "event": "phase",
+      "phase": 5,
+      "x": 584.3196875000003,
+      "feet": 224,
+      "food": 50,
+      "hp": 10
+    },
+    {
+      "t": 26.57,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 2,
+      "stun": 0,
+      "finish": 0,
+      "phase": 5
+    },
+    {
+      "t": 26.91,
+      "event": "food",
+      "from": 50,
+      "to": 55,
+      "x": 636.0696875000003,
+      "feet": 224,
+      "phase": 5
+    },
+    {
+      "t": 26.98,
+      "event": "phase",
+      "phase": 6,
+      "x": 639.4446875000003,
+      "feet": 224,
+      "food": 55,
+      "hp": 10
+    },
+    {
+      "t": 29.61,
+      "event": "coconut-dodge-jump",
+      "x": 659.8821875000003,
+      "feet": 224,
+      "rect": {
+        "x": 675.4,
+        "y": 198,
+        "w": 8,
+        "h": 8
+      },
+      "hp": 10
+    },
+    {
+      "t": 29.61,
+      "event": "dodge-command-issued",
+      "x": 659.8821875000003,
+      "feet": 224,
+      "hp": 10,
+      "note": "Input scheduling record, not a measured landing; actual subsequent airborne/ground positions recorded below."
+    },
+    {
+      "t": 29.67,
+      "event": "phase",
+      "phase": 7,
+      "x": 659.8821875000003,
+      "feet": 208.875,
+      "food": 55,
+      "hp": 10
+    },
+    {
+      "t": 30.27,
+      "event": "attack-key",
+      "phase": 7,
+      "x": 696.1634375000003,
+      "enemy": "jungleMonkey"
+    },
+    {
+      "t": 30.47,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 1,
+      "stun": 0,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 30.78,
+      "event": "attack-key",
+      "phase": 7,
+      "x": 702.6087500000003,
+      "enemy": "jungleMonkey"
+    },
+    {
+      "t": 31,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.983333333333333,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 31.06,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.943333333333333,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 31.19,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.8100000000000005,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 31.25,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.743333333333334,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 31.25,
+      "event": "attack-key",
+      "phase": 7,
+      "x": 702.6087500000003,
+      "enemy": "jungleMonkey"
+    },
+    {
+      "t": 31.37,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.626666666666668,
+      "finish": 0,
+      "phase": 7
+    },
+    {
+      "t": 31.43,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.576666666666668,
+      "finish": 1,
+      "phase": 7
+    },
+    {
+      "t": 31.56,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.503333333333335,
+      "finish": 1,
+      "phase": 7
+    },
+    {
+      "t": 31.62,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.436666666666668,
+      "finish": 1,
+      "phase": 7
+    },
+    {
+      "t": 31.75,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.3033333333333355,
+      "finish": 1,
+      "phase": 7
+    },
+    {
+      "t": 31.75,
+      "event": "attack-key",
+      "phase": 7,
+      "x": 702.6087500000003,
+      "enemy": "jungleMonkey"
+    },
+    {
+      "t": 31.83,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.236666666666669,
+      "finish": 1,
+      "phase": 7
+    },
+    {
+      "t": 31.95,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.136666666666669,
+      "finish": 2,
+      "phase": 7
+    },
+    {
+      "t": 32.09,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 4.030000000000003,
+      "finish": 2,
+      "phase": 7
+    },
+    {
+      "t": 32.17,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 3.94666666666667,
+      "finish": 2,
+      "phase": 7
+    },
+    {
+      "t": 32.24,
+      "event": "attack-key",
+      "phase": 7,
+      "x": 702.6087500000003,
+      "enemy": "jungleMonkey"
+    },
+    {
+      "t": 32.31,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 3.813333333333337,
+      "finish": 2,
+      "phase": 7
+    },
+    {
+      "t": 32.38,
+      "event": "enemy",
+      "key": "jungleMonkey",
+      "x": 728,
+      "y": 186,
+      "w": 24.75,
+      "h": 29.25,
+      "hp": 0,
+      "stun": 3.730000000000004,
+      "finish": 2,
+      "phase": 7
+    },
+    {
+      "t": 32.45,
+      "event": "drop",
+      "kind": "meat",
+      "x": 728,
+      "y": 214,
+      "phase": 7,
+      "food": 55
+    },
+    {
+      "t": 32.96,
+      "event": "food",
+      "from": 55,
+      "to": 75,
+      "x": 724.4224999999996,
+      "feet": 224,
+      "phase": 7
+    },
+    {
+      "t": 33.04,
+      "event": "phase",
+      "phase": 8,
+      "x": 725.7349999999996,
+      "feet": 224,
+      "food": 75,
+      "hp": 10
+    },
+    {
+      "t": 37.55,
+      "event": "phase",
+      "phase": 9,
+      "x": 840,
+      "feet": 144,
+      "food": 75,
+      "hp": 10
+    },
+    {
+      "t": 39.29,
+      "event": "food",
+      "from": 75,
+      "to": 80,
+      "x": 955.3125,
+      "feet": 144,
+      "phase": 9
+    },
+    {
+      "t": 40.12,
+      "event": "phase",
+      "phase": 10,
+      "x": 1011.5625,
+      "feet": 144,
+      "food": 80,
+      "hp": 10
+    },
+    {
+      "t": 42.05,
+      "event": "safe-catch-branch",
+      "x": 1106.90625,
+      "feet": 288,
+      "hp": 10
+    },
+    {
+      "t": 42.11,
+      "event": "phase",
+      "phase": 11,
+      "x": 1106.90625,
+      "feet": 288,
+      "food": 80,
+      "hp": 10
+    },
+    {
+      "t": 46.83,
+      "event": "reclimb",
+      "x": 1128,
+      "feet": 160,
+      "hp": 10
+    },
+    {
+      "t": 46.91,
+      "event": "phase",
+      "phase": 12,
+      "x": 1128,
+      "feet": 160,
+      "food": 80,
+      "hp": 10
+    },
+    {
+      "t": 47.87,
+      "event": "enemy",
+      "key": "jungleSnake",
+      "x": 1306.6625000000001,
+      "y": 151.5625,
+      "w": 40.5,
+      "h": 8.4375,
+      "hp": 2,
+      "stun": 0,
+      "finish": 0,
+      "phase": 12
+    }
+  ],
+  "errors": [],
+  "dodgeObservation": {
+    "jumpCommand": {
+      "t": 29.61,
+      "event": "coconut-dodge-jump",
+      "x": 659.8821875000003,
+      "feet": 224,
+      "rect": {
+        "x": 675.4,
+        "y": 198,
+        "w": 8,
+        "h": 8
+      },
+      "hp": 10
+    },
+    "subsequentAirborne": {
+      "t": 29.67,
+      "event": "phase",
+      "phase": 7,
+      "x": 659.8821875000003,
+      "feet": 208.875,
+      "food": 55,
+      "hp": 10
+    },
+    "subsequentGroundObserved": {
+      "t": 33.04,
+      "event": "phase",
+      "phase": 8,
+      "x": 725.7349999999996,
+      "feet": 224,
+      "food": 75,
+      "hp": 10
+    },
+    "exactLandingTimestampNotSampled": true,
+    "hpBefore": 10,
+    "hpAtGround": 10
+  },
+  "geometry": {
+    "mainCols": 192,
+    "groundColsExcludingArena": 52,
+    "groundRatio": 0.2708333333333333,
+    "groundRemovedRatio": 0.7291666666666667,
+    "arenaCols": 24,
+    "groundColsIncludingArena": 76,
+    "mainBranches": 10,
+    "maxRequiredHorizontalGap": 32,
+    "jumpVelocity": 340,
+    "gravity": 1200,
+    "runSpeed": 90,
+    "flatJumpTheoreticalRange": 51.0,
+    "note": "Static ballistic estimate plus real normal-key first gap and rear-segment later gaps; no alternate full-ground bypass."
+  },
+  "phaseNotes": {
+    "normalStartEnd": "stage1 x1196/feet160 only; does not claim whole stage1-2 normal completion",
+    "rearEvidence": "rear-segment.json starts from injected observed position/FOOD, then uses actual keys to stage2",
+    "patternRuntimeAudit": "Game DEV getter avoids different Vite HMR WeakMap instances; direct import probe sameInstance=false caused attempt02 observer failure",
+    "oldScorePopups": "Enemy numeric score popup and boss5000 popup removed; legacy internal p.score does not enter FOOD",
+    "fullRunBalance": "Continuous normal-start full-stage timer/difficulty balance not verified; 15 start regression only"
+  }
+}

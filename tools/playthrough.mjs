@@ -328,11 +328,11 @@ try {
             await loadStageArt(i+1)
             g.stageIdx=i;g.stage=STAGES[i];g.level=new Level(g.stage);g.beginStage();g.introT=0
             const p=g.players[0];p.alive=true;p.out=false;p.lives=3
-            check(`start-${i+1}`,g.mode==='play'&&p.alive&&g.foodMax===60)
+            check(`start-${i+1}`,g.mode==='play'&&p.alive&&Number.isFinite(g.food)&&g.food>=0)
             p.x=g.level.arenaX+32;p.y=300;p.onGround=true
-            g.food=59;g.checkEnd(0);check(`door59-${i+1}`,g.mode==='play')
-            g.food=60;g.checkEnd(0)
-            check(`door60-boss-${i+1}`,g.mode==='boss'&&g.boss.kingkong===(i===14))
+            g.food=0;g.checkEnd(0);check(`zero-food-boss-${i+1}`,g.mode==='boss'&&g.boss.kingkong===(i===14))
+            g.food=125;g.checkEnd(0)
+            check(`food-over60-${i+1}`,g.food===125&&g.mode==='boss')
           }
           const b=g.boss,p=g.players[0]
           check('kingkong-name',b.name==='킹콩')
@@ -382,10 +382,10 @@ try {
           const check=(name,ok)=>{checks.push({name,ok:!!ok})}
           for(let i=0;i<15;i++){
             g.stageIdx=i;g.stage=STAGES[i];g.level=new Level(g.stage);g.beginStage();g.introT=0
-            check(`start${i+1}`,g.players[0].alive&&g.level.cols>0&&g.foodMax===60)
+            check(`start${i+1}`,g.players[0].alive&&g.level.cols>0&&Number.isFinite(g.food)&&g.food>=0)
             p.x=g.level.arenaX+32;p.y=300;p.onGround=true
-            g.food=59;g.checkEnd(0);check(`gate59-${i+1}`,g.mode==='play')
-            g.food=60;g.checkEnd(0);check(`gate60-${i+1}`,g.mode==='boss')
+            g.food=0;g.checkEnd(0);check(`gate-zero-food-${i+1}`,g.mode==='boss')
+            g.food=125;g.checkEnd(0);check(`food-over60-${i+1}`,g.food===125&&g.mode==='boss')
           }
           g.stageIdx=12;g.stage=STAGES[12];g.level=new Level(g.stage);g.beginStage();g.introT=0
           const lv=g.level,r=lv.def.flood,e=g.environmentEvents
@@ -403,7 +403,7 @@ try {
           const entry=lv.spawns.find(s=>s.kind==='D'),door={x:entry.col*16+8,floor:(entry.row+1)*16,used:false,id:0};lv.floodWater={left:r.start,right:r.end,top:300,bottom:336};e.phase='ACTIVE'
           g.enterCave(door);check('cave-clears',!lv.floodWater);g.exitCave();check('cave-return',g.level===lv&&!lv.floodWater)
           const {TIME_LIMIT,TIME_EXTEND,CLOCK_BONUS}=await import('/src/game/game.ts')
-          check('rules60-20-10',g.foodMax===60&&TIME_LIMIT/TIME_EXTEND===3&&CLOCK_BONUS/TIME_EXTEND===.5)
+          check('food-and-clock-rules',Number.isFinite(g.food)&&g.food>=0&&TIME_LIMIT/TIME_EXTEND===3&&CLOCK_BONUS/TIME_EXTEND===.5)
           for(const id of [1,7]){
             g.stageIdx=id-1;g.stage=STAGES[id-1];g.level=new Level(g.stage);g.beginStage()
             check(`environment${id}-reset`,g.environmentEvents.phase==='IDLE'&&!g.level.floodWater)

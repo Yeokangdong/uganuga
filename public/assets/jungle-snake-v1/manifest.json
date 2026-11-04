@@ -1,0 +1,22 @@
+{
+  "image": "snake.png",
+  "size": {
+    "w": 1774,
+    "h": 887
+  },
+  "direction": "left",
+  "visibleBboxAlphaAbove16": {
+    "x": 364,
+    "y": 371,
+    "w": 1037,
+    "h": 172
+  },
+  "bellyPivotApprox": {
+    "x": 887,
+    "y": 541
+  },
+  "tool": "builtin image_gen",
+  "alphaNote": "Original RGBA alpha preserved. Faint alpha 1–16 pixels extend to bbox [92,55,1728,847]; invisible during visual inspection. Frame extraction should use visible bbox above, not raw alpha bbox.",
+  "generationPrompt": "Use case: stylized-concept. Asset type: one static 2D side-scrolling game monster illustration, NOT a sprite sheet. Reference image: existing marshFrog.webp is STYLE ONLY, match its cute hand-painted cartoon look, dark warm outlines, softly shaded moss/lime green palette, cream underside, huge expressive eyes and little orange cheek. Generate ONE small playful green jungle SNAKE, facing LEFT in pure side view. Clearly recognizable legless snake: one rounded head at the left, large friendly mischievous eye, tiny forked tongue, one continuous long low serpentine body extending horizontally toward the right, cream belly lying flat along an imaginary horizontal ground plane, thin tapered tail at right. Head only slightly raised; ground-hugging silhouette, body much longer than tall. No arms, no legs, no feet, no hands. One single pose and one single character only. Clean readable silhouette appropriate at 48 pixel game scale. Center entire complete snake within canvas with at least 15 percent completely transparent empty margin on every side, including below the belly and beyond tongue and tail. Genuine alpha transparency outside the character. No background, no ground, no contact shadow, no scenery, no water, no waves, no wings, no horns, no dragon parts, no accessories, no text, no panel borders, no repeated poses.",
+  "finalEditPrompt": "Keep the same cute painted-cartoon single left-facing legless snake; reduce and center entire silhouette to <=65% canvas width with >=17% transparent left/right margin and >=20% above/below. Clean transparent background without specks/haze/shadow. Cream belly rests on nearly flat horizontal baseline. No ground, scenery, water, limbs, wings, horns, text, or extra poses."
+}

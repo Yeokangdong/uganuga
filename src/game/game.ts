@@ -10,7 +10,7 @@ import { Level, T } from './level'
 import { Background } from './background'
 import { Boss } from './boss'
 import {
-  ContactAnimal, Enemy, Spider, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
+  ContactAnimal, JungleMonkey, Enemy, Spider, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
   WEAPON_NAME, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
@@ -50,8 +50,6 @@ export interface HudState {
   aerial:boolean
   aquatic:boolean
   food: number
-  foodFullFrame: number
-  foodFullNotice?: string | null
   dreaming: boolean
   opening: string | null
   players: HudPlayer[]
@@ -131,9 +129,7 @@ export class Game {
   mode: 'play' | 'boss' | 'rescue' | 'clear' | 'over' = 'play'
   paused = false
   time = 0
-  private foodFullAt: number | null = null
   food = 0
-  readonly foodMax = 60
   timeLeft = TIME_LIMIT
   private ambushes: Ambush[] = []
   private doors: Door[] = []
@@ -229,8 +225,7 @@ export class Game {
     this.boss = null
     this.suukurets.place(this.level)
     this.mode = 'play'
-    this.food = 0
-    this.foodFullAt = null
+    // FOOD is a run total; only a new Game starts at zero.
     this.timeLeft = TIME_LIMIT
     this.lastBeep = 0
     this.bg.setStage(this.stage.theme.background)
@@ -330,6 +325,9 @@ export class Game {
   }
 
   // ?????????????????????????? helpers ??????????????????????????
+  /** Read the runtime used by this Game; avoids stale Vite module audit instances. */
+  get patternAudit(){return import.meta.env.DEV?patternState(this):undefined}
+
   nearestPlayer(x: number): Player | null {
     let best: Player | null = null
     let bd = Infinity
@@ -445,7 +443,7 @@ export class Game {
         const dx=target-24-p.cx
         p.vx=dx>1?35:0;p.facing=1;p.x+=p.vx*dt;p.walkDistance+=p.vx*dt;p.anim+=dt
       }
-      if(this.rescueT>=7) {this.mode='clear';this.endT=-5;this.cb.onEnd('clear',this.players.map(p=>p.score),this.stage.id)}
+      if(this.rescueT>=7) {this.mode='clear';this.endT=-5;this.cb.onEnd('clear',this.players.map(()=>this.food),this.stage.id)}
       this.pushHud();return
     }
     if(this.mode==='clear' || this.mode==='over') {
@@ -635,11 +633,6 @@ export class Game {
     else if(feet>lower)targetY=feet-VIEW_H*.72
     targetY=Math.max(0,Math.min(Math.max(0,this.level.height-VIEW_H),targetY))
     this.camY+=(targetY-this.camY)*(1-Math.exp(-8*dt))
-    const gate=this.level.arenaX+16
-    if(this.food<this.foodMax && p.x+p.w>gate) {
-      p.x=gate-p.w;p.vx=0
-      if(this.bannerT<=0)this.showBanner('배고프다!',1.5)
-    }
   }
 
   private startBoss(): void {
@@ -678,6 +671,7 @@ export class Game {
   }
 
   private makeEnemy(cfg: EnemyCfg, x: number, floorY: number, _row: number): Enemy {
+    if(cfg.key==='jungleMonkey')return new JungleMonkey(cfg,x,floorY)
     const resolved=has(cfg.key+'.walk')?cfg:{...cfg,key:cfg.fallbackKey??'dino1_0'}
     return new ContactAnimal(resolved,x,cfg.cls==='flyer'&&this.stage.id>15?_row*TILE:floorY-cfg.h)
   }
@@ -696,7 +690,8 @@ export class Game {
         const floor=lv.floorBelow(x+8,s.row*TILE)
         if(x<this.camX+8||x+w>this.camX+VIEW_W-8||floor-h<this.camY+4||floor>this.camY+VIEW_H-4)continue
         const visible=this.enemies.filter(e=>!e.dead&&!e.dying&&e.cfg.hp<999&&e.x+e.w>this.camX-16&&e.x<this.camX+VIEW_W+16)
-        if(visible.length>=2||this.players.some(p=>p.alive&&(Math.abs(p.cx-x)<96||p.invuln>0&&Math.abs(p.cx-x)<160)))continue
+        const safeDistance=this.stage.jungleCanopy&&['jungleSnake','jungleMonkey'].includes(cfg?.key??'')?64:96
+        if(visible.length>=2||this.players.some(p=>p.alive&&(Math.abs(p.cx-x)<safeDistance||p.invuln>0&&Math.abs(p.cx-x)<160)))continue
       }
       s.done = true
       const x = s.col * TILE
@@ -839,19 +834,19 @@ export class Game {
         const foodBefore=this.food
         switch (it.kind) {
           case 'meat':
-            this.food = Math.min(this.foodMax, this.food + 20)
+            this.food += 20
             p.heal(3)
             p.score += 100
           this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
           case 'bigmeat':
-            this.food = Math.min(this.foodMax, this.food + 40)
+            this.food += 40
             p.heal(99)
             p.score += 500
           this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
           case 'fruit':
-            this.food = Math.min(this.foodMax, this.food + 5)
+            this.food += 5
             p.score += 500
           this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
@@ -911,7 +906,7 @@ export class Game {
           this.beginJourney()
           return
         }
-        this.cb.onEnd(this.mode === 'clear' ? 'clear' : 'over', this.players.map((p) => p.score), this.stage.id)
+        this.cb.onEnd(this.mode === 'clear' ? 'clear' : 'over', this.players.map(() => this.food), this.stage.id)
       }
       return
     }
@@ -923,11 +918,7 @@ export class Game {
       this.showBanner('GAME OVER', 5)
       return
     }
-    if(this.food>=this.foodMax && this.foodFullAt===null) {
-      this.foodFullAt=this.time
-      this.sfx.fanfare()
-    }
-    if(!this.saved && this.mode==='play' && this.food>=this.foodMax && this.players.some(p=>p.alive && p.cx>=this.level.arenaX+20 && p.onGround)) {
+    if(!this.saved && this.mode==='play' && this.players.some(p=>p.alive && p.cx>=this.level.arenaX+20 && p.onGround)) {
       this.startBoss()
     } else if(this.boss?.dead && this.mode==='boss') {
       if(this.stage.final) {
@@ -942,10 +933,7 @@ export class Game {
     if(this.mode==='clear')return
     this.mode='clear';this.endT=1.5;this.sfx.stopMusic();this.sfx.fanfare()
     this.showBanner('발자국을 찾았다! 누가를 향해 앞으로',1.5)
-    const seconds=Math.max(0,Math.ceil(this.timeLeft/TIME_UNIT))
-    const bonus=seconds*10
-    for(const p of this.players) if(!p.out) {p.score+=bonus;p.lives=Math.min(9,p.lives+1)}
-    if(bonus>0)this.popup(this.camX+VIEW_W/2,70,`TIME BONUS ${seconds}x10 +${bonus}`,'#ffe14a')
+    for(const p of this.players) if(!p.out)p.lives=Math.min(9,p.lives+1)
   }
 
   private pushHud(): void {
@@ -955,9 +943,7 @@ export class Game {
       trail:null,
       aquatic:!!this.level.def.aquatic,
       aerial:!!this.level.def.aerial,
-      food: this.food / this.foodMax,
-      foodFullNotice: this.foodFullAt!==null && this.time-this.foodFullAt<3 ? (this.saved?'↓ 동굴 밖으로 · 문 열림':(this.players[0]?.cx??0)<this.level.arenaX?'문 열림 →':'← 문 열림') : null,
-      foodFullFrame: 1 + Math.floor(this.time * 8) % 3,
+      food: this.food,
       opening:this.introT>0&&this.introElapsed<this.openingDuration?(this.introElapsed<1.7?'누가 공주가 도토리를 든 다람쥐를 쫓아갑니다':this.introElapsed<OPENING_GRAB_START?'다람쥐를 쫓던 공주 앞에 킹콩이 나타납니다':this.introElapsed<OPENING_PLEA_START?'킹콩이 누가 공주를 납치합니다':this.introElapsed<OPENING_DIALOGUE_START?'누가 공주: 우가! 도와줘! 무서워!':this.introElapsed<OPENING_ESCAPE_START?'킹콩: 누가 예쁘다… 내 색시로 삼을 거다!':this.introElapsed<OPENING_HERO_LINE_START?'킹콩이 공주를 데리고 달아납니다':'우가: 누가! 기다려! 내가 꼭 구해줄게!'):null,
       dreaming: this.introT > 0 && this.introElapsed < this.openingDuration+this.dreamCount * 2.5,
       players: this.players.map((p) => ({
@@ -966,7 +952,7 @@ export class Game {
         hp: p.hp,
         maxHp: p.maxHp,
         lives: p.lives,
-        score: p.score,
+        score: this.food,
         weapon: WEAPON_NAME[p.weapon],
         weaponKey: p.weapon,
         dead: p.dead,
@@ -1074,7 +1060,7 @@ export class Game {
 
     if(!this.saved) {
       const x=this.level.arenaX+(this.stage.final?16:VIEW_W-32),y=this.level.floorBelow(x,100)
-      drawArt(ctx,'v2.flag',0,x-cx,y-cy,false,{alpha:this.food>=this.foodMax?1:.45})
+      drawArt(ctx,'v2.flag',0,x-cx,y-cy,false)
       if(this.stage.final){const key=this.mode==='rescue'?(this.rescueT<3?'nuga.wave':'nuga.cheer'):'nuga.idle';drawArt(ctx,key,frameAt(key,this.mode==='rescue'?this.rescueT:this.time),this.level.arenaX+36-cx,y-cy,false)}
     }
 

@@ -26,6 +26,12 @@ const jungleView=(p:PatternSite,g:Game)=>({...p,left:g.camX+8,right:g.camX+VIEW_
 function sitesFor(l:Level):PatternSite[]{
   const id=l.def.id,result:PatternSite[]=[]
   if(id>15)return result
+  if(id===1&&l.def.jungleCanopy){
+    return l.spawns.filter(s=>s.cfg?.key==='jungleMonkey').map(s=>{
+      const x=s.col*TILE+8,floor=l.floorBelow(x,s.row*TILE)
+      return {x,y:floor-62,floor,dir:1,left:x-120,right:x+120}
+    })
+  }
   const safe=(x:number,y:number)=>x>240&&x<l.arenaX-240&&!l.spawns.some(s=>s.kind==='D'&&Math.abs(s.col*TILE-x)<128)&&!Array.from({length:7},(_,i)=>Math.floor(x/TILE)-3+i).some(c=>Array.from({length:7},(_,i)=>Math.floor(y/TILE)-3+i).some(r=>l.isLadder(c,r)))
   if(id>=11){
     for(const a of l.patternAnchors){
@@ -109,15 +115,23 @@ function bounds(s:PatternSite,id:number):Rect{
   return{x:s.x-110,y:s.floor-100,w:220,h:110}
 }
 function visible(g:Game,r:Rect):boolean{return r.x>=g.camX+4&&r.x+r.w<=g.camX+VIEW_W-4&&r.y>=g.camY+4&&r.y+r.h<=g.camY+VIEW_H-4}
+function monkeyActor(g:Game,p:PatternSite){
+  return g.enemies.find(e=>e.cfg.key==='jungleMonkey'&&!e.dead&&!e.dying&&Math.abs(e.cx-p.x)<1)
+}
+
 export function updateStagePattern(g:Game,dt:number):void{
   const id=g.level.def.id;if(id<1||id>15||g.level.def.cave||g.mode!=='play')return
   const s=patternState(g);s.elapsed+=dt;s.rect=null
+  if(id===1&&g.level.def.jungleCanopy&&s.site){
+    const actor=monkeyActor(g,s.site)
+    if(!actor||actor.stunT>0||actor.flash>0){s.phase='idle';s.site=null;s.age=0;s.wait=2;return}
+  }
   if((id===1&&['TELEGRAPH','ACTIVE'].includes(g.environmentEvents.phase))||(id===7&&g.environmentEvents.suppressesPatterns)){
     s.phase='idle';s.site=null;s.age=0;s.wait=id===1?6:5;return
   }
   if(s.phase==='idle'){
     s.wait=Math.max(0,s.wait-dt);if(s.wait>0)return
-    const site=s.sites.map(p=>id===1?jungleView(p,g):p).find(p=>visible(g,bounds(p,id))&&g.players.some(b=>b.alive&&Math.abs(b.x-p.x)<240&&Math.abs(b.y+b.h-p.floor)<60)&&!g.players.some(b=>b.alive&&b.invuln>0&&Math.abs(b.x-p.x)<150))
+    const site=s.sites.map(p=>id===1?jungleView(p,g):p).find(p=>(id!==1||!g.level.def.jungleCanopy||!!monkeyActor(g,p)&&monkeyActor(g,p)!.stunT<=0&&monkeyActor(g,p)!.flash<=0)&&visible(g,bounds(p,id))&&g.players.some(b=>b.alive&&Math.abs(b.x-p.x)<240&&Math.abs(b.y+b.h-p.floor)<60)&&!g.players.some(b=>b.alive&&b.invuln>0&&Math.abs(b.x-p.x)<150))
     if(!site)return
     const target=g.players.find(b=>b.alive)
     s.site={...site,dir:id===1&&target&&target.cx<site.x?-1:site.dir};s.phase='warn';s.age=0;return
@@ -196,9 +210,12 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   const recover=['','return','recover','retract','bury','idle','rest','return','extinguish','return','extinguish']
   ctx.save()
   // One selected actor only, so adjacent sites cannot produce concurrent attacks.
-  const site=p??state.sites.map(s=>id===1?jungleView(s,g):s).find(s=>visible(g,bounds(s,id)))
+  const site=p??state.sites.map(s=>id===1?jungleView(s,g):s).find(s=>(id!==1||!g.level.def.jungleCanopy||!!monkeyActor(g,s))&&visible(g,bounds(s,id)))
   if(!site){ctx.restore();return}
-  const phase=p?state.phase:'idle',t=state.age,x=site.x-cx,y=(id===3?site.y:site.floor)-cy
+  const actor=id===1&&g.level.def.jungleCanopy?monkeyActor(g,site):undefined
+  if(id===1&&g.level.def.jungleCanopy&&!actor){ctx.restore();return}
+  if(actor?.flash)ctx.filter='brightness(1.8)'
+  const phase=actor&&actor.stunT>0?'idle':p?state.phase:'idle',t=state.age,x=site.x-cx,y=(id===3?site.y:site.floor)-cy
   let ax=x,ay=y
   if(id===1||[6,7,8].includes(id)){ax=x;ay=site.y-cy}
   if(id===1){

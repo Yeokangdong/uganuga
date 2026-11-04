@@ -1098,7 +1098,6 @@ export abstract class Enemy implements Body {
       if(weapon){const drop=new Item(weapon,this.cx+8,this.y+this.h-10,true,g.stage.theme.n);drop.pickupDelay=.5;g.items.push(drop)}
     }
     g.sfx.kill()
-    g.popup(this.cx,this.y-4,String(this.score),'#ffe4a1')
     g.fx('fx.ko',this.cx,this.y+this.h,false,.25)
     g.burst(this.cx,this.y+this.h/2,'#ffe4a1',10)
   }
@@ -1204,6 +1203,22 @@ export abstract class Enemy implements Body {
   abstract draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void
 }
 
+/** Combat body only: the existing jungle pattern draws the single hanging actor. */
+export class JungleMonkey extends Enemy {
+  readonly anchorX:number
+  readonly branchFloor:number
+  constructor(cfg:EnemyCfg,x:number,floor:number){
+    super(cfg,x,floor-cfg.h)
+    this.anchorX=x+8;this.branchFloor=floor
+    this.x=this.anchorX-this.w/2;this.y=floor-38;this.contactDmg=0;this.onGround=true
+  }
+  update(_g:Game,dt:number):void {
+    this.anim+=dt;this.flash=Math.max(0,this.flash-dt)
+    this.vx=0;this.vy=0;this.x=this.anchorX-this.w/2;this.y=this.branchFloor-38
+  }
+  draw(_ctx:CanvasRenderingContext2D,_cx:number,_cy:number):void {}
+}
+
 /** Local tactics share readable warnings, safe ledge checks and the stun/food rules. */
 export class ContactAnimal extends Enemy {
   private homeX:number
@@ -1264,6 +1279,7 @@ export class ContactAnimal extends Enemy {
     if(this.updateDying(g,dt))return
     this.timer-=dt
     if(this.cfg.cls==='flyer'){this.fly(g,dt);return}
+    if(this.cfg.key==='jungleSnake')this.contactDmg=this.phase==='act'?1:0
     const p=g.nearestPlayer(this.cx),behavior=this.cfg.behavior??'patrol'
     const dx=p?p.cx-this.cx:Infinity
     const aligned=p&&Math.abs(p.y+p.h-(this.y+this.h))<48

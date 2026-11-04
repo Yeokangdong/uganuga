@@ -1,0 +1,300 @@
+{
+  "complete": true,
+  "reason": "",
+  "seconds": 69.39,
+  "stateInjection": true,
+  "scope": "Rear segment only. Fresh game initial position1196.0625/feet160/FOOD80, earlier spawns consumed; subsequent navigation/combat/cave/boss uses real keys. Not a continuous normal-start stage1-2 completion. Fixture timer begins fresh216, so full-run timer/difficulty balance remains unverified.",
+  "phase": 20,
+  "snapshot": {
+    "stage": 2,
+    "x": 40,
+    "y": 313.5,
+    "feet": 336,
+    "hp": 10,
+    "lives": 4,
+    "onGround": true,
+    "climbing": false,
+    "swing": 0,
+    "food": 180,
+    "mode": "play",
+    "saved": false,
+    "passage": false,
+    "doorCount": 0,
+    "timer": 216,
+    "boss": null,
+    "enemies": [],
+    "items": [],
+    "pattern": "idle"
+  },
+  "events": [
+    {
+      "t": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 1196.0625,
+      "feet": 160,
+      "food": 80,
+      "saved": false,
+      "timer": 216
+    },
+    {
+      "t": 3.16,
+      "event": "food",
+      "from": 80,
+      "to": 100,
+      "phase": 0
+    },
+    {
+      "t": 3.24,
+      "event": "phase",
+      "phase": 1,
+      "x": 1289.6637499999983,
+      "feet": 160,
+      "food": 100,
+      "saved": false,
+      "timer": 212.6833333333308
+    },
+    {
+      "t": 5.62,
+      "event": "phase",
+      "phase": 2,
+      "x": 1448.8512499999983,
+      "feet": 224,
+      "food": 100,
+      "saved": false,
+      "timer": 210.29999999999558
+    },
+    {
+      "t": 8.55,
+      "event": "food",
+      "from": 100,
+      "to": 120,
+      "phase": 2
+    },
+    {
+      "t": 8.63,
+      "event": "phase",
+      "phase": 3,
+      "x": 1540.9337499999976,
+      "feet": 224,
+      "food": 120,
+      "saved": false,
+      "timer": 207.2999999999933
+    },
+    {
+      "t": 9.92,
+      "event": "phase",
+      "phase": 4,
+      "x": 1622.6837499999976,
+      "feet": 224,
+      "food": 120,
+      "saved": false,
+      "timer": 205.99999999999227
+    },
+    {
+      "t": 10.74,
+      "event": "phase",
+      "phase": 5,
+      "x": 1674.6915624999976,
+      "feet": 208,
+      "food": 120,
+      "saved": false,
+      "timer": 205.18333333332495
+    },
+    {
+      "t": 14.37,
+      "event": "food",
+      "from": 120,
+      "to": 140,
+      "phase": 5
+    },
+    {
+      "t": 14.45,
+      "event": "phase",
+      "phase": 6,
+      "x": 1786.944062499996,
+      "feet": 208,
+      "food": 140,
+      "saved": false,
+      "timer": 201.48333333332215
+    },
+    {
+      "t": 19.35,
+      "event": "phase",
+      "phase": 7,
+      "x": 1928,
+      "feet": 128,
+      "food": 140,
+      "saved": false,
+      "timer": 196.58333333331825
+    },
+    {
+      "t": 22.86,
+      "event": "phase",
+      "phase": 8,
+      "x": 2164.8125,
+      "feet": 128,
+      "food": 140,
+      "saved": false,
+      "timer": 193.0499999999821
+    },
+    {
+      "t": 23.83,
+      "event": "phase",
+      "phase": 9,
+      "x": 2224.1328125,
+      "feet": 160,
+      "food": 140,
+      "saved": false,
+      "timer": 192.08333333331467
+    },
+    {
+      "t": 26.91,
+      "event": "food",
+      "from": 140,
+      "to": 160,
+      "phase": 9
+    },
+    {
+      "t": 26.97,
+      "event": "phase",
+      "phase": 10,
+      "x": 2314.134062500003,
+      "feet": 160,
+      "food": 160,
+      "saved": false,
+      "timer": 188.94999999997896
+    },
+    {
+      "t": 33.49,
+      "event": "phase",
+      "phase": 11,
+      "x": 2280,
+      "feet": 336,
+      "food": 160,
+      "saved": false,
+      "timer": 182.4333333333071
+    },
+    {
+      "t": 34.76,
+      "event": "cave-enter",
+      "food": 160
+    },
+    {
+      "t": 34.83,
+      "event": "phase",
+      "phase": 12,
+      "x": 64,
+      "feet": 192,
+      "food": 160,
+      "saved": true,
+      "timer": 182.0999999999735
+    },
+    {
+      "t": 36.05,
+      "event": "cave-exit",
+      "food": 160
+    },
+    {
+      "t": 36.12,
+      "event": "phase",
+      "phase": 13,
+      "x": 2280,
+      "feet": 336,
+      "food": 160,
+      "saved": false,
+      "timer": 181.79999999997327
+    },
+    {
+      "t": 42.25,
+      "event": "phase",
+      "phase": 14,
+      "x": 2280,
+      "feet": 160,
+      "food": 160,
+      "saved": false,
+      "timer": 175.66666666663505
+    },
+    {
+      "t": 46.07,
+      "event": "phase",
+      "phase": 15,
+      "x": 2532.75,
+      "feet": 224,
+      "food": 160,
+      "saved": false,
+      "timer": 171.84999999996535
+    },
+    {
+      "t": 48.7,
+      "event": "phase",
+      "phase": 16,
+      "x": 2708.8125,
+      "feet": 224,
+      "food": 160,
+      "saved": false,
+      "timer": 169.21666666662992
+    },
+    {
+      "t": 49.52,
+      "event": "phase",
+      "phase": 17,
+      "x": 2763.9375,
+      "feet": 224,
+      "food": 160,
+      "saved": false,
+      "timer": 168.3999999999626
+    },
+    {
+      "t": 52.62,
+      "event": "food",
+      "from": 160,
+      "to": 180,
+      "phase": 17
+    },
+    {
+      "t": 52.69,
+      "event": "phase",
+      "phase": 18,
+      "x": 2866.4900000000034,
+      "feet": 224,
+      "food": 180,
+      "saved": false,
+      "timer": 165.23333333329353
+    },
+    {
+      "t": 56.05,
+      "event": "arena-boss",
+      "food": 180,
+      "x": 3092.0525000000034
+    },
+    {
+      "t": 56.13,
+      "event": "phase",
+      "phase": 19,
+      "x": 3096.5525000000034,
+      "feet": 224,
+      "food": 180,
+      "saved": false,
+      "timer": 161.79999999995746
+    },
+    {
+      "t": 65.87,
+      "event": "phase",
+      "phase": 20,
+      "x": 3346.8321875000233,
+      "feet": 224,
+      "food": 180,
+      "saved": false,
+      "timer": 152.11666666661677
+    },
+    {
+      "t": 69.39,
+      "event": "stage2",
+      "food": 180,
+      "hp": 10,
+      "lives": 4
+    }
+  ],
+  "errors": []
+}

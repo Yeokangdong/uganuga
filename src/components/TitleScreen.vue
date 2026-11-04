@@ -14,7 +14,7 @@ let disposed = false
 
 let hi = 0
 try {
-  hi = Number(localStorage.getItem('ugauga.hi') ?? 0) || 0
+  hi = Number(localStorage.getItem('ugauga.foodHi') ?? 0) || 0
 } catch {
   hi = 0
 }
@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
     <div class="bottom">
       <p class="sub story-goal">누가 공주를 구하러 떠나는 우가의 모험</p>
     </div>
-    <p class="hi">최고 점수 {{hiText}}</p>
+    <p class="hi">최고 FOOD {{hiText}}</p>
   </div>
 </template>
 

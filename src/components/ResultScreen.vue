@@ -10,10 +10,10 @@ const best = Math.max(0, ...props.scores)
 let hi = 0
 
 try {
-  hi = Number(localStorage.getItem('ugauga.hi') ?? 0) || 0
+  hi = Number(localStorage.getItem('ugauga.foodHi') ?? 0) || 0
   if (best > hi) {
     hi = best
-    localStorage.setItem('ugauga.hi', String(best))
+    localStorage.setItem('ugauga.foodHi', String(best))
   }
 } catch {
   /* 저장소 사용 불가 */
@@ -34,10 +34,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     <p class="msg">STAGE {{stage}}</p>
     <div class="scores">
       <div v-for="s in scores.slice(0, 1)" :key="0" class="line">
-        <span class="p0">1P 우가</span>
+        <span class="p0">우가 FOOD</span>
         <b>{{String(s).padStart(7,'0')}}</b>
       </div>
-      <div class="line hi"><span>최고 점수</span><b>{{String(hi).padStart(7,'0')}}</b></div>
+      <div class="line hi"><span>최고 FOOD</span><b>{{String(hi).padStart(7,'0')}}</b></div>
     </div>
     <div class="btns">
       <button aria-label="Retry (Enter)" @click="emit('retry')">다시 도전</button>

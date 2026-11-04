@@ -128,6 +128,11 @@ async function loadAnimationPack(stage:number):Promise<void>{
       art.images[key]=await cachedImage('jungle-close-v1/'+src)
     }))
   }
+  if(stage===1){
+    const img=await cachedImage('jungle-snake-v1/snake.png')
+    const snake:FrameSet={img,frames:[[364,371,1037,172,.5,170/172]],h:7,fps:1,ax:.5,ay:170/172,facingLeft:true}
+    for(const action of ['idle','walk','attack','windup','stun','hit','collapse','recover'])art.sprites['jungleSnake.'+action]=snake
+  }
   const ludo=await (await fetch(BASE+'ludo/manifest.json')).json()
   // Keep Uga's complete painted-v6 action set at one authored pixel scale.
   // Ludo walk repeats idle; its attack/jump body scale differs between poses.

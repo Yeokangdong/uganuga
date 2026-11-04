@@ -135,6 +135,7 @@ export interface EncounterDef {
 }
 
 export interface StageDef {
+  jungleCanopy?:{trees:{x:number;top:number}[];main:[number,number,number][]}
   firstTrail?:{climbX:number;upperClimbX:number;retryX:number;traceX:number;traceY:number;rejoinX:number}
   flood?: {start:number;end:number;floor:number;safe:number;deck:number}
   chase?: {start:number;end:number;floor:number;obstacle:number}
@@ -465,18 +466,35 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   map=planned.map
   let encounters=planned.encounters
   let firstTrail:StageDef['firstTrail']
+  let jungleCanopy:StageDef['jungleCanopy']
   if(index===0){
-    // Keep the original four +5 fruit and two existing animal introductions,
-    // but connect their rewards to one readable root/vine/canopy detour.
-    const grid=map.map(row=>row.replace(/[fEU]/g,'.').split(''))
-    grid[20]![14]='E'
-    for(let col=24;col<=26;col++)for(let row=17;row<=21;row++)grid[row]![col]='R'
-    for(let col=32;col<=37;col++)grid[14]![col]='='
-    for(const [col,row] of [[18,20],[25,13],[30,6],[34,6]])grid[row]![col]='f'
-    const ladders=[...(map.ladders??[]),[34,14,22] as Span]
+    const width=192,grid=Array.from({length:ROWS},()=>Array<string>(width).fill('.')),ladders:Span[]=[]
+    const ground=(left:number,right:number,row:number)=>{for(let c=left;c<=right;c++)for(let r=row;r<ROWS;r++)grid[r]![c]='#'}
+    const branch=(left:number,right:number,row:number)=>{for(let c=left;c<=right;c++)grid[row]![c]='='}
+    const main:Span[]=[[17,33,14],[36,53,14],[50,67,9],[70,87,10],[84,101,14],[104,121,13],[118,135,8],[138,155,10],[152,169,14],[172,191,14]]
+    for(const [l,r,y]of main)branch(l,r,y)
+    ground(0,23,21);ground(74,83,20);ground(138,147,21);ground(184,191,14)
+    // Catch missed inter-tree jumps, without building a continuous ground bypass.
+    for(const [l,r,y,climb,top]of [[31,38,20,36,14],[65,72,18,70,10],[99,106,20,104,13],[133,140,18,138,10],[167,174,20,172,14]]){
+      branch(l!,r!,y!);ladders.push([climb!,top!,y!])
+    }
+    ladders.push([20,14,21],[52,9,14],[86,10,14],[120,8,13],[154,10,14],[78,10,20],[142,10,21])
+    grid[20]![14]='E';grid[19]![78]='D';grid[20]![142]='D'
+    for(const [col,row]of [[18,20],[25,13],[40,13],[60,8]])grid[row]![col]='f'
     map=Object.assign(grid.map(row=>row.join('')),{ladders})
-    encounters=[...encounters,{col:28,row:12,cfg:{...localRoles.U!,patrolRadius:16},group:'상층 먹이와 추적길 지킴이',facing:-1}]
-    firstTrail={climbX:328,upperClimbX:488,retryX:552,traceX:440,traceY:208,rejoinX:848}
+    const snake:EnemyCfg={key:'jungleSnake',name:'가지 뱀',cls:'melee',behavior:'charge',patrolRadius:18,hp:2,score:0,speed:12,w:36,h:7.5}
+    const monkey:EnemyCfg={key:'jungleMonkey',name:'덩굴 원숭이',cls:'melee',hp:2,score:0,speed:0,w:22,h:26}
+    encounters=[
+      {col:28,row:13,cfg:snake,group:'가지 먹이 지킴이',facing:-1},
+      {col:45,row:13,cfg:monkey,group:'나무 원숭이',facing:-1},
+      {col:78,row:9,cfg:snake,group:'동굴 위 가지',facing:-1},
+      {col:96,row:13,cfg:monkey,group:'두번째 나무 원숭이',facing:-1},
+      {col:112,row:12,cfg:{...localRoles.E!,patrolRadius:26},group:'가지 순찰',facing:-1},
+      {col:144,row:9,cfg:snake,group:'상층 가지',facing:-1},
+      {col:179,row:13,cfg:monkey,group:'마지막 나무 원숭이',facing:-1},
+    ]
+    jungleCanopy={main,trees:main.map(([l,r,y])=>({x:(l+r+1)*8,top:y*16}))}
+    firstTrail={climbX:328,upperClimbX:840,retryX:584,traceX:968,traceY:144,rejoinX:1128}
   }
   // Insert a dedicated dry corridor between exploration legs, after encounter planning.
   // Existing doors, ladders and encounters retain their relative geometry.
@@ -505,7 +523,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     flood={start:at*16,end:(at+24)*16,floor:floor*16,safe:(at+8)*16,deck:19*16}
   }
   return {
-    firstTrail,flood,chase,
+    jungleCanopy,firstTrail,flood,chase,
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
     encounters,

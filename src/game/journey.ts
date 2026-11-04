@@ -72,7 +72,9 @@ export function drawStoryTrace(g:CanvasRenderingContext2D,level:Level,blocked:nu
   if(x<-100||x>VIEW_W+100||y<64||y>VIEW_H+12)return
   g.save()
   if(level.def.id===1){
-    if(!background)for(const [tx,ty]of [[anchor.x,anchor.y],[548,112]]){
+    const branch=level.def.jungleCanopy?.main[1]
+    const traces=[[anchor.x,anchor.y],...(branch?[[(branch[0]+4)*16,branch[2]*16]]:[])]
+    if(!background)for(const [tx,ty]of traces){
       const rx=tx-cx,ry=ty-cy
       g.strokeStyle='#88485c';g.lineWidth=.7;g.fillStyle='#ee9bac'
       g.beginPath();g.moveTo(rx,ry+2);g.lineTo(rx-5,ry);g.lineTo(rx-6,ry+6);g.lineTo(rx,ry+3);g.lineTo(rx+6,ry);g.lineTo(rx+5,ry+6);g.closePath();g.fill();g.stroke()

@@ -53,7 +53,7 @@ export class Boss implements Body {
     if(this.hp===0){
       this.state='dying';this.t=1.2;this.vx=0;this.waves=[]
       for(const p of g.players)if(p.alive)p.score+=5000
-      g.popup(this.cx,this.y-8,'5000','#ffe14a');g.sfx.roar()
+      g.sfx.roar()
     }
   }
   update(g:Game,dt:number):void {

@@ -1,0 +1,173 @@
+{
+  "scope": "15 normal stage starts only, not stage1-15 completion; wait actual title.ready instead of separate HMR art import",
+  "stateInjection": false,
+  "rows": [
+    {
+      "stage": 1,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 216,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 2,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 432,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 3,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 440,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 4,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 424,
+      "x": 40,
+      "feet": 352,
+      "finite": true
+    },
+    {
+      "stage": 5,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 440,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 6,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 376,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 7,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 440,
+      "x": 40,
+      "feet": 352,
+      "finite": true
+    },
+    {
+      "stage": 8,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 408,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 9,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 424,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 10,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 440,
+      "x": 40,
+      "feet": 352,
+      "finite": true
+    },
+    {
+      "stage": 11,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 376,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 12,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 392,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 13,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 438,
+      "x": 40,
+      "feet": 352,
+      "finite": true
+    },
+    {
+      "stage": 14,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 424,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    },
+    {
+      "stage": 15,
+      "mode": "play",
+      "food": 0,
+      "hp": 10,
+      "lives": 3,
+      "cols": 440,
+      "x": 40,
+      "feet": 336,
+      "finite": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

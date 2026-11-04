@@ -116,7 +116,14 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
 /** An existing whole tree makes the short root obstacle read as jungle, not masonry. */
 export function firstJungleTrunk(g:CanvasRenderingContext2D):void {
   const im=part(1,'support');if(!im)return
-  const map=STAGES[0]!.map
+  const stage=STAGES[0]!,map=stage.map
+  if(stage.jungleCanopy){
+    for(const [index,tree]of stage.jungleCanopy.trees.entries()){
+      const width=154+(index%3)*12,height=im.height*width/im.width
+      g.drawImage(im,tree.x-width/2,tree.top-22,width,height)
+    }
+    return
+  }
   // Whole trees at spaced branch junctions; never stamp every climb route.
   for(const [x,width] of [[408,160],[1240,148],[2168,172],[3096,150],[4024,164],[4952,152],[5880,166]]){
     const col=Math.floor(x!/16);let row=map.length-1
