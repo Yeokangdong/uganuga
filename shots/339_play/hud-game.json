@@ -1,0 +1,523 @@
+{
+  "stateInjection": true,
+  "scope": "Actual live Game HUD values set for visual/layout checks, simulation frozen; debug stage buttons hidden only for photos. Not play completion.",
+  "states": [
+    {
+      "width": 1280,
+      "food": 0,
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "boxes": {
+        ".status": {
+          "x": 9.59375,
+          "y": 9.59375,
+          "width": 588,
+          "height": 100.796875,
+          "right": 597.59375,
+          "bottom": 110.390625,
+          "text": "FOOD0000000LIFE3HPBONE",
+          "font": "16px"
+        },
+        ".food": {
+          "x": 112.78125,
+          "y": 23.984375,
+          "width": 448.8125,
+          "height": 33.59375,
+          "right": 561.59375,
+          "bottom": 57.578125,
+          "text": "FOOD0000000",
+          "font": "13.92px"
+        },
+        ".food-value": {
+          "x": 167.734375,
+          "y": 23.984375,
+          "width": 118.453125,
+          "height": 29.046875,
+          "right": 286.1875,
+          "bottom": 53.03125,
+          "text": "0000000",
+          "font": "26.4px"
+        },
+        ".vitals": {
+          "x": 112.78125,
+          "y": 62.375,
+          "width": 448.8125,
+          "height": 24,
+          "right": 561.59375,
+          "bottom": 86.375,
+          "text": "LIFE3HPBONE",
+          "font": "13.92px"
+        },
+        ".health": {
+          "x": 173.625,
+          "y": 66.578125,
+          "width": 105.0625,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "HP",
+          "font": "13.92px"
+        },
+        ".energy": {
+          "x": 197.09375,
+          "y": 66.578125,
+          "width": 81.59375,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "",
+          "font": "13.92px"
+        },
+        ".weapon": {
+          "x": 497.96875,
+          "y": 63.578125,
+          "width": 63.625,
+          "height": 21.59375,
+          "right": 561.59375,
+          "bottom": 85.171875,
+          "text": "BONE",
+          "font": "13.92px"
+        },
+        ".timer": {
+          "x": 1148.625,
+          "y": 17.90625,
+          "width": 98.109375,
+          "height": 91.09375,
+          "right": 1246.734375,
+          "bottom": 109,
+          "text": "60",
+          "font": "46.72px"
+        },
+        ".rescue-goal": {
+          "x": 977.859375,
+          "y": 12.796875,
+          "width": 148.546875,
+          "height": 38.390625,
+          "right": 1126.40625,
+          "bottom": 51.1875,
+          "text": "누가 구출 · 1/15마지막 판까지 14판",
+          "font": "14.08px"
+        }
+      },
+      "overlaps": [],
+      "hpOn": 10,
+      "central": false
+    },
+    {
+      "width": 1280,
+      "food": 80,
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "boxes": {
+        ".status": {
+          "x": 9.59375,
+          "y": 9.59375,
+          "width": 588,
+          "height": 100.796875,
+          "right": 597.59375,
+          "bottom": 110.390625,
+          "text": "FOOD0000080LIFE3HPBONE",
+          "font": "16px"
+        },
+        ".food": {
+          "x": 112.78125,
+          "y": 23.984375,
+          "width": 448.8125,
+          "height": 33.59375,
+          "right": 561.59375,
+          "bottom": 57.578125,
+          "text": "FOOD0000080",
+          "font": "13.92px"
+        },
+        ".food-value": {
+          "x": 167.734375,
+          "y": 23.984375,
+          "width": 118.453125,
+          "height": 29.046875,
+          "right": 286.1875,
+          "bottom": 53.03125,
+          "text": "0000080",
+          "font": "26.4px"
+        },
+        ".vitals": {
+          "x": 112.78125,
+          "y": 62.375,
+          "width": 448.8125,
+          "height": 24,
+          "right": 561.59375,
+          "bottom": 86.375,
+          "text": "LIFE3HPBONE",
+          "font": "13.92px"
+        },
+        ".health": {
+          "x": 173.625,
+          "y": 66.578125,
+          "width": 105.0625,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "HP",
+          "font": "13.92px"
+        },
+        ".energy": {
+          "x": 197.09375,
+          "y": 66.578125,
+          "width": 81.59375,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "",
+          "font": "13.92px"
+        },
+        ".weapon": {
+          "x": 497.96875,
+          "y": 63.578125,
+          "width": 63.625,
+          "height": 21.59375,
+          "right": 561.59375,
+          "bottom": 85.171875,
+          "text": "BONE",
+          "font": "13.92px"
+        },
+        ".timer": {
+          "x": 1148.625,
+          "y": 17.90625,
+          "width": 98.109375,
+          "height": 91.09375,
+          "right": 1246.734375,
+          "bottom": 109,
+          "text": "60",
+          "font": "46.72px"
+        },
+        ".rescue-goal": {
+          "x": 977.859375,
+          "y": 12.796875,
+          "width": 148.546875,
+          "height": 38.390625,
+          "right": 1126.40625,
+          "bottom": 51.1875,
+          "text": "누가 구출 · 1/15마지막 판까지 14판",
+          "font": "14.08px"
+        }
+      },
+      "overlaps": [],
+      "hpOn": 10,
+      "central": false
+    },
+    {
+      "width": 1280,
+      "food": 180,
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "boxes": {
+        ".status": {
+          "x": 9.59375,
+          "y": 9.59375,
+          "width": 588,
+          "height": 100.796875,
+          "right": 597.59375,
+          "bottom": 110.390625,
+          "text": "FOOD0000180LIFE3HPBONE",
+          "font": "16px"
+        },
+        ".food": {
+          "x": 112.78125,
+          "y": 23.984375,
+          "width": 448.8125,
+          "height": 33.59375,
+          "right": 561.59375,
+          "bottom": 57.578125,
+          "text": "FOOD0000180",
+          "font": "13.92px"
+        },
+        ".food-value": {
+          "x": 167.734375,
+          "y": 23.984375,
+          "width": 118.453125,
+          "height": 29.046875,
+          "right": 286.1875,
+          "bottom": 53.03125,
+          "text": "0000180",
+          "font": "26.4px"
+        },
+        ".vitals": {
+          "x": 112.78125,
+          "y": 62.375,
+          "width": 448.8125,
+          "height": 24,
+          "right": 561.59375,
+          "bottom": 86.375,
+          "text": "LIFE3HPBONE",
+          "font": "13.92px"
+        },
+        ".health": {
+          "x": 173.625,
+          "y": 66.578125,
+          "width": 105.0625,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "HP",
+          "font": "13.92px"
+        },
+        ".energy": {
+          "x": 197.09375,
+          "y": 66.578125,
+          "width": 81.59375,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "",
+          "font": "13.92px"
+        },
+        ".weapon": {
+          "x": 497.96875,
+          "y": 63.578125,
+          "width": 63.625,
+          "height": 21.59375,
+          "right": 561.59375,
+          "bottom": 85.171875,
+          "text": "BONE",
+          "font": "13.92px"
+        },
+        ".timer": {
+          "x": 1148.625,
+          "y": 17.90625,
+          "width": 98.109375,
+          "height": 91.09375,
+          "right": 1246.734375,
+          "bottom": 109,
+          "text": "60",
+          "font": "46.72px"
+        },
+        ".rescue-goal": {
+          "x": 977.859375,
+          "y": 12.796875,
+          "width": 148.546875,
+          "height": 38.390625,
+          "right": 1126.40625,
+          "bottom": 51.1875,
+          "text": "누가 구출 · 1/15마지막 판까지 14판",
+          "font": "14.08px"
+        }
+      },
+      "overlaps": [],
+      "hpOn": 10,
+      "central": false
+    },
+    {
+      "width": 1280,
+      "food": 12345,
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "boxes": {
+        ".status": {
+          "x": 9.59375,
+          "y": 9.59375,
+          "width": 588,
+          "height": 100.796875,
+          "right": 597.59375,
+          "bottom": 110.390625,
+          "text": "FOOD0012345LIFE3HPBONE",
+          "font": "16px"
+        },
+        ".food": {
+          "x": 112.78125,
+          "y": 23.984375,
+          "width": 448.8125,
+          "height": 33.59375,
+          "right": 561.59375,
+          "bottom": 57.578125,
+          "text": "FOOD0012345",
+          "font": "13.92px"
+        },
+        ".food-value": {
+          "x": 167.734375,
+          "y": 23.984375,
+          "width": 118.453125,
+          "height": 29.046875,
+          "right": 286.1875,
+          "bottom": 53.03125,
+          "text": "0012345",
+          "font": "26.4px"
+        },
+        ".vitals": {
+          "x": 112.78125,
+          "y": 62.375,
+          "width": 448.8125,
+          "height": 24,
+          "right": 561.59375,
+          "bottom": 86.375,
+          "text": "LIFE3HPBONE",
+          "font": "13.92px"
+        },
+        ".health": {
+          "x": 173.625,
+          "y": 66.578125,
+          "width": 105.0625,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "HP",
+          "font": "13.92px"
+        },
+        ".energy": {
+          "x": 197.09375,
+          "y": 66.578125,
+          "width": 81.59375,
+          "height": 15.59375,
+          "right": 278.6875,
+          "bottom": 82.171875,
+          "text": "",
+          "font": "13.92px"
+        },
+        ".weapon": {
+          "x": 497.96875,
+          "y": 63.578125,
+          "width": 63.625,
+          "height": 21.59375,
+          "right": 561.59375,
+          "bottom": 85.171875,
+          "text": "BONE",
+          "font": "13.92px"
+        },
+        ".timer": {
+          "x": 1148.625,
+          "y": 17.90625,
+          "width": 98.109375,
+          "height": 91.09375,
+          "right": 1246.734375,
+          "bottom": 109,
+          "text": "60",
+          "font": "46.72px"
+        },
+        ".rescue-goal": {
+          "x": 977.859375,
+          "y": 12.796875,
+          "width": 148.546875,
+          "height": 38.390625,
+          "right": 1126.40625,
+          "bottom": 51.1875,
+          "text": "누가 구출 · 1/15마지막 판까지 14판",
+          "font": "14.08px"
+        }
+      },
+      "overlaps": [],
+      "hpOn": 10,
+      "central": false
+    },
+    {
+      "width": 390,
+      "food": 12345,
+      "frame": {
+        "width": 390,
+        "height": 219.375
+      },
+      "boxes": {
+        ".status": {
+          "x": 4.671875,
+          "y": 4.671875,
+          "width": 286.640625,
+          "height": 51.46875,
+          "right": 291.3125,
+          "bottom": 56.140625,
+          "text": "FOOD0012345LIFE9HPSTONE",
+          "font": "16px"
+        },
+        ".food": {
+          "x": 54.96875,
+          "y": 10.515625,
+          "width": 218.796875,
+          "height": 17.546875,
+          "right": 273.765625,
+          "bottom": 28.0625,
+          "text": "FOOD0012345",
+          "font": "9px"
+        },
+        ".food-value": {
+          "x": 86.21875,
+          "y": 10.515625,
+          "width": 67.3125,
+          "height": 16.5,
+          "right": 153.53125,
+          "bottom": 27.015625,
+          "text": "0012345",
+          "font": "15px"
+        },
+        ".vitals": {
+          "x": 54.96875,
+          "y": 30.390625,
+          "width": 218.796875,
+          "height": 12.859375,
+          "right": 273.765625,
+          "bottom": 43.25,
+          "text": "LIFE9HPSTONE",
+          "font": "9px"
+        },
+        ".health": {
+          "x": 88.53125,
+          "y": 31.875,
+          "width": 60.03125,
+          "height": 9.890625,
+          "right": 148.5625,
+          "bottom": 41.765625,
+          "text": "HP",
+          "font": "9px"
+        },
+        ".energy": {
+          "x": 102.9375,
+          "y": 33.015625,
+          "width": 45.625,
+          "height": 7.59375,
+          "right": 148.5625,
+          "bottom": 40.609375,
+          "text": "",
+          "font": "9px"
+        },
+        ".weapon": {
+          "x": 230.828125,
+          "y": 30.8125,
+          "width": 42.9375,
+          "height": 12,
+          "right": 273.765625,
+          "bottom": 42.8125,
+          "text": "STONE",
+          "font": "9px"
+        },
+        ".timer": {
+          "x": 348.609375,
+          "y": 5.453125,
+          "width": 33.59375,
+          "height": 31.171875,
+          "right": 382.203125,
+          "bottom": 36.625,
+          "text": "60",
+          "font": "16px"
+        },
+        ".rescue-goal": {
+          "x": 299.640625,
+          "y": 58.46875,
+          "width": 82.5625,
+          "height": 20.984375,
+          "right": 382.203125,
+          "bottom": 79.453125,
+          "text": "누가 구출 · 1/15마지막 판까지 14판",
+          "font": "8px"
+        }
+      },
+      "overlaps": [],
+      "hpOn": 1,
+      "central": false
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

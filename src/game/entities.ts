@@ -1233,6 +1233,7 @@ export class ContactAnimal extends Enemy {
   private timer:number
   private action='walk'
   private flightTarget=0
+  private landingReady=0
   constructor(cfg:EnemyCfg,x:number,y:number){
     super(cfg,x,y);this.homeX=this.x;this.homeY=this.y
     // Position-based offsets prevent a whole pack attacking on the same frame.
@@ -1287,9 +1288,17 @@ export class ContactAnimal extends Enemy {
     if(this.cfg.cls==='flyer'){this.fly(g,dt);return}
     if(this.cfg.key==='jungleSnake')this.contactDmg=this.phase==='act'?1:0
     const p=g.nearestPlayer(this.cx),behavior=this.cfg.behavior??'patrol'
+    const landingGuard=g.stage.id===1&&!g.level.def.cave&&this.cfg.key==='jungleSnake'&&this.cfg.landingGuard
+    if(landingGuard){
+      const belowBranch=!p||p.climbing||p.y+p.h>this.y+this.h+6
+      if(belowBranch){
+        this.landingReady=0;this.contactDmg=0
+        if(this.phase==='warn'||this.phase==='act'){this.transition('patrol',.6);this.vx=0;this.action='idle'}
+      }else if(p.onGround)this.landingReady=Math.min(.6,this.landingReady+dt)
+    }
     const dx=p?p.cx-this.cx:Infinity
     const aligned=p&&Math.abs(p.y+p.h-(this.y+this.h))<48
-    const near=aligned&&Math.abs(dx)<(behavior==='sentry'?150:behavior==='ambush'?78:125)
+    const near=aligned&&Math.abs(dx)<(behavior==='sentry'?150:behavior==='ambush'?78:125)&&(!landingGuard||this.landingReady>=.6)
     const radius=this.cfg.patrolRadius??48,speed=Math.min(this.cfg.speed||18,38)
     if(this.phase==='patrol'){
       if(this.x<this.homeX-radius)this.facing=1

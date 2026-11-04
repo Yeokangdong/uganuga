@@ -81,6 +81,7 @@ export type EnemyClass = 'melee' | 'thrower' | 'runner' | 'flyer' | 'charger'
 export type EnemyBehavior = 'patrol' | 'skirmish' | 'hopper' | 'ambush' | 'charge' | 'swoop' | 'hover' | 'sentry'
 
 export interface EnemyCfg {
+  landingGuard?:boolean
   reward?:'weapon'|'treasure'
   fallbackKey?: string
   name?: string
@@ -487,10 +488,10 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     encounters=[
       {col:28,row:13,cfg:snake,group:'가지 먹이 지킴이',facing:-1},
       {col:45,row:13,cfg:monkey,group:'나무 원숭이',facing:-1},
-      {col:78,row:9,cfg:snake,group:'동굴 위 가지',facing:-1},
+      {col:78,row:9,cfg:{...snake,landingGuard:true},group:'동굴 위 가지',facing:-1},
       {col:96,row:13,cfg:monkey,group:'두번째 나무 원숭이',facing:-1},
       {col:112,row:12,cfg:{...localRoles.E!,patrolRadius:26},group:'가지 순찰',facing:-1},
-      {col:144,row:9,cfg:snake,group:'상층 가지',facing:-1},
+      {col:144,row:9,cfg:{...snake,landingGuard:true},group:'상층 가지',facing:-1},
       {col:179,row:13,cfg:monkey,group:'마지막 나무 원숭이',facing:-1},
     ]
     jungleCanopy={main,trees:main.map(([l,r,y])=>({x:(l+r+1)*8,top:y*16}))}

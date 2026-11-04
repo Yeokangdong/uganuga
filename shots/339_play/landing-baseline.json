@@ -1,0 +1,1022 @@
+{
+  "stateInjection": true,
+  "scope": "Fresh original stage1 enemies spawned by original pipeline before real cave roundtrip; only initial hero positions injected, no enemy removed/altered. Then real walk/Up with no attack.",
+  "cases": [
+    {
+      "setup": {
+        "door": 1256,
+        "base": 320,
+        "vine": 1320,
+        "top": 160,
+        "upperStart": 1170,
+        "enemyRange": [
+          1200,
+          1408
+        ]
+      },
+      "originalAlive": [
+        {
+          "x": 1275,
+          "hp": 2,
+          "phase": "patrol",
+          "guard": false
+        }
+      ],
+      "caveRoundTrip": true,
+      "firstLand": null,
+      "damage": {
+        "t": 5.837,
+        "x": 1322.484375,
+        "feet": 178.16204864566845,
+        "left": 1315.734375,
+        "right": 1329.234375,
+        "climbing": false,
+        "onGround": false,
+        "hp": 9,
+        "lives": 3,
+        "invuln": 0.7500000000000002,
+        "enemy": {
+          "x": 1298.0624999999934,
+          "hp": 2,
+          "stun": 0,
+          "phase": "act",
+          "timer": 0.5875000000000002,
+          "contact": 1,
+          "guard": false
+        }
+      },
+      "preLandingAttack": true,
+      "samples": [
+        {
+          "t": 0.002,
+          "phase": 0,
+          "x": 1256,
+          "feet": 320,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1257.1125000000072,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.312,
+          "phase": 0,
+          "x": 1276.8125,
+          "feet": 320,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1259.3625000000063,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.623,
+          "phase": 0,
+          "x": 1297.0625,
+          "feet": 320,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1261.3875000000055,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.934,
+          "phase": 0,
+          "x": 1318.4375,
+          "feet": 320,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1263.5250000000046,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.998,
+          "phase": 1,
+          "x": 1319.75,
+          "feet": 320,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1263.9750000000045,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.062,
+          "phase": 1,
+          "x": 1320,
+          "feet": 319.4375,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1264.4250000000043,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.248,
+          "phase": 1,
+          "x": 1320,
+          "feet": 314.5276743796094,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1265.6625000000038,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.562,
+          "phase": 1,
+          "x": 1320,
+          "feet": 305.09793023806327,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1267.800000000003,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.872,
+          "phase": 1,
+          "x": 1320,
+          "feet": 295.88602871964696,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1269.825000000002,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.181,
+          "phase": 1,
+          "x": 1320,
+          "feet": 287.1144156740398,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1271.9625000000012,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.493,
+          "phase": 1,
+          "x": 1320,
+          "feet": 277.9958775579592,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1273.9875000000004,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.8,
+          "phase": 1,
+          "x": 1320,
+          "feet": 268.4590755588083,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1276.1249999999995,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.111,
+          "phase": 1,
+          "x": 1320,
+          "feet": 260.18900078165234,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1278.1499999999987,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.416,
+          "phase": 1,
+          "x": 1320,
+          "feet": 250.46627929467186,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1280.2874999999979,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.727,
+          "phase": 1,
+          "x": 1320,
+          "feet": 241.59831565962818,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1282.312499999997,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.039,
+          "phase": 1,
+          "x": 1320,
+          "feet": 232.72524817385275,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1284.4499999999962,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.35,
+          "phase": 1,
+          "x": 1320,
+          "feet": 222.94143213049517,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1286.5874999999953,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.657,
+          "phase": 1,
+          "x": 1320,
+          "feet": 214.21033870838306,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1288.6124999999945,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.905,
+          "phase": 1,
+          "x": 1320,
+          "feet": 207.0285450623413,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1289.962499999994,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.967,
+          "phase": 1,
+          "x": 1320,
+          "feet": 205.24462796894358,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1289.962499999994,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.276,
+          "phase": 1,
+          "x": 1320,
+          "feet": 195.87456863078418,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1289.962499999994,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.59,
+          "phase": 1,
+          "x": 1320,
+          "feet": 186.82697909473822,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1289.962499999994,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.776,
+          "phase": 1,
+          "x": 1320,
+          "feet": 181.2244873211431,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 1292.6624999999938,
+            "hp": 2,
+            "stun": 0,
+            "phase": "act",
+            "contact": 1,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.837,
+          "phase": 1,
+          "x": 1322.484375,
+          "feet": 178.16204864566845,
+          "climbing": false,
+          "onGround": false,
+          "hp": 9,
+          "invuln": 0.7500000000000002,
+          "enemy": {
+            "x": 1298.0624999999934,
+            "hp": 2,
+            "stun": 0,
+            "phase": "act",
+            "contact": 1,
+            "guard": false
+          }
+        }
+      ],
+      "rawSampleCount": 95,
+      "samplePolicy": "Every fifth observation plus all state/HP/AI transitions and samples within0.12s of landing/warning/escape/damage. Full raw trace preserved uncommitted in shots/_old/339_diagnostics."
+    },
+    {
+      "setup": {
+        "door": 2280,
+        "base": 336,
+        "vine": 2344,
+        "top": 160,
+        "upperStart": 2420,
+        "enemyRange": [
+          2208,
+          2496
+        ]
+      },
+      "originalAlive": [
+        {
+          "x": 2299,
+          "hp": 2,
+          "phase": "patrol",
+          "guard": false
+        }
+      ],
+      "caveRoundTrip": true,
+      "firstLand": null,
+      "damage": {
+        "t": 6.335,
+        "x": 2344.8515625,
+        "feet": 180.24352749065628,
+        "left": 2338.1015625,
+        "right": 2351.6015625,
+        "climbing": false,
+        "onGround": false,
+        "hp": 9,
+        "lives": 3,
+        "invuln": 0.7833333333333334,
+        "enemy": {
+          "x": 2320.1500000000274,
+          "hp": 2,
+          "stun": 0,
+          "phase": "act",
+          "timer": 0.6250000000000001,
+          "contact": 1,
+          "guard": false
+        }
+      },
+      "preLandingAttack": false,
+      "samples": [
+        {
+          "t": 0.001,
+          "phase": 0,
+          "x": 2280,
+          "feet": 336,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2281.4499999999716,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.314,
+          "phase": 0,
+          "x": 2299.6875,
+          "feet": 336,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2283.587499999975,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.626,
+          "phase": 0,
+          "x": 2321.0625,
+          "feet": 336,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2285.7249999999785,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.938,
+          "phase": 0,
+          "x": 2342.4375,
+          "feet": 336,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2287.862499999982,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 0.998,
+          "phase": 1,
+          "x": 2343.75,
+          "feet": 336,
+          "climbing": false,
+          "onGround": true,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2288.1999999999825,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.061,
+          "phase": 1,
+          "x": 2344,
+          "feet": 335.4375,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2288.6499999999833,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.247,
+          "phase": 1,
+          "x": 2344,
+          "feet": 330.5276743796094,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2289.8874999999853,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.561,
+          "phase": 1,
+          "x": 2344,
+          "feet": 321.09793023806327,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2292.0249999999887,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 1.872,
+          "phase": 1,
+          "x": 2344,
+          "feet": 311.3793928067083,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2294.162499999992,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.181,
+          "phase": 1,
+          "x": 2344,
+          "feet": 303.1144156740398,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2296.1874999999955,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.493,
+          "phase": 1,
+          "x": 2344,
+          "feet": 293.5683774424314,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2298.324999999999,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 2.807,
+          "phase": 1,
+          "x": 2344,
+          "feet": 283.93591027043425,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2300.4625000000024,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.102,
+          "phase": 1,
+          "x": 2344,
+          "feet": 276.18900078165234,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2302.3750000000055,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.413,
+          "phase": 1,
+          "x": 2344,
+          "feet": 266.4662792946718,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2304.512500000009,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 3.726,
+          "phase": 1,
+          "x": 2344,
+          "feet": 257.04873702001896,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2306.6500000000124,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.036,
+          "phase": 1,
+          "x": 2344,
+          "feet": 248.7252481738525,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2308.6750000000156,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.346,
+          "phase": 1,
+          "x": 2344,
+          "feet": 238.94143213049486,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2310.812500000019,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.658,
+          "phase": 1,
+          "x": 2344,
+          "feet": 229.6520334846695,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2312.9500000000226,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 4.967,
+          "phase": 1,
+          "x": 2344,
+          "feet": 221.24462796894335,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2314.975000000026,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.277,
+          "phase": 1,
+          "x": 2344,
+          "feet": 211.4245567679065,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.887500000029,
+            "hp": 2,
+            "stun": 0,
+            "phase": "patrol",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.466,
+          "phase": 1,
+          "x": 2344,
+          "feet": 206.55373330725646,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.1000000000276,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.589,
+          "phase": 1,
+          "x": 2344,
+          "feet": 202.82697909473794,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.1000000000276,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 5.899,
+          "phase": 1,
+          "x": 2344,
+          "feet": 193.7488481327492,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.1000000000276,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 6.212,
+          "phase": 1,
+          "x": 2344,
+          "feet": 183.9187217205928,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.1000000000276,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 6.273,
+          "phase": 1,
+          "x": 2344,
+          "feet": 182.59155039867238,
+          "climbing": true,
+          "onGround": false,
+          "hp": 10,
+          "invuln": -0.0125,
+          "enemy": {
+            "x": 2316.1000000000276,
+            "hp": 2,
+            "stun": 0,
+            "phase": "warn",
+            "contact": 0,
+            "guard": false
+          }
+        },
+        {
+          "t": 6.335,
+          "phase": 1,
+          "x": 2344.8515625,
+          "feet": 180.24352749065628,
+          "climbing": false,
+          "onGround": false,
+          "hp": 9,
+          "invuln": 0.7833333333333334,
+          "enemy": {
+            "x": 2320.1500000000274,
+            "hp": 2,
+            "stun": 0,
+            "phase": "act",
+            "contact": 1,
+            "guard": false
+          }
+        }
+      ],
+      "rawSampleCount": 103,
+      "samplePolicy": "Every fifth observation plus all state/HP/AI transitions and samples within0.12s of landing/warning/escape/damage. Full raw trace preserved uncommitted in shots/_old/339_diagnostics."
+    }
+  ],
+  "errors": [],
+  "summary": [
+    {
+      "door": 1256,
+      "vine": 1320,
+      "originalSnakeAlive": true,
+      "landAt": null,
+      "damageBeforeLanding": true
+    },
+    {
+      "door": 2280,
+      "vine": 2344,
+      "originalSnakeAlive": true,
+      "landAt": null,
+      "damageBeforeLanding": true
+    }
+  ],
+  "interpretation": "Damage before first grounded landing is decisive. At damage tick Player.hurt already cancels climbing, so preLandingAttack polling may be false even though the enemy attack hit at feet180 before reaching top160."
+}
