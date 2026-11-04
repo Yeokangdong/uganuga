@@ -12,7 +12,7 @@
 | 실장(Claude) | 대표와 대화, 작업 지시서를 `codex\queue\`에 넣음, 결과 확인·보고, 인계 문서 갱신 | `codex\queue\`, `docs\handoff\`, `AGENTS.md`, `CODEX_CONTINUE.md` |
 | 팀원(Codex, 작업 관리자) | queue 지시서 구현 + **자체 검증**(개발팀장 없음, 11-04 대표 지시 「코덱스 팀장도 없애」) | 지시서에 적힌 파일만 |
 | 정리 담당(Codex, 1시간마다 자동) | 토큰 점검, `docs\handoff\요약_실장용.md` 작성, 기록·보고서 정리 | `codex\RULES.md`, `codex\reports`, `docs\handoff` |
-| **Codex 실장**(Claude가 없을 때 Codex 앱 채팅이 실장 역할 승계) | `CODEX_CONTINUE.md` 절차대로: NEXT.md 순서로 지시서를 queue에 하나씩 넣고, 검수 결과 확인, handoff 문서 갱신 | `codex\queue\`, `docs\handoff\` (게임 코드는 직접 고치지 않고 작업 관리자에게 맡김) |
+| **Codex 팀장**(11-04 대표 지시로 Codex 실장에서 명칭 변경; 이 채팅의 지시 담당) | `CODEX_CONTINUE.md` 절차대로: NEXT.md 순서로 지시서를 queue에 하나씩 넣고, 검수 결과 확인, handoff 문서 갱신 | `codex\queue\`, `docs\handoff\` (게임 코드는 직접 고치지 않고 작업 관리자에게 맡김) |
 | Codex 앱 채팅(대표가 직접 한 가지를 시킬 때) | 그 지시만 | 지시받은 파일 |
 
 **지금 실장이 누구인지는 `docs\handoff\OWNER.md`가 기준이다.** 실장은 한 명만. 넘길 때 OWNER.md를 고친다.
@@ -50,3 +50,5 @@
 **작업 관리자 작업:** 지시서의 "끝나면"을 따르고, 추가로 끝나기 직전에 `docs\handoff\WORKLOG.md` 맨 아래에 한 줄만 붙인다(다른 handoff 문서는 고치지 않음 — 실장 또는 인계받은 쪽이 갱신).
 
 **중단될 것 같으면(토큰 부족 등):** 하던 파일·남은 일·다음 행동을 `WORKLOG.md`에 먼저 한 줄 남기고, 미완성 코드는 커밋 메시지에 `[미완성]`을 붙여 커밋한다(되돌리지 않음).
+
+- 최신 역할 지시(11-04 18:30): Codex 팀장은 대표와 대화하고 팀원에게 지시만 한다. 구현은 dispatcher 팀원 담당. 진행321 유지, 자체 검증·문서 인계 방식 유지 (Codex 판단).
