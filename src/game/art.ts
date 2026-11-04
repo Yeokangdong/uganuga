@@ -120,6 +120,12 @@ async function loadAnimationPack(stage:number):Promise<void>{
   for(const [to,from]of Object.entries({collapse:'dead',windup:'attack',swing:'attack',charge:'attack'}))alias('spider',to,from)
   const spiderFall=art.sprites['spider.dead']
   if(spiderFall)art.sprites['spider.recover']={...spiderFall,frames:[...spiderFall.frames].reverse(),durationsMs:spiderFall.durationsMs?[...spiderFall.durationsMs].reverse():undefined}
+  if(stage===1){
+    const jungle=await (await fetch(BASE+'jungle-close-v1/manifest.json')).json()
+    await Promise.all(Object.entries(jungle.images).map(async([key,src])=>{
+      art.images[key]=await cachedImage('jungle-close-v1/'+src)
+    }))
+  }
   const ludo=await (await fetch(BASE+'ludo/manifest.json')).json()
   await Promise.all(Object.entries(ludo.sheets).filter(([key,v]:[string,any])=>
     (key.startsWith('suukuret_')||key.startsWith('uga_')||stage===15&&key.startsWith('kingkong_'))&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{

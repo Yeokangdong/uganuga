@@ -153,6 +153,24 @@ export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:n
 }
 
 export function rockPattern(g:CanvasRenderingContext2D,stage:number,size=64):CanvasPattern {
+  const jungle=stage===1&&size===64?[1,2,3,4].map(n=>image('jungle.ground.'+n)):[]
+  if(jungle.length&&jungle.every(Boolean)){
+    const sequence=[0,1,3,2,1,0,2,3],band=size*1.5,fade=size*.18,height=size*2
+    const quality=4,cv=document.createElement('canvas');cv.width=band*sequence.length*quality;cv.height=height*quality
+    const c=cv.getContext('2d')!;c.scale(quality,quality);c.fillStyle='#79502f';c.fillRect(0,0,cv.width/quality,height)
+    for(let i=-1;i<=sequence.length;i++){
+      const width=band+fade*2,layer=document.createElement('canvas');layer.width=Math.ceil(width*quality);layer.height=height*quality
+      const l=layer.getContext('2d')!,im=jungle[sequence[(i+sequence.length)%sequence.length]!]!
+      l.scale(quality,quality);l.drawImage(im,0,0,width,height)
+      l.globalCompositeOperation='destination-in'
+      const mask=l.createLinearGradient(0,0,width,0)
+      mask.addColorStop(0,'transparent');mask.addColorStop(fade*2/width,'#000')
+      mask.addColorStop(1-fade*2/width,'#000');mask.addColorStop(1,'transparent')
+      l.fillStyle=mask;l.fillRect(0,0,width,height)
+      c.drawImage(layer,i*band-fade,0,width,height)
+    }
+    const mixed=g.createPattern(cv,'repeat')!;mixed.setTransform(new DOMMatrix().scale(1/quality));return mixed
+  }
   const im=(stage===0?image('world.rock1'):part(stage,'fill'))??image('world.rock1')
   if(!im)throw new Error('Missing terrain material for stage '+stage)
   const pattern=g.createPattern(im,'repeat')!
@@ -163,8 +181,10 @@ export function rockPattern(g:CanvasRenderingContext2D,stage:number,size=64):Can
 export function surface(g:CanvasRenderingContext2D,stage:number,x:number,y:number,_col:number):void {
   const im=part(stage,'surface')
   if(!im)return
+  // Keep the new soil faces under the same visible grass walking line.
+  const top=stage===1?platformTop(im)*9/im.height:0
   // Each exposed tile owns a complete silhouette, including isolated ledges.
-  g.drawImage(im,x,y,16,9)
+  g.drawImage(im,x,y-top,16,9)
 }
 
 export function ladder(g:CanvasRenderingContext2D,stage:number,x:number,top:number,end:number):void {

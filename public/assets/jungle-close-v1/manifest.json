@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "images": {
+    "jungle.close.1": "background-01-v1.png",
+    "jungle.close.2": "background-02-v1.png",
+    "jungle.close.3": "background-03-v1.png",
+    "jungle.ground.1": "ground-01-v1.png",
+    "jungle.ground.2": "ground-02-v1.png",
+    "jungle.ground.3": "ground-03-v1.png",
+    "jungle.ground.4": "ground-04-v1.png"
+  },
+  "generation": {
+    "mode": "built-in image_gen",
+    "backgrounds": "1536x1024 warm hand-painted close jungle interior; huge nearby trunks, broad leaves, lianas and layered ferns; three variations: intertwined trunks, straight trunks, buttress roots; no mountains/waterfall panorama/characters/text.",
+    "ground": "1024x1024 opaque side-face seamless earth textures; four variations: clay, boulders, branching roots, shale; shared warm brown/moss palette, no sky/horizon/grass strip. Existing grass walking rim is preserved separately."
+  }
+}
