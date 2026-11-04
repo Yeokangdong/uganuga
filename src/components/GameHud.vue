@@ -16,18 +16,21 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 <template>
   <div class="hud">
     <div v-if="hud.trail&&!hud.paused&&!hud.boss" class="trail-clue" role="status">{{hud.trail}}</div>
+    <div class="stage-score" v-if="hud.players[0]">
+      <span :aria-label="'???? '+hud.stage"><CartoonText :text="'STAGE '+hud.stage"/></span>
+      <span :aria-label="'?? '+hud.players[0].score"><CartoonText text="SCORE"/> <CartoonText :text="digits(hud.players[0].score)"/></span>
+    </div>
+    <div v-if="hud.foodFullNotice && !hud.paused" class="food-full" role="status"><strong>FOOD FULL!</strong><span>{{hud.foodFullNotice}}</span></div>
     <div class="status" v-for="p in hud.players.slice(0, 1)" :key="p.name" :class="{out:p.out}" :aria-label="p.name+' 캐릭터 정보'" :style="{'--panel-image':`url(${art.images['ui.status_panel']?.src})`}">
       <img :src="art.images['ui.portrait']?.src" class="portrait" alt="우가"/>
       <div class="status-content">
         <div class="stats">
-          <span class="score" :aria-label="'점수 '+p.score"><CartoonText text="SCORE"/><CartoonText :text="digits(p.score)"/></span>
           <span class="lives" :aria-label="'목숨 '+p.lives"><CartoonText text="LIFE"/><CartoonText :text="Math.max(0,p.lives)"/></span>
-          <span class="stage" :aria-label="'스테이지 '+hud.stage"><CartoonText :text="'ST '+hud.stage"/></span>
         </div>
         <div class="vitals">
           <span class="health"><CartoonText text="HP"/>
           <span class="energy" role="meter" aria-label="체력" :aria-valuenow="p.hp" aria-valuemin="0" :aria-valuemax="p.maxHp"><i v-for="n in p.maxHp" :key="n" :class="{on:n<=p.hp}"/></span></span>
-          <span class="food"><CartoonText text="FOOD"/><span class="meter" role="meter" aria-label="먹이" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="Math.round(hud.food*100)"><i :style="{width:hud.food*100+'%'}"/></span></span>
+          <span class="food"><CartoonText text="FOOD"/><CartoonText :text="Math.round(hud.food*60)+'/60'"/><span class="meter" role="meter" aria-label="먹이" aria-valuemin="0" aria-valuemax="60" :aria-valuenow="Math.round(hud.food*60)"><i :style="{width:hud.food*100+'%'}"/></span></span>
           <span class="weapon" :aria-label="p.weapon" :title="p.weapon"><img v-if="weaponIcon(p.weaponKey)" :src="weaponIcon(p.weaponKey)" alt="" class="weapon-icon"/><CartoonText :text="weaponLabel(p.weaponKey)"/></span>
         </div>
       </div>
@@ -53,14 +56,14 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 .hud{position:absolute;inset:0;pointer-events:none;color:#fff2cd;font-family:system-ui,sans-serif;text-shadow:0 2px 2px #130c08}
 .trail-clue{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);max-width:80%;padding:8px 14px;border:1px solid #b69a67;border-radius:9px;background:#30271ee8;color:#fff1ce;font:600 clamp(11px,1.5cqw,20px)/1.6 "Malgun Gothic",sans-serif;text-align:center;text-shadow:none}
 /* Nine-slice the leather: stretch its middle, preserve the bone corners. */
-.status{--pixel:.2604167cqw;position:absolute;left:calc(var(--pixel)*4);top:calc(var(--pixel)*4);width:calc(var(--pixel)*210);height:calc(var(--pixel)*38);transform:scale(.72);transform-origin:top left;color:#fff0cb;text-shadow:none}
+.status{--pixel:.2604167cqw;position:absolute;left:calc(var(--pixel)*4);top:calc(var(--pixel)*4);width:calc(var(--pixel)*245);height:calc(var(--pixel)*38);transform:scale(.72);transform-origin:top left;color:#fff0cb;text-shadow:none}
 .status::before{content:'';position:absolute;inset:0 0 0 calc(var(--pixel)*23);border:calc(var(--pixel)*8) solid transparent;border-image-source:var(--panel-image);border-image-slice:88 128 fill;border-image-width:calc(var(--pixel)*8) calc(var(--pixel)*12);border-image-repeat:stretch;pointer-events:none}
 .portrait{position:absolute;z-index:1;left:0;top:calc(var(--pixel)*2);display:block;width:calc(var(--pixel)*34);height:calc(var(--pixel)*34);object-fit:contain;image-rendering:auto}
 .status-content{position:absolute;left:calc(var(--pixel)*43);right:calc(var(--pixel)*15);top:calc(var(--pixel)*9);display:flex;flex-direction:column;gap:calc(var(--pixel)*3);font-size:calc(var(--pixel)*6);line-height:1}
 .stats,.vitals{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;column-gap:calc(var(--pixel)*6);height:calc(var(--pixel)*8);min-width:0}
 .stats>span,.food,.health{display:flex;align-items:center;gap:calc(var(--pixel)*2);white-space:nowrap;min-width:0}
 .score{font-variant-numeric:tabular-nums}.stage,.weapon{color:#e5cea1}.lives{color:#fff0cb}
-.vitals{grid-template-columns:auto minmax(0,1fr) auto}
+.stats{display:flex;justify-content:flex-start}.vitals{grid-template-columns:auto minmax(0,1fr) auto}
 .energy{display:flex;flex:none;width:calc(var(--pixel)*33);gap:calc(var(--pixel)*.5);padding:calc(var(--pixel)*.6);height:calc(var(--pixel)*6);background:#292016;border:calc(var(--pixel)*.7) solid #ba945d;border-radius:calc(var(--pixel)*.7)}
 .energy i{flex:1;min-width:0;border-radius:calc(var(--pixel)*.25);background:#504332}
 .energy i.on{background:#ca6543;box-shadow:inset 0 calc(var(--pixel)*.7) #f0ae70}
@@ -70,6 +73,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 .weapon{display:flex;align-items:center;gap:.3cqw}.weapon-icon{width:2.3cqw;height:2.3cqw;object-fit:contain}
 .pattern-description{color:#ffdfa4}
 .breath{position:absolute;left:calc(var(--pixel)*40);top:calc(var(--pixel)*39);display:flex;align-items:center;gap:.5cqw;padding:.4cqw .7cqw;border:.1cqw solid #86d7d6;border-radius:.6cqw;background:#102c3ce6;color:#dcffff;font-size:1.1cqw;white-space:nowrap}.breath-meter{width:9cqw;height:.7cqw;border-radius:1cqw;background:#203e4d;overflow:hidden}.breath-meter i{display:block;height:100%;background:linear-gradient(90deg,#32a9d6,#9af5db);transition:width .15s linear}.breath small{font-size:.85cqw;color:#aadbe2}.breath.recovering .breath-meter i{background:#8be8a4}.breath.low{border-color:#ffac70;color:#ffcf9b}.breath.low .breath-meter i{background:#ff805b;animation:pulse .7s alternate infinite}
+.stage-score{position:absolute;top:2cqw;left:60%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6cqw;font-size:1.65cqw;line-height:1.1}.stage-score>span{display:flex;gap:.5cqw;align-items:center}.food-full{position:absolute;top:40%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6cqw;font-size:2cqw;color:#ffe898}.food-full strong{animation:full-flash .5s ease-in-out 6}@keyframes full-flash{50%{filter:brightness(1.8);text-shadow:0 0 1cqw #ffd34e}}
 .timer{position:absolute;right:2.6cqw;top:1.4cqw;display:flex;justify-content:center;min-width:2.1em;padding:.4em .4em .45em;color:#fff0bd;background-color:transparent;background-size:100% 100%;border:0;box-shadow:none;font-size:3.65cqw;line-height:1;text-shadow:none;image-rendering:auto}
 .timer.warning{color:#ffbd84;border-color:#ba6245}.boss{position:absolute;bottom:1.8cqw;left:30cqw;width:40cqw;display:flex;flex-direction:column;gap:.55cqw;align-items:center;font-size:1.4cqw}.boss-meter{width:100%;height:.8cqw;background:#1c100c;border:.18cqw solid #b89357;border-radius:1cqw;overflow:hidden}.boss-meter i{display:block;height:100%;background:linear-gradient(#ffac70,#ce3930);transition:width .15s}.banner{position:absolute;left:15%;right:15%;top:24%;text-align:center;font-size:3.2cqw;color:#ffe3a0;filter:drop-shadow(2px 3px 1px #27160d);animation:appear .25s ease-out}.banner small{display:block;font-size:1.9cqw;margin-top:1cqw}.help{position:absolute;bottom:1cqw;left:50%;transform:translateX(-50%);padding:.55cqw 1cqw;border-radius:2cqw;background:#17130cba;font-size:.95cqw;white-space:nowrap}.pause{position:absolute;inset:0;display:grid;place-items:center;background:#0d0b08b0;pointer-events:auto}.pause-card{width:44cqw;padding:2.6cqw;background:linear-gradient(135deg,#443325,#201911);border:.2cqw solid #b28e52;border-radius:.7cqw;box-shadow:0 1cqw 4cqw #0008;text-align:center}.pause h2{font-size:3cqw;margin:0 0 1.8cqw}.pause p{font-size:1.15cqw;line-height:1.6}.pause button{display:inline-flex;align-items:center;gap:1cqw;margin:1.5cqw .5cqw 0;padding:.9cqw 1.5cqw;background:#b48a47;border:1px solid #f0d19b;border-radius:.3cqw;color:#20160e;font-weight:700;font-size:1.3cqw;cursor:pointer}.pause button:hover{background:#e0b765}kbd{opacity:.6;font-size:.9cqw}.mute{position:absolute;right:2cqw;top:5cqw;font-size:.8cqw}.out{opacity:.4}@keyframes pulse{to{opacity:.4}}@keyframes appear{from{transform:scale(1.2);opacity:0}to{transform:scale(1);opacity:1}}
 </style>

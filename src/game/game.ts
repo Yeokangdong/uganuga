@@ -49,6 +49,7 @@ export interface HudState {
   aquatic:boolean
   food: number
   foodFullFrame: number
+  foodFullNotice?: string | null
   dreaming: boolean
   opening: string | null
   players: HudPlayer[]
@@ -69,8 +70,8 @@ export type EndKind = 'clear' | 'over'
 
 /** ?�테?��? ?�한 ?�간(�? / ?�간 초과 ???�시 주는 ?�간 / ?�계 ?�이??*/
 export const TIME_UNIT = 3.6
-export const TIME_LIMIT = 99 * TIME_UNIT
-export const TIME_EXTEND = 40 * TIME_UNIT
+export const TIME_LIMIT = 60 * TIME_UNIT
+export const TIME_EXTEND = 20 * TIME_UNIT
 export const CLOCK_BONUS = 10 * TIME_UNIT
 
 export interface GameCallbacks {
@@ -127,6 +128,7 @@ export class Game {
   mode: 'play' | 'boss' | 'rescue' | 'clear' | 'over' = 'play'
   paused = false
   time = 0
+  private foodFullAt: number | null = null
   food = 0
   readonly foodMax = 60
   timeLeft = TIME_LIMIT
@@ -213,7 +215,8 @@ export class Game {
     this.scrat=null
     this.mode = 'play'
     this.food = 0
-    this.timeLeft = this.stage.id === 1 ? TIME_LIMIT * 2 : TIME_LIMIT
+    this.foodFullAt = null
+    this.timeLeft = TIME_LIMIT
     this.lastBeep = 0
     this.bg.setStage(this.stage.theme.background)
     this.bg.setBoss(false)
@@ -889,6 +892,10 @@ export class Game {
       this.showBanner('GAME OVER', 5)
       return
     }
+    if(this.food>=this.foodMax && this.foodFullAt===null) {
+      this.foodFullAt=this.time
+      this.sfx.fanfare()
+    }
     if(!this.saved && this.mode==='play' && this.food>=this.foodMax && this.players.some(p=>p.alive && p.cx>=this.level.arenaX+20 && p.onGround)) {
       this.startBoss()
     } else if(this.boss?.dead && this.mode==='boss') {
@@ -917,6 +924,7 @@ export class Game {
       aquatic:!!this.level.def.aquatic,
       aerial:!!this.level.def.aerial,
       food: this.food / this.foodMax,
+      foodFullNotice: this.foodFullAt!==null && this.time-this.foodFullAt<3 ? (this.saved?'↓ 동굴 밖으로 · 문 열림':(this.players[0]?.cx??0)<this.level.arenaX?'문 열림 →':'← 문 열림') : null,
       foodFullFrame: 1 + Math.floor(this.time * 8) % 3,
       opening:this.introT>0&&this.introElapsed<this.openingDuration?(this.introElapsed<1.7?'누가 공주가 도토리를 든 다람쥐를 쫓아갑니다':this.introElapsed<OPENING_GRAB_START?'다람쥐를 쫓던 공주 앞에 킹콩이 나타납니다':this.introElapsed<OPENING_PLEA_START?'킹콩이 누가 공주를 납치합니다':this.introElapsed<OPENING_DIALOGUE_START?'누가 공주: 우가! 도와줘! 무서워!':this.introElapsed<OPENING_ESCAPE_START?'킹콩: 누가 예쁘다… 내 색시로 삼을 거다!':this.introElapsed<OPENING_HERO_LINE_START?'킹콩이 공주를 데리고 달아납니다':'우가: 누가! 기다려! 내가 꼭 구해줄게!'):null,
       dreaming: this.introT > 0 && this.introElapsed < this.openingDuration+this.dreamCount * 2.5,

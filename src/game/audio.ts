@@ -62,7 +62,7 @@ export class Sfx {
     const pending=this.loading.get(key)
     if(pending)return pending
     const music=['jungle','volcano','glacier','boss'].includes(key)
-    const request=fetch(`/assets/audio/${key}.${music?'mp3':'wav'}?v=20261101-dry2`)
+    const request=fetch(`${import.meta.env.BASE_URL}assets/audio/${key}.${music?'mp3':'wav'}?v=20261101-dry2`)
       .then(response=>{if(!response.ok)throw Error('audio unavailable');return response.arrayBuffer()})
       .then(bytes=>this.ctx!.decodeAudioData(bytes))
       .then(buffer=>{this.buffers.set(key,buffer);return buffer})
