@@ -1,5 +1,5 @@
 import { SuukuretPopulation } from './suukuret'
-import {updateStagePattern,drawStagePattern} from './patternRuntime'
+import {updateStagePattern,drawStagePattern,patternState} from './patternRuntime'
 import { EnvironmentEvents } from './environmentEvents'
 import { Piranha } from './piranha'
 import { rollCaveReward, addCaveLife } from './caveRewards'
@@ -478,7 +478,9 @@ export class Game {
       p.advanceIdleThought(realDt,inp.get(i))
     })
     this.environmentEvents.update(this,realDt,this.doors.map(d=>d.x))
-    updateStagePattern(this,realDt)
+    if(this.stage.id===13&&this.environmentEvents.suppressesPatterns){
+      const pattern=patternState(this);pattern.phase='idle';pattern.site=null;pattern.rect=null;pattern.age=0;pattern.wait=4
+    }else updateStagePattern(this,realDt)
     this.updateCamera(dt)
     if(!this.saved)this.suukurets.update(this,dt)
     this.spawn()
@@ -1054,7 +1056,7 @@ export class Game {
       }
     }
     drawStagePattern(this,ctx,cx,cy)
-    if(!this.saved&&[1,7].includes(this.stage.id))this.environmentEvents.draw(ctx,cx,cy)
+    if(!this.saved&&[1,7,13].includes(this.stage.id))this.environmentEvents.draw(ctx,cx,cy)
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)
@@ -1176,10 +1178,16 @@ export class Game {
     const lv = this.level
     const c0 = Math.max(0, Math.floor(cx / TILE))
     const c1 = Math.min(lv.cols - 1, Math.ceil((cx + VIEW_W) / TILE))
+    const f=lv.floodWater
+    if(f){
+      ctx.fillStyle=this.stage.theme.water;ctx.globalAlpha=.38
+      ctx.fillRect(f.left-cx,f.top-cy,f.right-f.left,f.bottom-f.top)
+      ctx.globalAlpha=1;ctx.fillStyle='#b3efff';ctx.fillRect(f.left-cx,f.top-cy,f.right-f.left,1)
+    }
     const color = this.stage.theme.water
     for (let c = c0; c <= c1; c++) {
       for (let r = 0; r < lv.rows; r++) {
-        if (!lv.waterAt(c * TILE + 1, r * TILE + 1)) continue
+        if (lv.tile(c,r)!==5&&!lv.def.aquatic || !lv.waterAt(c * TILE + 1, r * TILE + 1)) continue
         const top = !lv.waterAt(c * TILE + 1, (r - 1) * TILE + 1)
         const wave = top ? Math.round(Math.sin(this.time * 3 + c * 0.9)) : 0
         ctx.globalAlpha = lv.def.aquatic ? .17 : .85

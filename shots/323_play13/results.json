@@ -1,0 +1,96 @@
+[
+  {
+    "stage": 13,
+    "target": "environment13-input-drain",
+    "complete": true,
+    "blocked": "",
+    "seconds": 21.38,
+    "position": {
+      "x": 525.625,
+      "y": 281.5
+    },
+    "snapshot": {
+      "stage": 13,
+      "mode": "play",
+      "food": 0,
+      "time": 11.69999999999987,
+      "timeLeft": 200.39999999998759,
+      "x": 525.625,
+      "cx": 532.375,
+      "y": 281.5,
+      "h": 22.5,
+      "hp": 10,
+      "lives": 3,
+      "alive": true,
+      "out": false,
+      "ground": true,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "RESOLVED",
+        "elapsed": 1.0666666666666678,
+        "rockX": 0,
+        "flood": {
+          "start": 384,
+          "end": 768,
+          "floor": 336,
+          "safe": 512,
+          "deck": 304
+        },
+        "water": null
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6624,
+      "wall": false,
+      "waterAhead": false,
+      "gap": false,
+      "foods": [],
+      "foes": [],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 3.82,
+        "stage": 13,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "seconds": 12.099,
+        "phase": "TELEGRAPH",
+        "x": 451.1875,
+        "y": 313.5,
+        "hp": 10,
+        "water": null
+      },
+      {
+        "seconds": 17.167,
+        "phase": "ACTIVE",
+        "x": 532.375,
+        "y": 281.5,
+        "hp": 10,
+        "water": {
+          "left": 384,
+          "right": 768,
+          "top": 316.95000000000005,
+          "bottom": 336
+        }
+      },
+      {
+        "seconds": 20.51,
+        "phase": "RESOLVED",
+        "x": 532.375,
+        "y": 281.5,
+        "hp": 10,
+        "water": null
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\323_play13\\stage-13-1793786548904.png"
+  }
+]

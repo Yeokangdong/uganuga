@@ -15,6 +15,7 @@ if (!range) throw new Error('--stages: 1-15 형식 필요')
 const first = Number(range[1]), last = Number(range[2] ?? range[1])
 if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
 const port=option('--port','5306')
+const floodCheck = args.includes('--environment13')
 const chaseCheck = args.includes('--environment7')
 const limit = Number(option('--timeout', '240'))
 if (!Number.isFinite(limit) || limit <= 0) throw new Error('--timeout: 양수(초) 필요')
@@ -66,14 +67,15 @@ try {
     let anchor = null, previousSignature = '', tick = 0
     const captured = new Set()
     const onError = e => errors.push(e.message)
-    page.on('pageerror', onError)
+    const onConsole=m=>{if(m.type()==='error')errors.push(m.text())}
+    page.on('pageerror', onError);page.on('console',onConsole)
     try {
       await input()
       await page.goto(`http://127.0.0.1:${port}/?stage=${stage}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
       await page.waitForFunction(() => !document.querySelector('.loading'), null, { timeout: 60000 })
       await page.keyboard.press('Space')
       await page.waitForFunction(() => window.__game?.players?.length, null, { timeout: 60000 })
-      while (Date.now() - started < limit * 1000) {
+      while (!args.includes('--branches323') && Date.now() - started < limit * 1000) {
         // Observation only: do not call engine methods, set fields, or alter clocks.
         snapshot = await page.evaluate(() => {
           const g = window.__game, p = g.players[0], lv = g.level
@@ -88,7 +90,7 @@ try {
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
             climbing: p.climbing, facing: p.facing, swing: p.swingT, vx: p.vx,
             environment: {phase:g.environmentEvents.phase,elapsed:g.environmentEvents.elapsed,
-              rockX:g.environmentEvents.rockX,route:lv.def.chase},
+              rockX:g.environmentEvents.rockX,route:lv.def.chase,flood:lv.def.flood,water:lv.floodWater},
             intro: g.introT > 0, journey: g.journeyT !== null, arena: lv.arenaX,
             wall: lv.solidAt(p.cx+dir*27, feet - 8),
             waterAhead:lv.waterAt(x,feet+8),
@@ -97,6 +99,30 @@ try {
               state: g.boss.state, vx: g.boss.vx } : null }
         })
         const s = snapshot
+        if(floodCheck&&stage===13){
+          const phase=s.environment.phase
+          if(['TELEGRAPH','ACTIVE','RESOLVED'].includes(phase)&&!captured.has(phase)
+            &&(phase!=='ACTIVE'||s.environment.water&&s.environment.water.top<s.environment.flood.floor-18)){
+            captured.add(phase)
+            const name=phase==='TELEGRAPH'?'warning':phase==='ACTIVE'?'flood':'drained'
+            if(!args.includes('--miss323'))await page.screenshot({path:path.join(root,`shots/323_${name}.png`)})
+            events.push({seconds:(Date.now()-started)/1000,phase,x:s.cx,y:s.y,hp:s.hp,water:s.environment.water})
+          }
+          if(phase==='RESOLVED'&&s.environment.elapsed>=1){
+            complete=['TELEGRAPH','ACTIVE','RESOLVED'].every(p=>captured.has(p))&&s.alive&&s.ground
+              &&(args.includes('--miss323')?s.y+s.h>s.environment.flood.deck+2:s.y+s.h<=s.environment.flood.deck+2)&&errors.length===0
+            if(args.includes('--miss323')&&complete){
+              await input(['ArrowRight']);await page.waitForTimeout(300);await input()
+              const moved=await page.evaluate(x=>window.__game.players[0].cx>x+5,s.cx)
+              await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>!document.querySelector('.loading'))
+              await page.keyboard.press('Space');await page.waitForFunction(()=>window.__game?.players?.length)
+              const reset=await page.evaluate(()=>({phase:window.__game.environmentEvents.phase,water:window.__game.level.floodWater,x:window.__game.players[0].cx}))
+              events.push({branch:'real-input-missed-refuge-and-page-restart',moved,reset})
+              complete=moved&&reset.phase==='IDLE'&&!reset.water
+            }
+            reason=complete?'':'안전 발판 생존 증거 부족';break
+          }
+        }
         if(chaseCheck&&stage===7){
           const phase=s.environment.phase
           if(['TELEGRAPH','ACTIVE','RESOLVED'].includes(phase)&&!captured.has(phase)){
@@ -157,6 +183,9 @@ try {
             wanted.length=0;wanted.push('ArrowRight')
             if(!held.has('ArrowUp'))wanted.push('ArrowUp')
           }
+          if(chaseCheck&&stage===7&&s.cx>748&&s.cx<810&&s.ground){
+            wanted.length=0;wanted.push('ArrowRight');if(!held.has('ArrowUp'))wanted.push('ArrowUp')
+          }
           if(chaseCheck&&stage===7&&['TELEGRAPH','ACTIVE'].includes(s.environment.phase)){
             wanted.length=0
             const route=s.environment.route
@@ -167,22 +196,77 @@ try {
             wanted.length=0
             if(s.cx<s.environment.route.end+112)wanted.push('ArrowRight')
           }
+          if(floodCheck&&stage===13&&s.environment.flood){
+            const r=s.environment.flood
+            if(s.cx>=r.start-40&&s.cx<r.end){
+              wanted.length=0
+              if(s.cx<r.start+64)wanted.push('ArrowRight')
+              else if(s.environment.phase!=='IDLE'&&!args.includes('--miss323')){
+                if(s.cx<r.safe+16)wanted.push('ArrowRight')
+                if(s.ground&&s.cx>r.start+80&&s.cx<r.safe&&!held.has('ArrowUp'))wanted.push('ArrowUp')
+              }
+            }
+          }
           if (!s.alive) wanted.length = 0
           await input(wanted)
         }
         tick++
         await page.waitForTimeout(100)
       }
+      if(args.includes('--branches323')){
+        const branch=await page.evaluate(async()=>{
+          const {STAGES}=await import('/src/game/stages.ts'),{Level}=await import('/src/game/level.ts')
+          const g=window.__game,p=g.players[0],checks=[]
+          const check=(name,ok)=>{checks.push({name,ok:!!ok})}
+          for(let i=0;i<15;i++){
+            g.stageIdx=i;g.stage=STAGES[i];g.level=new Level(g.stage);g.beginStage();g.introT=0
+            check(`start${i+1}`,g.players[0].alive&&g.level.cols>0&&g.foodMax===60)
+            p.x=g.level.arenaX+32;p.y=300;p.onGround=true
+            g.food=59;g.checkEnd(0);check(`gate59-${i+1}`,g.mode==='play')
+            g.food=60;g.checkEnd(0);check(`gate60-${i+1}`,g.mode==='boss')
+          }
+          g.stageIdx=12;g.stage=STAGES[12];g.level=new Level(g.stage);g.beginStage();g.introT=0
+          const lv=g.level,r=lv.def.flood,e=g.environmentEvents
+          check('protected-route',!lv.def.map.some(row=>/[fD]/.test(row.slice(r.start/16,r.end/16)))&&!lv.def.map.ladders.some(([c])=>c>=r.start/16&&c<r.end/16)&&g.doors.every(d=>d.x<r.start||d.x>=r.end))
+          lv.floodWater={left:r.start,right:r.end,top:r.floor-36,bottom:r.floor}
+          check('water-boundary',lv.waterAt(r.start+16,r.floor-35)&&!lv.waterAt(r.start+16,r.floor-37)&&lv.swimmableAt(r.start+16,r.floor-35))
+          p.x=r.start+16;p.y=r.floor-p.h;p.invuln=0
+          const inp={left:false,right:false,up:false,down:false}
+          p.update(g,1/60,inp,1/60);check('swim',p.swimming&&p.submerged)
+          const oxygen=p.oxygen;p.update(g,1/60,inp,1/60);check('oxygen',p.oxygen<oxygen)
+          e.phase='ACTIVE';e.elapsed=3;e.update(g,0,[]);p.die(g);e.update(g,1/60,[])
+          check('death-clears-water',!lv.floodWater&&e.phase==='CANCELLED')
+          p.update(g,10,inp,10);check('respawn-clears',p.alive&&!lv.floodWater&&!p.swimming)
+          g.beginStage();check('restart-clears',!lv.floodWater&&e.phase==='IDLE'&&e.elapsed===0)
+          const entry=lv.spawns.find(s=>s.kind==='D'),door={x:entry.col*16+8,floor:(entry.row+1)*16,used:false,id:0};lv.floodWater={left:r.start,right:r.end,top:300,bottom:336};e.phase='ACTIVE'
+          g.enterCave(door);check('cave-clears',!lv.floodWater);g.exitCave();check('cave-return',g.level===lv&&!lv.floodWater)
+          const {TIME_LIMIT,TIME_EXTEND,CLOCK_BONUS}=await import('/src/game/game.ts')
+          check('rules60-20-10',g.foodMax===60&&TIME_LIMIT/TIME_EXTEND===3&&CLOCK_BONUS/TIME_EXTEND===.5)
+          for(const id of [1,7]){
+            g.stageIdx=id-1;g.stage=STAGES[id-1];g.level=new Level(g.stage);g.beginStage()
+            check(`environment${id}-reset`,g.environmentEvents.phase==='IDLE'&&!g.level.floodWater)
+            if(id===1){
+              const tree=g.environmentEvents;p.invuln=0;g.introT=0;tree.update(g,0,[])
+              p.x=tree.x-160;p.y=tree.floor-p.h;p.onGround=true;p.climbing=false
+              g.camX=tree.x-200;g.camY=tree.floor-160;tree.update(g,0,[])
+              check('tree-warning',tree.phase==='TELEGRAPH');tree.update(g,2.4,[]);tree.update(g,.8,[])
+              check('tree-resolved',tree.phase==='RESOLVED')
+            }
+          }
+          return checks
+        })
+        events.push({branch:'state-injection-only',checks:branch});complete=branch.every(c=>c.ok);reason=complete?'':'상태 분기 실패'
+      }
       if (!complete && !reason) reason = `실시간 ${limit}초 제한`
     } catch (error) { reason = `실행 오류: ${error.message}` }
     await input()
     const screenshot = path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
-    if(!chaseCheck)await page.screenshot({ path: screenshot, fullPage: true })
-    const result = { stage, target:chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
+    if(!chaseCheck&&!floodCheck)await page.screenshot({ path: screenshot, fullPage: true })
+    const result = { stage, target:floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }
     results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))
-    page.off('pageerror', onError)
+    page.off('pageerror', onError);page.off('console',onConsole)
     console.log(`| ${stage} | ${complete ? 'O' : 'X'} | ${reason || '—'} | ${result.seconds}초 |`)
   }
   process.exitCode = results.every(r => r.complete) ? 0 : 1

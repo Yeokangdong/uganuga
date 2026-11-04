@@ -135,6 +135,7 @@ export interface EncounterDef {
 }
 
 export interface StageDef {
+  flood?: {start:number;end:number;floor:number;safe:number;deck:number}
   chase?: {start:number;end:number;floor:number;obstacle:number}
   aerial?: {updrafts:{col:number;row:number;w:number;h:number}[]}
   aquatic?: {surfaceRow:number;startCol:number;endCol:number;airPockets:{col:number;row:number;w:number;h:number}[]}
@@ -482,8 +483,20 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     encounters=encounters.map(e=>({...e,col:e.col>=at?e.col+length:e.col}))
     chase={start:at*16,end:(at+36)*16,floor:floor*16,obstacle:(at+27)*16}
   }
+  let flood:StageDef['flood']
+  if(index===12){
+    const at=24,length=30,floor=21
+    map=Object.assign(map.map((row,r)=>row.slice(0,at)+(r>=floor?'#':'.').repeat(length)+row.slice(at)),{
+      ladders:(map.ladders??[]).map(([c,t,b]):Span=>[c>=at?c+length:c,t,b])
+    })
+    const grid=map.map(row=>row.split(''))
+    for(let c=at+6;c<=at+13;c++)grid[19]![c]='='
+    map=Object.assign(grid.map(row=>row.join('')),{ladders:map.ladders})
+    encounters=encounters.map(e=>({...e,col:e.col>=at?e.col+length:e.col}))
+    flood={start:at*16,end:(at+24)*16,floor:floor*16,safe:(at+8)*16,deck:19*16}
+  }
   return {
-    chase,
+    flood,chase,
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
     encounters,

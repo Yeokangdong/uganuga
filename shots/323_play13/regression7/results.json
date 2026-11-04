@@ -1,0 +1,1251 @@
+[
+  {
+    "stage": 7,
+    "target": "environment7-input-escape",
+    "complete": true,
+    "blocked": "",
+    "seconds": 94.19,
+    "position": {
+      "x": 3633.15437500001,
+      "y": 313.5
+    },
+    "snapshot": {
+      "stage": 7,
+      "mode": "play",
+      "food": 60,
+      "time": 64.75500000000619,
+      "timeLeft": 127.49999999993103,
+      "x": 3633.15437500001,
+      "cx": 3639.90437500001,
+      "y": 313.5,
+      "h": 22.5,
+      "hp": 10,
+      "lives": 2,
+      "alive": true,
+      "out": false,
+      "ground": true,
+      "climbing": false,
+      "facing": 1,
+      "swing": -0.00500000000000014,
+      "vx": 0,
+      "environment": {
+        "phase": "RESOLVED",
+        "elapsed": 2.0499999999999976,
+        "rockX": 3488,
+        "route": {
+          "start": 2944,
+          "end": 3520,
+          "floor": 336,
+          "obstacle": 3376
+        },
+        "water": null
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "waterAhead": false,
+      "gap": false,
+      "foods": [
+        {
+          "x": 2001.7311249999836,
+          "y": 326
+        },
+        {
+          "x": 3554,
+          "y": 320
+        },
+        {
+          "x": 3586,
+          "y": 320
+        },
+        {
+          "x": 3618,
+          "y": 320
+        }
+      ],
+      "foes": [
+        {
+          "x": 816.8839374999976,
+          "y": 266.625,
+          "w": 27,
+          "h": 21.375
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 3.69,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "gapProbe": true,
+        "x": 707.6875,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 714.4375,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 722.3125,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 729.0625,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 736.9375,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 743.6875,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 751.5625,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 759.4375,
+        "y": 289,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 763.3984375,
+        "y": 275.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 761.9765625,
+        "y": 267.875,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 756,
+        "y": 268.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 751.84375,
+        "y": 278.4375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 747.8828125,
+        "y": 294,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 744.8046875,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 747.1406249999998,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 750.7406249999995,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 757.4906249999995,
+        "y": 291.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 761.6468749999995,
+        "y": 275.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 760.0296874999995,
+        "y": 268.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 759.5374999999995,
+        "y": 268.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 761.2015624999995,
+        "y": 271.25,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 766.3421874999995,
+        "y": 270.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 769.8343749999995,
+        "y": 276.9375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 772.8421874999995,
+        "y": 293.125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 776.0687499999995,
+        "y": 314.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 783.7796874999995,
+        "y": 347.5625,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 790.5296874999995,
+        "y": 382.625,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 744.84375,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "seconds": 18.61,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 738.09375,
+        "y": 313.5
+      },
+      {
+        "gapProbe": true,
+        "x": 751.3125,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 759.1875,
+        "y": 291.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 763.1484375,
+        "y": 277.125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 764.7265625,
+        "y": 271,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 765.3974999999998,
+        "y": 267.4174999999999,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 766.6490624999997,
+        "y": 271.05499999999984,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 766.7146874999995,
+        "y": 283.82999999999976,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 767.1693749999994,
+        "y": 302.0924999999997,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 766.1428124999994,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 767.4599999999997,
+        "y": 291.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 767.6021875,
+        "y": 275.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 768.1225000000003,
+        "y": 268.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 768.4693750000005,
+        "y": 267.5,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 770.1409375000003,
+        "y": 271.05499999999995,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 770.655,
+        "y": 283.82999999999987,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 771.4940624999997,
+        "y": 302.0924999999998,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 771.9565624999996,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 773.2737499999998,
+        "y": 291.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 774.13875,
+        "y": 280.3924999999999,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 777.6278125000001,
+        "y": 269.54249999999985,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 780.2200000000003,
+        "y": 267.5549999999998,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 784.6387500000004,
+        "y": 273.7674999999997,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 786.9309375000005,
+        "y": 279.24249999999967,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 793.4296875000006,
+        "y": 296.5399999999995,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 797.3906250000006,
+        "y": 319.7524999999994,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 803.5546875000006,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 810.3046875000006,
+        "y": 307.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 818.1796875000006,
+        "y": 291.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 822.1406250000006,
+        "y": 284.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 820.7187500000006,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 814.7421875000006,
+        "y": 292.5,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 806.8671875000006,
+        "y": 310,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 802.9062500000006,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 806.2578125000006,
+        "y": 307.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 812.9140625000006,
+        "y": 293.125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 818.0000000000006,
+        "y": 284.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 816.5781250000006,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 810.6015625000006,
+        "y": 292.5,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 806.4453125000006,
+        "y": 310,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 808.0625000000006,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 812.4171875000003,
+        "y": 307.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 817.5031250000003,
+        "y": 291.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 823.3859375000003,
+        "y": 283.875,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 827.3468750000003,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 825.9250000000003,
+        "y": 294.4375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 10
+      },
+      {
+        "gapProbe": true,
+        "x": 825.1046875000003,
+        "y": 310,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 819.6359375000003,
+        "y": 306.5,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 815.8625000000003,
+        "y": 310.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 812.5265625000003,
+        "y": 324.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 307.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 291.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 811.1359375000003,
+        "y": 284.375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 807.4171875000003,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 804.6281250000003,
+        "y": 292.5,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 799.9796875000003,
+        "y": 310,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 796.3937500000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 800.1828125000003,
+        "y": 307.9375,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 806.9015625000003,
+        "y": 293.125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 812.1828125000003,
+        "y": 283.875,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 810.5656250000003,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 803.4640625000003,
+        "y": 294.4375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 799.3078125000003,
+        "y": 313.25,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 801.0734375000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 808.8546875000003,
+        "y": 305,
+        "ground": false,
+        "climbing": false,
+        "up": true,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 812.8156250000003,
+        "y": 291.3125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 818.6984375000003,
+        "y": 283.875,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 822.6593750000003,
+        "y": 284.8125,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 821.2375000000003,
+        "y": 294.4375,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 820.4171875000003,
+        "y": 310,
+        "ground": false,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 818.4062500000003,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 818.5750000000004,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 816.3250000000006,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 819.7000000000008,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 820.3187500000009,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 820.768750000001,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 823.2887500000007,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "gapProbe": true,
+        "x": 825.6512500000005,
+        "y": 329.5,
+        "ground": true,
+        "climbing": false,
+        "up": false,
+        "hp": 9
+      },
+      {
+        "seconds": 47.14,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 1709.270312499998,
+        "y": 329.5
+      },
+      {
+        "seconds": 82.3,
+        "phase": "TELEGRAPH",
+        "x": 3042.34187500001,
+        "rockX": 2968,
+        "hp": 10,
+        "food": 60
+      },
+      {
+        "seconds": 85.12,
+        "phase": "ACTIVE",
+        "x": 3232.46687500001,
+        "rockX": 3119.97187500001,
+        "hp": 10,
+        "food": 60
+      },
+      {
+        "phase": "JUMP",
+        "x": 3349.46687500001,
+        "y": 291.9375
+      },
+      {
+        "seconds": 92.23,
+        "phase": "RESOLVED",
+        "x": 3639.90437500001,
+        "rockX": 3488,
+        "hp": 10,
+        "food": 60
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\323_play13\\regression7\\stage-07-1793786590353.png"
+  }
+]

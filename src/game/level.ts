@@ -40,6 +40,11 @@ export function themeKey(base: string, n: string): string {
 }
 
 export class Level {
+  floodWater: {left:number;right:number;top:number;bottom:number}|null=null
+  floodAt(px:number,py:number):boolean {
+    const f=this.floodWater
+    return !!f&&px>=f.left&&px<f.right&&py>=f.top&&py<f.bottom&&!this.solidAt(px,py)
+  }
   patternAnchors: {x:number;y:number;floor:number;left:number;right:number}[]=[]
   patternCliffs: {x:number;y:number;top:number;bottom:number}[]=[]
   cols: number
@@ -163,6 +168,7 @@ export class Level {
   }
 
   waterAt(px: number, py: number): boolean {
+    if(this.floodAt(px,py))return true
     const sea=this.def.aquatic,c=Math.floor(px/TILE),r=Math.floor(py/TILE)
     if(sea&&c>=sea.startCol&&c<=sea.endCol&&r>=sea.surfaceRow&&r<this.rows&&!this.solidAt(px,py)){
       if(!sea.airPockets.some(p=>c>=p.col&&c<p.col+p.w&&r>=p.row&&r<p.row+p.h))return true
@@ -175,7 +181,7 @@ export class Level {
   }
 
   swimmableAt(px:number,py:number):boolean {
-    return !!this.def.aquatic&&this.waterAt(px,py)
+    return this.floodAt(px,py)||!!this.def.aquatic&&this.waterAt(px,py)
   }
 
   /** 열에서 가장 아래쪽의 설 수 있는 바깥 지면 y (부활·스폰용). 없으면 null */

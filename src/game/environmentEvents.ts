@@ -15,27 +15,32 @@ export class EnvironmentEvents {
   x = 0
   floor = 0
   rockX = 0
+  draining = false
   private reward = false
   get suppressesPatterns(): boolean {
-    return this.level?.def.id===7 && (this.phase==='TELEGRAPH'||this.phase==='ACTIVE'||this.phase==='RESOLVED'&&this.elapsed<2)
+    return (this.level?.def.id===7||this.level?.def.id===13) && (this.phase==='TELEGRAPH'||this.phase==='ACTIVE'||this.phase==='RESOLVED'&&this.elapsed<2)
   }
   private level: Level | null = null
   private hit = false
   private lives: number | null = null
 
   reset(level: Level): void {
+    if(this.level)this.level.floodWater=null
+    level.floodWater=null;this.draining=false
     this.level = level
     this.phase = 'IDLE'; this.elapsed = 0; this.x = 0; this.hit = false; this.lives = null
     this.rockX=0;this.reward=false
   }
 
   cancel(): void {
+    if(this.level)this.level.floodWater=null
+    this.draining=false
     this.phase = 'CANCELLED'; this.elapsed = 0; this.hit = false
   }
 
   update(g: Game, dt: number, blocked: number[]): void {
     const p = g.players[0], lv = g.level
-    if (lv.def.id !== 1 && lv.def.id !== 7) return
+    if (lv.def.id !== 1 && lv.def.id !== 7 && lv.def.id !== 13) return
     if (p && this.lives !== null && p.lives !== this.lives) {
       if(lv.def.id===7&&this.phase==='IDLE'){this.lives=p.lives;return}
       this.cancel(); return
@@ -46,6 +51,7 @@ export class EnvironmentEvents {
       this.cancel(); return
     }
     if (this.phase === 'CANCELLED') return
+    if(lv.def.id===13){this.updateFlood(g,dt);return}
     if(lv.def.id===7){this.updateChase(g,dt);return}
     if (!this.x) {
       // Keep the first four fruit, spawn and all entrances well outside the sweep.
@@ -93,6 +99,31 @@ export class EnvironmentEvents {
         if (this.elapsed >= FALL) { this.phase = 'RESOLVED'; this.elapsed = 0 }
       }
     } else if (this.phase === 'RESOLVED') this.elapsed += dt
+  }
+
+  private updateFlood(g:Game,dt:number):void {
+    const p=g.players[0]!,r=g.level.def.flood
+    if(!r){this.cancel();return}
+    this.x=r.start;this.floor=r.floor
+    if(this.phase==='IDLE'){
+      if(p.onGround&&!p.climbing&&p.invuln<=0&&p.cx>=r.start+40&&p.cx<r.start+96
+        &&r.start>g.camX+8&&r.safe+80<g.camX+VIEW_W-8&&r.deck-40>g.camY
+        &&r.floor<g.camY+VIEW_H){this.phase='TELEGRAPH';this.elapsed=0}
+      return
+    }
+    this.elapsed+=dt
+    if(this.phase==='TELEGRAPH'&&this.elapsed>=3){this.phase='ACTIVE';this.elapsed=0}
+    if(this.phase==='ACTIVE'){
+      const lv=g.level
+      if(!this.draining){
+        const top=r.floor-Math.min(24,this.elapsed*9)
+        lv.floodWater={left:r.start,right:r.end,top,bottom:r.floor}
+        if(this.elapsed>=5&&(p.onGround&&p.cx>=r.safe-32&&p.cx<=r.safe+80&&p.y+p.h<=r.deck+2)||this.elapsed>=12)this.draining=true
+      }else if(lv.floodWater){
+        lv.floodWater.top=Math.min(r.floor,lv.floodWater.top+60*dt)
+        if(lv.floodWater.top>=r.floor){lv.floodWater=null;this.phase='RESOLVED';this.elapsed=0}
+      }
+    }
   }
 
   private updateChase(g:Game,dt:number):void {
@@ -181,6 +212,18 @@ export class EnvironmentEvents {
   }
 
   draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+    if(this.level?.def.id===13){
+      const r=this.level.def.flood
+      if(r&&this.phase==='TELEGRAPH'){
+        ctx.save();ctx.strokeStyle='#a4edff';ctx.lineWidth=2
+        for(let i=0;i<3;i++){
+          const x=r.start+24+i*14-cx,y=r.floor-8-(this.elapsed*15)%25-cy
+          ctx.beginPath();ctx.moveTo(x-4,y+5);ctx.lineTo(x,y);ctx.lineTo(x+4,y+5);ctx.stroke()
+        }
+        ctx.strokeStyle='#d5f6b0';ctx.strokeRect(r.safe-32-cx,r.deck-3-cy,128,3);ctx.restore()
+      }
+      return
+    }
     if(this.level?.def.id===7){this.drawChase(ctx,cx,cy);return}
     if (!this.x || this.phase === 'CANCELLED' || this.phase === 'RESOLVED' && this.elapsed > 1.4) return
     const im = image('world.rootedTree')
