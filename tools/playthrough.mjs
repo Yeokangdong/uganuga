@@ -15,7 +15,8 @@ if (!range) throw new Error('--stages: 1-15 형식 필요')
 const first = Number(range[1]), last = Number(range[2] ?? range[1])
 if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
 const port=option('--port','5306')
-const kingkongCheck = args.includes('--kingkong326')
+const kingkongCheck = args.includes('--kingkong326') || args.includes('--kingkong328')
+const shotPrefix = args.includes('--kingkong328') ? '328' : '326'
 const floodCheck = args.includes('--environment13')
 const chaseCheck = args.includes('--environment7')
 const storyCheck = args.includes('--story325')
@@ -83,7 +84,7 @@ try {
           await input();await page.keyboard.press('Enter')
           await page.waitForFunction(()=>window.__game?.players?.length&&!window.__game.stageLoading&&window.__game.mode==='play')
           const reset=await page.evaluate(()=>({stage:window.__game.stage.id,mode:window.__game.mode,food:window.__game.food,boss:!!window.__game.boss,hp:window.__game.players[0].hp}))
-          events.push({branch:'keyboard-restart',reset})
+          events.push({branch:'keyboard-restart',reset});await page.screenshot({path:path.join(root,`shots/${shotPrefix}_restart.png`)})
           complete=events.some(e=>e.food>=60)&&events.some(e=>e.mode==='rescue')&&['pound','charge','slam'].every(p=>captured.has(p))&&captured.has('rage')&&reset.food===0&&!reset.boss&&errors.length===0
           reason=complete?'':'구출/3패턴/분노/재시작 증거 부족';break
         }
@@ -103,23 +104,25 @@ try {
             climbing: p.climbing, facing: p.facing, swing: p.swingT, chargeReady:p.chargeReady, charge:p.charge, vx: p.vx,
             environment: {phase:g.environmentEvents.phase,elapsed:g.environmentEvents.elapsed,
               rockX:g.environmentEvents.rockX,route:lv.def.chase,flood:lv.def.flood,water:lv.floodWater},
+            route4689: argsStory?null:Array.from({length:25},(_,i)=>{const x=4560+i*8;return {x,floor:lv.floorBelow(x,280),water336:lv.waterAt(x,344),water288:lv.waterAt(x,296)}}),
             intro: g.introT > 0, journey: g.journeyT !== null, arena: lv.arenaX,
             wall: lv.solidAt(p.cx+dir*27, feet - 8),
             waterAhead:lv.waterAt(x,feet+8),
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
+            terrain: Array.from({length:9},(_,i)=>{const px=p.cx+i*8;return {x:px,floor:lv.floorBelow(px,feet-2),water:lv.waterAt(px,feet+8),ladder:lv.isLadder(Math.floor(px/16),Math.floor((feet-2)/16))}}),
             routeLadders:argsStory?[]:(lv.def.map.ladders??[]).filter(([c,t,b])=>c>=lv.arenaX/32&&b>=20&&t<=18).map(([c,t,b])=>({x:c*16+8,top:t*16,bottom:b*16})),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
               state: g.boss.state, pattern:g.boss.pattern, rage:g.boss.phase2, y:g.boss.y, h:g.boss.h, t:g.boss.t, vy:g.boss.vy, waves:g.boss.waves?.map(w=>({x:w.x,dir:w.dir})),target:g.boss.targetX, vx: g.boss.vx } : null }
         },storyCheck)
         const s = snapshot
         if(kingkongCheck){
-          if(!captured.has('uga')&&!await access(path.join(root,'shots/326_uga.png')).then(()=>true,()=>false)&&s.ground&&s.x>80){await page.screenshot({path:path.join(root,'shots/326_uga.png')});captured.add('uga')}
+          if(shotPrefix==='326'&&!captured.has('uga')&&!await access(path.join(root,'shots/326_uga.png')).then(()=>true,()=>false)&&s.ground&&s.x>80){await page.screenshot({path:path.join(root,'shots/326_uga.png')});captured.add('uga')}
           if(s.boss){
             for(const tag of ['pound','charge','slam'])if(s.boss.state===tag&&!captured.has(tag)){captured.add(tag);events.push({branch:tag,seconds:(Date.now()-started)/1000,hp:s.boss.hp})}
             if(s.boss.rage&&!captured.has('rage')){captured.add('rage');events.push({branch:'rage',hp:s.boss.hp})}
-            if(s.boss.state==='warn'&&!captured.has('kingkong')){await page.screenshot({path:path.join(root,'shots/326_kingkong.png')});captured.add('kingkong')}
+            if(s.boss.rage&&!captured.has('kingkong')){await page.screenshot({path:path.join(root,`shots/${shotPrefix}_kingkong.png`)});captured.add('kingkong')}
           }
-          if(s.mode==='rescue'&&!captured.has('rescue')){await page.screenshot({path:path.join(root,'shots/326_rescue.png')});captured.add('rescue')}
+          if(s.mode==='rescue'&&!captured.has('rescue')){await page.screenshot({path:path.join(root,`shots/${shotPrefix}_rescue.png`)});captured.add('rescue')}
         }
         if(storyCheck&&s.story&&!s.intro&&s.mode==='play'){
           if(!captured.has('STORY')&&s.cx>s.story.x-90&&s.cx<s.story.x+40&&s.ground){
@@ -212,7 +215,7 @@ try {
           }
           if (s.climbing || s.ground && !held.has('ArrowUp') && (s.wall || s.gap || stuck > 2 ||
             foods[0] && foods[0].y < s.y - 5 && Math.abs(foods[0].x - s.cx) < 35)) wanted.push('ArrowUp')
-          if(s.waterAhead&&s.ground){
+          if(s.waterAhead&&s.ground&&!kingkongCheck){
             wanted.length=0;wanted.push('ArrowRight')
             if(!held.has('ArrowUp'))wanted.push('ArrowUp')
           }
@@ -241,6 +244,14 @@ try {
             }
           }
           if(kingkongCheck&&s.mode==='play'){
+            if(s.cx>4500&&s.ground&&!held.has('ArrowUp')&&s.terrain.slice(2,5).some(t=>t.floor>s.y+s.h+16))wanted.push('ArrowUp')
+            if(s.cx>4540&&s.cx<4800&&tick%3===0)events.push({branch:'route-input',x:s.cx,y:s.y,ground:s.ground,climbing:s.climbing,hp:s.hp,lives:s.lives,terrain:s.terrain,keys:[...held]})
+
+            // A water jump launched 32px early lands inside a 32px pool (90px/s, ~0.57s flight).
+            // Keep rightward speed and launch only within 8–16px of the near bank.
+            if(s.terrain.slice(1,3).some(t=>t.water)&&s.ground){
+              wanted.length=0;wanted.push('ArrowRight');if(!held.has('ArrowUp'))wanted.push('ArrowUp')
+            }
             const ladder=s.routeLadders.find(l=>l.x>s.cx-12&&l.x<s.cx+90&&s.y+s.h>l.top+3&&s.y+s.h<=l.bottom+4)
             if(ladder){
               wanted.length=0
@@ -403,7 +414,7 @@ try {
       if (!complete && !reason) reason = `실시간 ${limit}초 제한`
     } catch (error) { reason = `실행 오류: ${error.message}` }
     await input()
-    const screenshot = kingkongCheck?(args.includes('--branches326')?path.join(root,'shots/326_uga.png'):captured.has('kingkong')?path.join(root,'shots/326_kingkong.png'):null):storyCheck?path.join(root,args.includes('--branches323')?'shots/325_late.png':'shots/325_story.png'):path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
+    const screenshot = kingkongCheck?(args.includes('--branches326')?path.join(root,'shots/326_uga.png'):captured.has('kingkong')?path.join(root,`shots/${shotPrefix}_kingkong.png`):null):storyCheck?path.join(root,args.includes('--branches323')?'shots/325_late.png':'shots/325_story.png'):path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
     if(!kingkongCheck&&!chaseCheck&&!floodCheck&&!storyCheck&&!args.includes('--branches323'))await page.screenshot({ path: screenshot, fullPage: true })
     const result = { stage, target:kingkongCheck?'normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart':storyCheck?'story-trace-real-input-and-control':floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }

@@ -1,0 +1,2173 @@
+[
+  {
+    "stage": 15,
+    "target": "normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart",
+    "complete": false,
+    "blocked": "목숨 소진",
+    "seconds": 226.39,
+    "position": {
+      "x": 6533.519374999873,
+      "y": 295.0625
+    },
+    "snapshot": {
+      "story": null,
+      "stage": 15,
+      "mode": "over",
+      "food": 60,
+      "time": 159.55333333332499,
+      "timeLeft": 69.06666666666683,
+      "x": 6533.519374999873,
+      "cx": 6540.269374999873,
+      "y": 295.0625,
+      "h": 22.5,
+      "hp": 0,
+      "lives": 0,
+      "alive": false,
+      "out": true,
+      "ground": false,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "chargeReady": false,
+      "charge": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "IDLE",
+        "elapsed": 0,
+        "rockX": 0,
+        "water": null
+      },
+      "route4689": [
+        {
+          "x": 4560,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4568,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4576,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4584,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4592,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4600,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4608,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4616,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4624,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4632,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4640,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4648,
+          "floor": 288,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4656,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4664,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4672,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4680,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4688,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4696,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4704,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4712,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4720,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4728,
+          "floor": 272,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4736,
+          "floor": 384,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4744,
+          "floor": 384,
+          "water336": false,
+          "water288": false
+        },
+        {
+          "x": 4752,
+          "floor": 384,
+          "water336": false,
+          "water288": false
+        }
+      ],
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "waterAhead": false,
+      "gap": true,
+      "terrain": [
+        {
+          "x": 6540.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6548.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6556.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6564.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6572.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6580.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6588.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6596.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        },
+        {
+          "x": 6604.269374999873,
+          "floor": 336,
+          "water": false,
+          "ladder": false
+        }
+      ],
+      "routeLadders": [
+        {
+          "x": 3528,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 3928,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 4600,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 5000,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 5720,
+          "top": 288,
+          "bottom": 352
+        },
+        {
+          "x": 6120,
+          "top": 288,
+          "bottom": 336
+        }
+      ],
+      "foods": [
+        {
+          "x": 2132.5,
+          "y": 326
+        },
+        {
+          "x": 3049.206000000031,
+          "y": 326
+        },
+        {
+          "x": 3197.0404999999846,
+          "y": 326
+        },
+        {
+          "x": 4019.3314999999807,
+          "y": 326
+        },
+        {
+          "x": 4181.457249999982,
+          "y": 342
+        },
+        {
+          "x": 4259.297249999935,
+          "y": 326
+        },
+        {
+          "x": 5268.5,
+          "y": 326
+        },
+        {
+          "x": 5892.525249999956,
+          "y": 246
+        },
+        {
+          "x": 6251.9275,
+          "y": 342
+        }
+      ],
+      "foes": [
+        {
+          "x": 3733.756250000014,
+          "y": 145.625,
+          "w": 28.125,
+          "h": 30.375
+        },
+        {
+          "x": 4834.5625,
+          "y": 150.42323729941933,
+          "w": 23.625,
+          "h": 21.375
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 5.37,
+        "stage": 15,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 313.5
+      },
+      {
+        "seconds": 19.58,
+        "stage": 15,
+        "mode": "play",
+        "food": 0,
+        "x": 756.0625,
+        "y": 313.5
+      },
+      {
+        "seconds": 49.87,
+        "stage": 15,
+        "mode": "play",
+        "food": 60,
+        "x": 1972.0259374999962,
+        "y": 329.5
+      },
+      {
+        "seconds": 117.49,
+        "stage": 15,
+        "mode": "play",
+        "food": 60,
+        "x": 4238.979687500003,
+        "y": 285.375
+      },
+      {
+        "branch": "route-input",
+        "x": 4541.706250000004,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4541.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4549.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4557.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4565.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4573.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4581.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4589.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4597.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4605.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4564.206250000004,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4564.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4572.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4580.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4588.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4596.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4604.206250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4612.206250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.206250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.206250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4586.706250000004,
+        "y": 313.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4586.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4594.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4602.706250000004,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4610.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4618.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4626.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4634.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4642.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4650.706250000004,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4600,
+        "y": 311.925,
+        "ground": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4600,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4608,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4616,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4600,
+        "y": 301.1990006185638,
+        "ground": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4600,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4608,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4616,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4600,
+        "y": 290.99111386702856,
+        "ground": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4600,
+            "floor": 336,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4608,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4616,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4600,
+        "y": 281.64080202416835,
+        "ground": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4600,
+            "floor": 288,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4608,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4616,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4600,
+        "y": 271.4958775579592,
+        "ground": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4600,
+            "floor": 288,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4608,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4616,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664,
+            "floor": 352,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4606.1875,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4606.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4614.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4622.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4630.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4638.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4646.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4654.1875,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4662.1875,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4670.1875,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4615.412500000003,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4615.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4623.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4631.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4639.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4647.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4655.412500000003,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4663.412500000003,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4671.412500000003,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4679.412500000003,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4618.900000000004,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4618.900000000004,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4626.900000000004,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4634.900000000004,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4642.900000000004,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4650.900000000004,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4658.900000000004,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4666.900000000004,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4674.900000000004,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4682.900000000004,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4614.681250000005,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4614.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4622.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4630.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4638.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4646.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4654.681250000005,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4662.681250000005,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4670.681250000005,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4678.681250000005,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowLeft"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4616.756250000007,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4616.756250000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4624.756250000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4632.756250000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4640.756250000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4648.756250000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4656.756250000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4664.756250000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4672.756250000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4680.756250000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4612.587500000007,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4612.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4636.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4644.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4652.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4660.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4668.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4676.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": []
+      },
+      {
+        "branch": "route-input",
+        "x": 4612.587500000007,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4612.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4636.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4644.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4652.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4660.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4668.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4676.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": []
+      },
+      {
+        "branch": "route-input",
+        "x": 4612.587500000007,
+        "y": 230.27999999999992,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4612.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4636.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4644.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4652.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4660.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4668.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4676.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": []
+      },
+      {
+        "branch": "route-input",
+        "x": 4612.587500000007,
+        "y": 227.4049999999997,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4612.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4636.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4644.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4652.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4660.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4668.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4676.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": []
+      },
+      {
+        "branch": "route-input",
+        "x": 4612.587500000007,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4612.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4620.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4628.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4636.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4644.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4652.587500000007,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4660.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4668.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4676.587500000007,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": []
+      },
+      {
+        "branch": "route-input",
+        "x": 4615.231250000008,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4615.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4623.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4631.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4639.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4647.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4655.231250000008,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4663.231250000008,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4671.231250000008,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4679.231250000008,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4633.8500000000095,
+        "y": 265.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4633.8500000000095,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4641.8500000000095,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4649.8500000000095,
+            "floor": 288,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4657.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4665.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4673.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4681.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4689.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4697.8500000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4658.6000000000095,
+        "y": 225.6875,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4658.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4666.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4674.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4682.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4690.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4698.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4706.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4714.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4722.6000000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4682.2250000000095,
+        "y": 234.875,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4682.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4690.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4698.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4706.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4714.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4722.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4730.2250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4738.2250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4746.2250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": true
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4706.9750000000095,
+        "y": 249.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4706.9750000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4714.9750000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4722.9750000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4730.9750000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4738.9750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4746.9750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4754.9750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4762.9750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4770.9750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4731.7250000000095,
+        "y": 225,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4731.7250000000095,
+            "floor": 272,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4739.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4747.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": true
+          },
+          {
+            "x": 4755.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4763.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4771.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4779.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4787.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4795.7250000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight",
+          "ArrowUp"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4756.4750000000095,
+        "y": 207.8125,
+        "ground": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4756.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4764.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4772.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4780.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4788.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4796.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4804.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4812.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4820.4750000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "branch": "route-input",
+        "x": 4780.1000000000095,
+        "y": 233.5,
+        "ground": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 1,
+        "terrain": [
+          {
+            "x": 4780.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4788.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4796.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4804.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4812.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4820.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4828.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4836.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          },
+          {
+            "x": 4844.1000000000095,
+            "floor": 256,
+            "water": false,
+            "ladder": false
+          }
+        ],
+        "keys": [
+          "ArrowRight"
+        ]
+      },
+      {
+        "seconds": 223.42,
+        "stage": 15,
+        "mode": "play",
+        "food": 60,
+        "x": 6533.519374999873,
+        "y": 295.0625
+      },
+      {
+        "seconds": 226.39,
+        "stage": 15,
+        "mode": "over",
+        "food": 60,
+        "x": 6533.519374999873,
+        "y": 295.0625
+      }
+    ],
+    "errors": [],
+    "screenshot": null,
+    "attemptsSummary": [
+      {
+        "seconds": 63.54,
+        "food": 60,
+        "endX": 2273.88,
+        "failure": "물 구간; FOOD60 문 방향 강제 제거"
+      },
+      {
+        "seconds": 215.37,
+        "food": 60,
+        "endX": 6557.74,
+        "failure": "water=true; 물 점프 선행거리 축소"
+      },
+      {
+        "seconds": 226.39,
+        "food": 60,
+        "endX": 6533.519374999873,
+        "failure": "목숨 소진; 보스 미도달"
+      }
+    ],
+    "validationScope": "실제키 입력만; 상태주입 분기 재실행 없음; 전체1~15 연속완주/3패턴/분노/구출/재시작 미검증; 게임 코드 변경 없음"
+  }
+]
