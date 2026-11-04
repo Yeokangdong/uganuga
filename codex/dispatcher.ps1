@@ -45,7 +45,7 @@ Get-ChildItem $dirs.done -Filter *.txt | ForEach-Object { $seen[$_.Name] = $true
 while ($true) {
   Set-Content -Path "$cx\dispatcher-alive.txt" -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8
 
-  $hold = Test-Path "$cx\HOLD.txt"
+  $hold = Test-Path "$cx\HOLD_ON.txt"
   # --- 팀장 체제 자동 체인 (HOLD.txt 있으면 멈춤) ---
   foreach ($f in (Get-ChildItem $dirs.done -Filter *.txt | Sort-Object LastWriteTime)) {
     if ($seen[$f.Name]) { continue }

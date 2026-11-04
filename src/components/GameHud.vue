@@ -17,8 +17,8 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
   <div class="hud">
     <div v-if="hud.trail&&!hud.paused&&!hud.boss" class="trail-clue" role="status">{{hud.trail}}</div>
     <div class="stage-score" v-if="hud.players[0]">
-      <span :aria-label="'???? '+hud.stage"><CartoonText :text="'STAGE '+hud.stage"/></span>
-      <span :aria-label="'?? '+hud.players[0].score"><CartoonText text="SCORE"/> <CartoonText :text="digits(hud.players[0].score)"/></span>
+      <span :aria-label="'스테이지 '+hud.stage"><CartoonText :text="'STAGE '+hud.stage"/></span>
+      <span :aria-label="'점수 '+hud.players[0].score"><CartoonText text="SCORE"/> <CartoonText :text="digits(hud.players[0].score)"/></span>
     </div>
     <div v-if="hud.foodFullNotice && !hud.paused" class="food-full" role="status"><strong>FOOD FULL!</strong><span>{{hud.foodFullNotice}}</span></div>
     <div class="status" v-for="p in hud.players.slice(0, 1)" :key="p.name" :class="{out:p.out}" :aria-label="p.name+' 캐릭터 정보'" :style="{'--panel-image':`url(${art.images['ui.status_panel']?.src})`}">
