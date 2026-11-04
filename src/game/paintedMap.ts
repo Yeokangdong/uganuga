@@ -104,7 +104,23 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
   g.drawImage(im,0,im.height-rootSource,im.width,rootSource,drawX,rootTop,w,root)
 }
 
-/** Paint only below the actual one-way platform top: no fake raised landing edge. */
+const platformTopCache = new WeakMap<HTMLImageElement, number>()
+/** Ignore sparse leaves above the continuous walking rim, not just empty rows. */
+function platformTop(im:HTMLImageElement):number {
+  const cached=platformTopCache.get(im);if(cached!==undefined)return cached
+  const cv=document.createElement('canvas');cv.width=im.width;cv.height=im.height
+  const g=cv.getContext('2d',{willReadFrequently:true})!
+  g.drawImage(im,0,0)
+  const pixels=g.getImageData(0,0,im.width,im.height).data,tops:number[]=[]
+  for(let x=Math.floor(im.width/8);x<im.width*7/8;x++){
+    for(let y=0;y<im.height;y++)if(pixels[(y*im.width+x)*4+3]!>128){tops.push(y);break}
+  }
+  tops.sort((a,b)=>a-b)
+  const top=tops[Math.floor(tops.length/2)]??0
+  platformTopCache.set(im,top);return top
+}
+
+/** The painted walking rim shares the one-way collision top; foliage is decoration. */
 export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:number,width:number,object:ElevatedObject='local',bottom?:number):void {
   const objectArt=object==='local'?undefined:image('world.elevated.'+object)
   if(objectArt){
@@ -126,13 +142,14 @@ export function terrainDeck(g:CanvasRenderingContext2D,x:number,y:number,stage:n
   // otherwise a long platform becomes a row of disconnected miniature ledges.
   const unit=stage===15?44:64
   const depth=im.height*unit/im.width,edge=Math.min(8,width/2)
+  const drawY=y-platformTop(im)*unit/im.width
   const sourceEdge=im.width/8
-  g.drawImage(im,0,0,sourceEdge,im.height,x,y,edge,depth)
+  g.drawImage(im,0,0,sourceEdge,im.height,x,drawY,edge,depth)
   for(let offset=edge;offset<width-edge;offset+=48){
     const w=Math.min(48,width-edge-offset)
-    g.drawImage(im,sourceEdge,0,im.width-2*sourceEdge,im.height,x+offset,y,w,depth)
+    g.drawImage(im,sourceEdge,0,im.width-2*sourceEdge,im.height,x+offset,drawY,w,depth)
   }
-  g.drawImage(im,im.width-sourceEdge,0,sourceEdge,im.height,x+width-edge,y,edge,depth)
+  g.drawImage(im,im.width-sourceEdge,0,sourceEdge,im.height,x+width-edge,drawY,edge,depth)
 }
 
 export function rockPattern(g:CanvasRenderingContext2D,stage:number,size=64):CanvasPattern {
