@@ -1,0 +1,237 @@
+{
+  "complete": true,
+  "blocked": "",
+  "seconds": 82.37,
+  "phase": 7,
+  "snapshot": {
+    "cx": 853.34375,
+    "x": 846.59375,
+    "y": 313.5,
+    "feet": 336,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.00500000000000014,
+    "facing": 1,
+    "food": 60,
+    "score": 2450,
+    "mode": "play",
+    "camX": 622.1745343093615,
+    "camY": 167.9476815867075,
+    "trail": {
+      "climbX": 328,
+      "upperClimbX": 488,
+      "retryX": 552,
+      "traceX": 440,
+      "traceY": 208,
+      "rejoinX": 848
+    },
+    "enemies": [
+      {
+        "key": "dino1_0",
+        "id": "dino1_0:915",
+        "x": 945.3374999999974,
+        "w": 15.75,
+        "y": 329.5,
+        "h": 22.5,
+        "hp": 3,
+        "stun": 0,
+        "finish": 0
+      }
+    ],
+    "items": [],
+    "timer": 189.03333333331219
+  },
+  "events": [
+    {
+      "seconds": 0,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 264.92499999999995,
+      "phase": 0
+    },
+    {
+      "seconds": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "hp": 10,
+      "food": 0
+    },
+    {
+      "seconds": 7.08,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 290.1967500000006,
+      "food": 0,
+      "score": 100,
+      "phase": 0
+    },
+    {
+      "seconds": 7.58,
+      "event": "food-change",
+      "from": 0,
+      "to": 25,
+      "x": 285.2375000000015,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 7.64,
+      "event": "phase",
+      "phase": 1,
+      "x": 286.5500000000015,
+      "feet": 336,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 8.37,
+      "event": "enemy-visible",
+      "enemy": "boar",
+      "x": 446.04999999999995,
+      "phase": 1
+    },
+    {
+      "seconds": 12.38,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 13.44,
+      "event": "food-change",
+      "from": 25,
+      "to": 30,
+      "x": 398.3125,
+      "feet": 208.875,
+      "phase": 2
+    },
+    {
+      "seconds": 13.88,
+      "event": "phase",
+      "phase": 3,
+      "x": 427.5625,
+      "feet": 183.6875,
+      "hp": 10,
+      "food": 30
+    },
+    {
+      "seconds": 16.68,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 457.4265000000005,
+      "food": 30,
+      "score": 1350,
+      "phase": 3
+    },
+    {
+      "seconds": 17.17,
+      "event": "food-change",
+      "from": 30,
+      "to": 50,
+      "x": 449.6231250000003,
+      "feet": 208,
+      "phase": 3
+    },
+    {
+      "seconds": 17.24,
+      "event": "phase",
+      "phase": 4,
+      "x": 450.9356250000003,
+      "feet": 208,
+      "hp": 10,
+      "food": 50
+    },
+    {
+      "seconds": 18.4,
+      "event": "food-change",
+      "from": 50,
+      "to": 55,
+      "x": 488,
+      "feet": 191.7779225957389,
+      "phase": 4
+    },
+    {
+      "seconds": 21.18,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    },
+    {
+      "seconds": 21.99,
+      "event": "food-change",
+      "from": 55,
+      "to": 60,
+      "x": 540.3125,
+      "feet": 112,
+      "phase": 5
+    },
+    {
+      "seconds": 22.27,
+      "event": "phase",
+      "phase": 6,
+      "x": 559.4375,
+      "feet": 112,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 24.13,
+      "event": "phase",
+      "phase": 7,
+      "x": 668.28125,
+      "feet": 240,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 25.96,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 923.2874999999999,
+      "phase": 7
+    }
+  ],
+  "recovery": {
+    "complete": false,
+    "stateInjection": false,
+    "events": [
+      {
+        "event": "safe-floor-before-retry",
+        "seconds": 4.956,
+        "cx": 556.34375,
+        "feet": 352,
+        "onGround": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3
+      },
+      {
+        "event": "retry-vine-top",
+        "seconds": 9.455,
+        "cx": 552,
+        "feet": 224,
+        "onGround": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3
+      }
+    ]
+  },
+  "errors": [],
+  "shots": [
+    "reason",
+    "upper",
+    "rejoin"
+  ],
+  "stateInjection": false
+}

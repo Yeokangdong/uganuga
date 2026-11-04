@@ -135,6 +135,7 @@ export interface EncounterDef {
 }
 
 export interface StageDef {
+  firstTrail?:{climbX:number;upperClimbX:number;retryX:number;traceX:number;traceY:number;rejoinX:number}
   flood?: {start:number;end:number;floor:number;safe:number;deck:number}
   chase?: {start:number;end:number;floor:number;obstacle:number}
   aerial?: {updrafts:{col:number;row:number;w:number;h:number}[]}
@@ -462,16 +463,24 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   }
   const planned=planEncounters(map,index,localRoles,habitat,BESTIARY)
   map=planned.map
+  let encounters=planned.encounters
+  let firstTrail:StageDef['firstTrail']
   if(index===0){
-    // Four +5 fruit trace the first jump; two normal animal drops supply +40.
-    const grid=map.map(row=>row.replace(/f/g,'.').split(''))
-    for(const [col,row] of [[8,18],[9,17],[10,17],[11,18]])grid[row]![col]='f'
-    map=Object.assign(grid.map(row=>row.join('')),{ladders:map.ladders})
+    // Keep the original four +5 fruit and two existing animal introductions,
+    // but connect their rewards to one readable root/vine/canopy detour.
+    const grid=map.map(row=>row.replace(/[fEU]/g,'.').split(''))
+    grid[20]![14]='E'
+    for(let col=24;col<=26;col++)for(let row=17;row<=21;row++)grid[row]![col]='R'
+    for(let col=32;col<=37;col++)grid[14]![col]='='
+    for(const [col,row] of [[18,20],[25,13],[30,10],[34,6]])grid[row]![col]='f'
+    const ladders=[...(map.ladders??[]),[34,14,22] as Span]
+    map=Object.assign(grid.map(row=>row.join('')),{ladders})
+    encounters=[...encounters,{col:28,row:12,cfg:{...localRoles.U!,patrolRadius:16},group:'상층 먹이와 추적길 지킴이',facing:-1}]
+    firstTrail={climbX:328,upperClimbX:488,retryX:552,traceX:440,traceY:208,rejoinX:848}
   }
   // Insert a dedicated dry corridor between exploration legs, after encounter planning.
   // Existing doors, ladders and encounters retain their relative geometry.
   let chase:StageDef['chase']
-  let encounters=planned.encounters
   if(index===6){
     const at=184, length=48, floor=21
     map=Object.assign(map.map((row,r)=>row.slice(0,at)+(r>=floor?'#':'.').repeat(length)+row.slice(at)),{
@@ -496,7 +505,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     flood={start:at*16,end:(at+24)*16,floor:floor*16,safe:(at+8)*16,deck:19*16}
   }
   return {
-    flood,chase,
+    firstTrail,flood,chase,
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
     encounters,

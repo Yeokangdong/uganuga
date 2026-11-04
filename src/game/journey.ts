@@ -47,7 +47,9 @@ function bone(g:CanvasRenderingContext2D,x:number,y:number):void {
 
 /** Pure scenery: no spawns, timers, collision bodies, rewards or visit state. */
 export function storyTraceAnchor(level:Level,blocked:number[]):{x:number;y:number}|null {
-  if(level.def.cave||![4,9,12,14].includes(level.def.id))return null
+  if(level.def.cave)return null
+  if(level.def.id===1&&level.def.firstTrail)return {x:level.def.firstTrail.traceX,y:level.def.firstTrail.traceY}
+  if(![4,9,12,14].includes(level.def.id))return null
   for(let x=320;x<Math.min(960,level.arenaX-384);x+=16){
     const y=level.groundY(x)
     if(y==null||blocked.some(b=>Math.abs(b-x)<176))continue
@@ -69,6 +71,16 @@ export function drawStoryTrace(g:CanvasRenderingContext2D,level:Level,blocked:nu
   const x=anchor.x-cx,y=anchor.y-cy
   if(x<-100||x>VIEW_W+100||y<64||y>VIEW_H+12)return
   g.save()
+  if(level.def.id===1){
+    if(!background)for(const [tx,ty]of [[anchor.x,anchor.y],[548,112]]){
+      const rx=tx-cx,ry=ty-cy
+      g.strokeStyle='#88485c';g.lineWidth=.7;g.fillStyle='#ee9bac'
+      g.beginPath();g.moveTo(rx,ry+2);g.lineTo(rx-5,ry);g.lineTo(rx-6,ry+6);g.lineTo(rx,ry+3);g.lineTo(rx+6,ry);g.lineTo(rx+5,ry+6);g.closePath();g.fill();g.stroke()
+      g.beginPath();g.moveTo(rx-1,ry+3);g.lineTo(rx-4,ry+14);g.lineTo(rx,ry+12);g.lineTo(rx+3,ry+16);g.lineTo(rx+2,ry+3);g.fill()
+      for(let i=0;i<3;i++)footprint(g,rx+18+i*10,ry+3,.65)
+    }
+    g.restore();return
+  }
   if(background){
     if(level.def.id===4||level.def.id===9){
       g.globalAlpha=.24;g.filter='brightness(.2)'

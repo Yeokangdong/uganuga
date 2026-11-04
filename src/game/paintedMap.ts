@@ -82,7 +82,7 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
   const im=part(stage,'support'),theme=terrainTheme(stage)
   if(!im||bottom<=top||right<=left||theme.floating)return
   const available=bottom-top+6
-  const limit=stage===1?34:theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
+  const limit=stage===1?(x>=280&&x<=680?68:34):theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
   const scale=Math.min(available/im.height,Math.min(limit,right-left)/im.width)
   const w=im.width*scale,h=im.height*scale
   const center=Math.max(left+w/2,Math.min(right-w/2,x))
@@ -102,6 +102,13 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
     g.drawImage(im,0,crownSource,im.width,height/scale,drawX,y,w,height)
   }
   g.drawImage(im,0,im.height-rootSource,im.width,rootSource,drawX,rootTop,w,root)
+}
+
+/** An existing whole tree makes the short root obstacle read as jungle, not masonry. */
+export function firstJungleTrunk(g:CanvasRenderingContext2D):void {
+  const im=part(1,'support');if(!im)return
+  const width=160,height=im.height*width/im.width
+  g.drawImage(im,408-width/2,352-height,width,height)
 }
 
 const platformTopCache = new WeakMap<HTMLImageElement, number>()

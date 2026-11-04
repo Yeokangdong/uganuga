@@ -1,7 +1,7 @@
 import { SCALE, TILE } from './constants'
 import { has, image } from './art'
 import { ROWS, type StageDef, type EnemyCfg } from './stages'
-import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, terrainDrawAudit, type ElevatedObject } from './paintedMap'
+import { rockPattern, surface, ladder, terrainSupport, terrainDeck, elevatedObject, terrainDrawAudit, firstJungleTrunk, type ElevatedObject } from './paintedMap'
 import { terrainTheme } from './terrainThemes'
 import { cloudFloor } from './cloudTerrain'
 import {drawStageSign} from './stageSign'
@@ -457,6 +457,7 @@ export class Level {
         g.fillStyle='rgba(8,12,18,.22)';g.fillRect(x,y,TILE,TILE)
       }
     }
+    if(this.def.firstTrail&&!this.def.cave)firstJungleTrunk(g)
     for(const deck of decks){
       const support=supports[deck.support]
       if(!support){terrainDeck(g,deck.x,deck.y,theme,deck.width);continue}

@@ -1,0 +1,191 @@
+{
+  "complete": false,
+  "blocked": "단계 정체 6",
+  "seconds": 42.26,
+  "phase": 6,
+  "snapshot": {
+    "cx": 613.625,
+    "x": 606.875,
+    "y": 105.5,
+    "feet": 128,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.00500000000000014,
+    "facing": 1,
+    "food": 60,
+    "score": 2450,
+    "mode": "play",
+    "camX": 390.9049999999998,
+    "camY": 20.380519768889897,
+    "trail": {
+      "climbX": 328,
+      "upperClimbX": 488,
+      "retryX": 552,
+      "traceX": 440,
+      "traceY": 208,
+      "rejoinX": 848
+    },
+    "enemies": [],
+    "items": [],
+    "timer": 173.68333333329997
+  },
+  "events": [
+    {
+      "seconds": 0,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 265.31874999999997,
+      "phase": 0
+    },
+    {
+      "seconds": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "hp": 10,
+      "food": 0
+    },
+    {
+      "seconds": 6.09,
+      "event": "food-change",
+      "from": 0,
+      "to": 5,
+      "x": 284.26375000000166,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 8.46,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 311.0655000000012,
+      "food": 5,
+      "score": 600,
+      "phase": 0
+    },
+    {
+      "seconds": 8.96,
+      "event": "food-change",
+      "from": 5,
+      "to": 25,
+      "x": 309.883750000002,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 9.02,
+      "event": "phase",
+      "phase": 1,
+      "x": 311.196250000002,
+      "feet": 336,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 9.35,
+      "event": "enemy-visible",
+      "enemy": "boar",
+      "x": 439.87499999999966,
+      "phase": 1
+    },
+    {
+      "seconds": 13.51,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 14.57,
+      "event": "food-change",
+      "from": 25,
+      "to": 30,
+      "x": 397.1875,
+      "feet": 224,
+      "phase": 2
+    },
+    {
+      "seconds": 15.01,
+      "event": "phase",
+      "phase": 3,
+      "x": 426.4375,
+      "feet": 179.3125,
+      "hp": 10,
+      "food": 30
+    },
+    {
+      "seconds": 17.88,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 457.4765000000008,
+      "food": 30,
+      "score": 1350,
+      "phase": 3
+    },
+    {
+      "seconds": 18.37,
+      "event": "food-change",
+      "from": 30,
+      "to": 50,
+      "x": 448.95750000000027,
+      "feet": 208,
+      "phase": 3
+    },
+    {
+      "seconds": 18.48,
+      "event": "phase",
+      "phase": 4,
+      "x": 450.27000000000027,
+      "feet": 208,
+      "hp": 10,
+      "food": 50
+    },
+    {
+      "seconds": 19.6,
+      "event": "food-change",
+      "from": 50,
+      "to": 55,
+      "x": 488,
+      "feet": 191.31954815375445,
+      "phase": 4
+    },
+    {
+      "seconds": 22.39,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    },
+    {
+      "seconds": 23.2,
+      "event": "food-change",
+      "from": 55,
+      "to": 60,
+      "x": 541.4375,
+      "feet": 112,
+      "phase": 5
+    },
+    {
+      "seconds": 23.5,
+      "event": "phase",
+      "phase": 6,
+      "x": 561.6875,
+      "feet": 112,
+      "hp": 10,
+      "food": 60
+    }
+  ],
+  "errors": [],
+  "shots": [
+    "reason",
+    "upper"
+  ],
+  "stateInjection": false
+}

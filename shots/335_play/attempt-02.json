@@ -1,0 +1,220 @@
+{
+  "complete": true,
+  "blocked": "",
+  "seconds": 28.06,
+  "phase": 7,
+  "snapshot": {
+    "cx": 862.1328125,
+    "x": 855.3828125,
+    "y": 329.5,
+    "feet": 352,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.00500000000000014,
+    "facing": -1,
+    "food": 60,
+    "score": 2450,
+    "mode": "play",
+    "camX": 636.7161113687414,
+    "camY": 167.98943717518145,
+    "trail": {
+      "climbX": 328,
+      "upperClimbX": 488,
+      "retryX": 552,
+      "traceX": 440,
+      "traceY": 208,
+      "rejoinX": 848
+    },
+    "enemies": [
+      {
+        "key": "dino1_0",
+        "id": "dino1_0:915",
+        "x": 941.3999999999978,
+        "w": 15.75,
+        "y": 329.5,
+        "h": 22.5,
+        "hp": 3,
+        "stun": 0,
+        "finish": 0
+      }
+    ],
+    "items": [],
+    "timer": 188.14999999997815
+  },
+  "events": [
+    {
+      "seconds": 0,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 264.92499999999995,
+      "phase": 0
+    },
+    {
+      "seconds": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "hp": 10,
+      "food": 0
+    },
+    {
+      "seconds": 6.37,
+      "event": "food-change",
+      "from": 0,
+      "to": 5,
+      "x": 284.3712500000017,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 7.98,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 311.4592500000012,
+      "food": 5,
+      "score": 600,
+      "phase": 0
+    },
+    {
+      "seconds": 8.54,
+      "event": "food-change",
+      "from": 5,
+      "to": 25,
+      "x": 309.77500000000197,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 8.6,
+      "event": "phase",
+      "phase": 1,
+      "x": 311.08750000000197,
+      "feet": 336,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 8.95,
+      "event": "enemy-visible",
+      "enemy": "boar",
+      "x": 439.87499999999966,
+      "phase": 1
+    },
+    {
+      "seconds": 13.06,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 14.11,
+      "event": "food-change",
+      "from": 25,
+      "to": 30,
+      "x": 398.3125,
+      "feet": 208.875,
+      "phase": 2
+    },
+    {
+      "seconds": 14.55,
+      "event": "phase",
+      "phase": 3,
+      "x": 427.5625,
+      "feet": 183.6875,
+      "hp": 10,
+      "food": 30
+    },
+    {
+      "seconds": 17.3,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 457.4765000000008,
+      "food": 30,
+      "score": 1350,
+      "phase": 3
+    },
+    {
+      "seconds": 17.8,
+      "event": "food-change",
+      "from": 30,
+      "to": 50,
+      "x": 449.2868750000004,
+      "feet": 208,
+      "phase": 3
+    },
+    {
+      "seconds": 17.86,
+      "event": "phase",
+      "phase": 4,
+      "x": 450.5993750000004,
+      "feet": 208,
+      "hp": 10,
+      "food": 50
+    },
+    {
+      "seconds": 18.97,
+      "event": "food-change",
+      "from": 50,
+      "to": 55,
+      "x": 488,
+      "feet": 191.7779225957389,
+      "phase": 4
+    },
+    {
+      "seconds": 21.75,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    },
+    {
+      "seconds": 22.56,
+      "event": "food-change",
+      "from": 55,
+      "to": 60,
+      "x": 540.3125,
+      "feet": 112,
+      "phase": 5
+    },
+    {
+      "seconds": 22.89,
+      "event": "phase",
+      "phase": 6,
+      "x": 562.8125,
+      "feet": 112,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 24.75,
+      "event": "phase",
+      "phase": 7,
+      "x": 668.28125,
+      "feet": 240,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 26.61,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 924.0749999999998,
+      "phase": 7
+    }
+  ],
+  "errors": [],
+  "shots": [
+    "reason",
+    "upper",
+    "rejoin"
+  ],
+  "stateInjection": false
+}

@@ -1,0 +1,311 @@
+{
+  "complete": true,
+  "blocked": "",
+  "seconds": 35.07,
+  "totalIncludingRecovery": 90.1,
+  "phase": 7,
+  "snapshot": {
+    "cx": 854.46875,
+    "x": 847.71875,
+    "y": 313.5,
+    "feet": 336,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.010000000000000259,
+    "facing": 1,
+    "food": 60,
+    "score": 2650,
+    "mode": "play",
+    "camX": 623.2995343086885,
+    "camY": 167.95266070345843,
+    "trail": {
+      "climbX": 328,
+      "upperClimbX": 488,
+      "retryX": 552,
+      "traceX": 440,
+      "traceY": 208,
+      "rejoinX": 848
+    },
+    "enemies": [
+      {
+        "key": "dino1_0",
+        "id": "dino1_0:915",
+        "x": 945.7312499999973,
+        "w": 15.75,
+        "y": 329.5,
+        "h": 22.5,
+        "hp": 3,
+        "stun": 0,
+        "finish": 0
+      }
+    ],
+    "items": [],
+    "timer": 181.13333333330587
+  },
+  "events": [
+    {
+      "seconds": 0,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 264.92499999999995,
+      "phase": 0
+    },
+    {
+      "seconds": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "hp": 10,
+      "food": 0
+    },
+    {
+      "seconds": 5.8,
+      "event": "food-change",
+      "from": 0,
+      "to": 5,
+      "x": 283.7812500000017,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 14.49,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 268.54049999999995,
+      "food": 5,
+      "score": 600,
+      "phase": 0
+    },
+    {
+      "seconds": 14.99,
+      "event": "food-change",
+      "from": 5,
+      "to": 25,
+      "x": 263.36625000000095,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 15.05,
+      "event": "phase",
+      "phase": 1,
+      "x": 264.67875000000095,
+      "feet": 336,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 15.93,
+      "event": "enemy-visible",
+      "enemy": "boar",
+      "x": 445.0999999999999,
+      "phase": 1
+    },
+    {
+      "seconds": 19.97,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 21.01,
+      "event": "food-change",
+      "from": 25,
+      "to": 30,
+      "x": 397.1875,
+      "feet": 224,
+      "phase": 2
+    },
+    {
+      "seconds": 21.45,
+      "event": "phase",
+      "phase": 3,
+      "x": 426.4375,
+      "feet": 179.3125,
+      "hp": 10,
+      "food": 30
+    },
+    {
+      "seconds": 24.42,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 454.8250000000005,
+      "food": 30,
+      "score": 1550,
+      "phase": 3
+    },
+    {
+      "seconds": 24.98,
+      "event": "food-change",
+      "from": 30,
+      "to": 50,
+      "x": 446.4325000000003,
+      "feet": 208,
+      "phase": 3
+    },
+    {
+      "seconds": 25.05,
+      "event": "phase",
+      "phase": 4,
+      "x": 447.7450000000003,
+      "feet": 208,
+      "hp": 10,
+      "food": 50
+    },
+    {
+      "seconds": 26.23,
+      "event": "food-change",
+      "from": 50,
+      "to": 55,
+      "x": 488,
+      "feet": 191.31954815375445,
+      "phase": 4
+    },
+    {
+      "seconds": 29.02,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    },
+    {
+      "seconds": 29.82,
+      "event": "food-change",
+      "from": 55,
+      "to": 60,
+      "x": 540.3125,
+      "feet": 112,
+      "phase": 5
+    },
+    {
+      "seconds": 30.11,
+      "event": "phase",
+      "phase": 6,
+      "x": 559.4375,
+      "feet": 112,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 32.03,
+      "event": "phase",
+      "phase": 7,
+      "x": 668.28125,
+      "feet": 240,
+      "hp": 10,
+      "food": 60
+    },
+    {
+      "seconds": 33.88,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 923.6812499999999,
+      "phase": 7
+    }
+  ],
+  "recovery": {
+    "complete": false,
+    "stateInjection": false,
+    "events": [
+      {
+        "event": "safe-floor-before-retry",
+        "seconds": 4.876,
+        "cx": 554.4609375,
+        "feet": 352,
+        "onGround": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3
+      },
+      {
+        "event": "retry-vine-top",
+        "seconds": 9.397,
+        "cx": 552,
+        "feet": 224,
+        "onGround": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3
+      }
+    ],
+    "scope": "Optional extra attempt: after verified return climb, try a second fall at x480; not completed before 55-second cap. Does not negate verified main fall and return-vine climb."
+  },
+  "errors": [],
+  "shots": [
+    "reason",
+    "upper",
+    "rejoin"
+  ],
+  "stateInjection": false,
+  "rejoin": {
+    "passed": true,
+    "seconds": 35.07,
+    "feet": 336,
+    "hp": 10,
+    "lives": 3
+  },
+  "safeFall": {
+    "passed": true,
+    "from": {
+      "seconds": 29.02,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    },
+    "intermediate": {
+      "seconds": 32.03,
+      "event": "phase",
+      "phase": 7,
+      "x": 668.28125,
+      "feet": 240,
+      "hp": 10,
+      "food": 60
+    },
+    "end": {
+      "passed": true,
+      "seconds": 35.07,
+      "feet": 336,
+      "hp": 10,
+      "lives": 3
+    },
+    "stateInjection": false
+  },
+  "safeReturn": {
+    "passed": true,
+    "clock": "seconds since rejoin (separate from main route)",
+    "start": {
+      "event": "safe-floor-before-retry",
+      "seconds": 4.876,
+      "cx": 554.4609375,
+      "feet": 352,
+      "onGround": true,
+      "climbing": false,
+      "hp": 10,
+      "lives": 3
+    },
+    "end": {
+      "event": "retry-vine-top",
+      "seconds": 9.397,
+      "cx": 552,
+      "feet": 224,
+      "onGround": true,
+      "climbing": false,
+      "hp": 10,
+      "lives": 3
+    },
+    "stateInjection": false
+  },
+  "regressionScope": "15 normal starts only. doors=[] is actual initial runtime list before nearby spawn updates; no cave completion claimed. FOOD gate remains existing game.ts food<60 clamp/food>=60 transition, unchanged. 333 horizontal coconut/334 calm behavior/331 ground art code unchanged.",
+  "observation": "First enemy already visible from start camera; safe approach precedes fight. Main route cycles attack/drop, climb, second attack/drop, high branch reward, short descent. No claim of subjective fun or 1-15 completion."
+}
