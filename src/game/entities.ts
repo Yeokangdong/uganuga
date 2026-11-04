@@ -343,10 +343,16 @@ export class Player implements Body {
     this.groundGraceT = this.onGround ? 0.065 : Math.max(0, this.groundGraceT - dt)
 
     // ?? ?щ떎由???
-    const col = Math.floor(this.cx / TILE)
+    let col = Math.floor(this.cx / TILE)
     const rowMid = Math.floor((this.y + this.h / 2) / TILE)
     const rowLow = Math.floor((this.y + this.h - 2) / TILE)
     const rowFeet = Math.floor((this.y + this.h + 1) / TILE)
+    // In the jungle, a nearby visible hand/body reach can catch the thin vine.
+    // Still require a real ladder at the player's current height and explicit Up.
+    if(lv.def.jungleCanopy&&!lv.def.cave&&inp.up&&!lv.isLadder(col,rowMid)&&!lv.isLadder(col,rowLow)){
+      const near=[col-1,col+1].find(c=>Math.abs((c+.5)*TILE-this.cx)<=this.w/2+8&&(lv.isLadder(c,rowMid)||lv.isLadder(c,rowLow)))
+      if(near!==undefined)col=near
+    }
     const touchingLadder = lv.isLadder(col, rowMid) || lv.isLadder(col, rowLow)
     const onLadderTop = this.onGround && lv.isLadderTop(col, rowFeet)
     if (!this.climbing && !this.swimming && this.swingT <= 0) {

@@ -77,6 +77,49 @@ export function elevatedObject(stage:number,col:number):ElevatedObject {
   return choices[Math.floor(col/48)%choices.length]!
 }
 
+type JungleTreeRecord={x:number;branchY:number;kind:string;rooted:boolean;floor:number|null;rootGap:number|null;stemEnd:number|null}
+const jungleCrownCache=new WeakMap<HTMLImageElement,HTMLCanvasElement>()
+function treeProfile(im:HTMLImageElement){
+  return im.width>800?{kind:'layered-S',cut:1120,fade:990,center:.57,bottom:1493,left:36,right:988}:
+    {kind:'broad-Y',cut:400,fade:330,center:.55,bottom:585,left:1,right:511}
+}
+/** Authored crown/branch proportions above a broad textured stem, with no roots. */
+function rootlessTree(g:CanvasRenderingContext2D,im:HTMLImageElement,x:number,top:number,width:number,end:number):void {
+  const profile=treeProfile(im),scale=width/im.width
+  let crown=jungleCrownCache.get(im)
+  if(!crown){
+    crown=document.createElement('canvas');crown.width=im.width;crown.height=profile.cut
+    const c=crown.getContext('2d')!;c.drawImage(im,0,0)
+    c.globalCompositeOperation='destination-in'
+    const fade=c.createLinearGradient(0,profile.fade,0,profile.cut)
+    fade.addColorStop(0,'#000');fade.addColorStop(1,'transparent')
+    c.fillStyle=fade;c.fillRect(0,0,crown.width,crown.height);jungleCrownCache.set(im,crown)
+  }
+  const center=x+(profile.center-.5)*width,start=top+profile.fade*scale-10
+  const half=width*.135,bottomHalf=width*.18,lean=profile.kind==='layered-S'?-width*.035:width*.025
+  g.save();g.beginPath();g.moveTo(center-half,start)
+  g.bezierCurveTo(center-half-3,start+38,center-bottomHalf+lean,end-60,center-bottomHalf+lean,end)
+  g.lineTo(center+bottomHalf+lean,end)
+  g.bezierCurveTo(center+bottomHalf+lean+4,end-55,center+half+2,start+34,center+half,start)
+  g.closePath();g.clip()
+  // One continuous authored S-trunk section, scaled uniformly once. No tiling
+  // of leaves, knots, branches or roots along the extension.
+  const stem=image('world.rootedTree')??im
+  const [sx,sy,sw,sh,axis]=stem.width>800?[400,650,350,500,160]:[225,280,110,140,55]
+  const stemScale=(end-start)/sh!
+  g.drawImage(stem,sx!,sy!,sw!,sh!,center-axis!*stemScale,start,sw!*stemScale,end-start)
+  const shade=g.createLinearGradient(center-bottomHalf,0,center+bottomHalf,0)
+  shade.addColorStop(0,'rgba(28,24,9,.32)');shade.addColorStop(.45,'rgba(128,90,40,.08)');shade.addColorStop(1,'rgba(28,24,9,.28)')
+  g.fillStyle=shade;g.fillRect(center-width,start,width*2,end-start);g.restore()
+  g.drawImage(crown,x-width/2,top,width,crown.height*scale)
+}
+function soilFloor(map:string[],x:number):number|null {
+  const col=Math.floor(x/16);let row=map.length-1
+  if(map[row]?.[col]!=='#')return null
+  while(row>0&&map[row-1]?.[col]==='#')row--
+  return row*16
+}
+
 /** Preserve the crown and roots; repeat the trunk to reach tall ledges. */
 export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bottom:number,stage:number,left:number,right:number,object:ElevatedObject='local'):void {
   if(stage===10||object!=='local'&&image('world.elevated.'+object))return
@@ -87,8 +130,12 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
     // Tall routes use slender climb vines and the spaced whole jungle trees.
     // Short supports keep ONE complete tree, never a stack of cropped crowns.
     if(available>96)return
-    const height=available,width=height*im.width/im.height
-    g.drawImage(im,x-width/2,top,width,height)
+    const height=available,width=height*im.width/im.height,map=STAGES[0]!.map
+    const support=map[Math.round(bottom/16)]?.[Math.floor(x/16)]
+    if(support==='#'){
+      const scale=width/im.width,profile=treeProfile(im)
+      g.drawImage(im,x-width/2,bottom-profile.bottom*scale,width,height)
+    }else if(support==='=')rootlessTree(g,im,x,top,width,bottom+6)
     return
   }
   const limit=theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
@@ -114,24 +161,33 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
 }
 
 /** An existing whole tree makes the short root obstacle read as jungle, not masonry. */
-export function firstJungleTrunk(g:CanvasRenderingContext2D):void {
-  const im=part(1,'support');if(!im)return
+export function firstJungleTrunk(g:CanvasRenderingContext2D):JungleTreeRecord[] {
+  const base=part(1,'support'),layered=image('world.rootedTree'),records:JungleTreeRecord[]=[]
+  if(!base)return records
   const stage=STAGES[0]!,map=stage.map
-  if(stage.jungleCanopy){
-    for(const [index,tree]of stage.jungleCanopy.trees.entries()){
-      const width=154+(index%3)*12,height=im.height*width/im.width
-      g.drawImage(im,tree.x-width/2,tree.top-22,width,height)
+  if(!stage.jungleCanopy)return records
+  for(const [index,tree]of stage.jungleCanopy.trees.entries()){
+    const im=index%3===1&&layered?layered:base,profile=treeProfile(im),width=154+(index%3)*12,scale=width/im.width
+    let ground:{x:number;floor:number}|null=null
+    // Every visible root must be over the same real soil platform, including its ends.
+    for(const offset of [0,-16,16,-32,32,-48,48,-64,64,-80,80]){
+      const x=tree.x+offset,floor=soilFloor(map,x)
+      if(floor===null||floor<tree.top+64)continue
+      const left=x-width/2+profile.left*scale,right=x-width/2+profile.right*scale
+      if(Array.from({length:Math.ceil((right-left)/8)+1},(_,i)=>Math.min(right,left+i*8)).every(px=>soilFloor(map,px)===floor)){
+        ground={x,floor};break
+      }
     }
-    return
+    if(ground){
+      g.drawImage(im,ground.x-width/2,ground.floor-profile.bottom*scale,width,im.height*scale)
+      records.push({x:ground.x,branchY:tree.top,kind:profile.kind,rooted:true,floor:ground.floor,rootGap:0,stemEnd:null})
+    }else{
+      const end=map.length*16+64
+      rootlessTree(g,im,tree.x,tree.top-22,width,end)
+      records.push({x:tree.x,branchY:tree.top,kind:profile.kind,rooted:false,floor:null,rootGap:null,stemEnd:end})
+    }
   }
-  // Whole trees at spaced branch junctions; never stamp every climb route.
-  for(const [x,width] of [[408,160],[1240,148],[2168,172],[3096,150],[4024,164],[4952,152],[5880,166]]){
-    const col=Math.floor(x!/16);let row=map.length-1
-    if(map[row]?.[col]!=='#')continue
-    while(row>0&&map[row-1]?.[col]==='#')row--
-    const height=im.height*width!/im.width
-    g.drawImage(im,x!-width!/2,row*16-height,width!,height)
-  }
+  return records
 }
 
 const platformTopCache = new WeakMap<HTMLImageElement, number>()

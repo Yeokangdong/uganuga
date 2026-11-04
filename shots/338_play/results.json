@@ -1,0 +1,288 @@
+{
+  "stateInjection": true,
+  "scope": "short isolated placement/camera fixtures; actions after setup use actual keys, not a normal stage1 completion",
+  "tests": [
+    {
+      "name": "first-vine-near-hand-reach",
+      "startX": 315,
+      "ladderX": 328,
+      "delta": 13,
+      "pressed": "Up only",
+      "after": {
+        "x": 328,
+        "feet": 323.2528101890173,
+        "left": 321.25,
+        "right": 334.75,
+        "onGround": false,
+        "climbing": true,
+        "hp": 10,
+        "lives": 3,
+        "saved": false
+      },
+      "passed": true
+    },
+    {
+      "name": "no-distant-vine-snap",
+      "startX": 300,
+      "ladderX": 328,
+      "delta": 28,
+      "after": {
+        "x": 300,
+        "feet": 290.6875,
+        "left": 293.25,
+        "right": 306.75,
+        "onGround": false,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3,
+        "saved": false
+      },
+      "passed": true
+    },
+    {
+      "name": "cave-side-return-vine",
+      "doorX": 1256,
+      "base": 320,
+      "vine": 1320,
+      "top": 160,
+      "left": 1120,
+      "right": 1408,
+      "passed": true,
+      "seconds": 7.014,
+      "events": [
+        {
+          "t": 0.964,
+          "event": "vine-base",
+          "x": 1319.5625,
+          "feet": 320,
+          "left": 1312.8125,
+          "right": 1326.3125,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        },
+        {
+          "t": 6.575,
+          "event": "top",
+          "x": 1320,
+          "feet": 160,
+          "left": 1313.25,
+          "right": 1326.75,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        },
+        {
+          "t": 7.014,
+          "event": "full-body-on-branch",
+          "x": 1343.0625,
+          "feet": 160,
+          "left": 1336.3125,
+          "right": 1349.8125,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        }
+      ]
+    },
+    {
+      "name": "cave-side-return-vine",
+      "doorX": 2280,
+      "base": 336,
+      "vine": 2344,
+      "top": 160,
+      "left": 2208,
+      "right": 2496,
+      "passed": true,
+      "seconds": 7.601,
+      "events": [
+        {
+          "t": 0.974,
+          "event": "vine-base",
+          "x": 2343.5625,
+          "feet": 336,
+          "left": 2336.8125,
+          "right": 2350.3125,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        },
+        {
+          "t": 7.144,
+          "event": "top",
+          "x": 2344,
+          "feet": 160,
+          "left": 2337.25,
+          "right": 2350.75,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        },
+        {
+          "t": 7.6,
+          "event": "full-body-on-branch",
+          "x": 2368.1875,
+          "feet": 160,
+          "left": 2361.4375,
+          "right": 2374.9375,
+          "onGround": true,
+          "climbing": false,
+          "hp": 10,
+          "lives": 3,
+          "saved": false
+        }
+      ]
+    },
+    {
+      "name": "branch-gap-real-keys",
+      "start": {
+        "x": 532,
+        "feet": 224
+      },
+      "gap": 32,
+      "after": {
+        "x": 582.8828125,
+        "feet": 224,
+        "left": 576.1328125,
+        "right": 589.6328125,
+        "onGround": true,
+        "climbing": false,
+        "hp": 10,
+        "lives": 3,
+        "saved": false
+      },
+      "passed": true
+    }
+  ],
+  "treeAudit": [
+    {
+      "x": 408,
+      "branchY": 224,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 720,
+      "branchY": 224,
+      "kind": "layered-S",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 944,
+      "branchY": 144,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 1264,
+      "branchY": 160,
+      "kind": "broad-Y",
+      "rooted": true,
+      "floor": 320,
+      "rootGap": 0,
+      "stemEnd": null
+    },
+    {
+      "x": 1488,
+      "branchY": 224,
+      "kind": "layered-S",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 1808,
+      "branchY": 208,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 2032,
+      "branchY": 128,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 2288,
+      "branchY": 160,
+      "kind": "layered-S",
+      "rooted": true,
+      "floor": 336,
+      "rootGap": 0,
+      "stemEnd": null
+    },
+    {
+      "x": 2576,
+      "branchY": 224,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    },
+    {
+      "x": 2912,
+      "branchY": 224,
+      "kind": "broad-Y",
+      "rooted": false,
+      "floor": null,
+      "rootGap": null,
+      "stemEnd": 448
+    }
+  ],
+  "lowestCameraBottom": 384,
+  "highCamera": {
+    "camX": 560,
+    "camY": 80,
+    "viewportBottom": 296,
+    "stemEnd": [
+      448,
+      448,
+      448,
+      448,
+      448,
+      448,
+      448,
+      448
+    ]
+  },
+  "variantKinds": [
+    "broad-Y",
+    "layered-S"
+  ],
+  "rootedCount": 2,
+  "rootlessCount": 8,
+  "groundCols": 52,
+  "mainCols": 192,
+  "errors": [],
+  "passed": true,
+  "renderMaterial": "Crown/branches retain native image proportions with a feathered join. One authored S-trunk section x400/y650/w350/h500 is scaled uniformly once below each crown, clipped to a broad curved stem ending448. No repeated crowns, roots or bark tiles.",
+  "rootFootprintRule": "Roots drawn only when their entire significant-alpha footprint samples the same real # soil floor; broad-Y root585px and layered-S1493px align exactly to soil.",
+  "build": "npm run build passed after final material correction"
+}

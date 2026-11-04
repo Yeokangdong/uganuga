@@ -478,7 +478,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     for(const [l,r,y,climb,top]of [[31,38,20,36,14],[65,72,18,70,10],[99,106,20,104,13],[133,140,18,138,10],[167,174,20,172,14]]){
       branch(l!,r!,y!);ladders.push([climb!,top!,y!])
     }
-    ladders.push([20,14,21],[52,9,14],[86,10,14],[120,8,13],[154,10,14],[78,10,20],[142,10,21])
+    ladders.push([20,14,21],[52,9,14],[86,10,14],[120,8,13],[154,10,14],[82,10,20],[146,10,21])
     grid[20]![14]='E';grid[19]![78]='D';grid[20]![142]='D'
     for(const [col,row]of [[18,20],[25,13],[40,13],[60,8]])grid[row]![col]='f'
     map=Object.assign(grid.map(row=>row.join('')),{ladders})

@@ -56,6 +56,7 @@ export class Level {
   caveRects: Rect4[] = []
   spawns: SpawnDef[] = []
   arenaCol: number
+  jungleTreeAudit:ReturnType<typeof firstJungleTrunk>=[]
   canvas: HTMLCanvasElement
   scale = SCALE
   /** 스테이지 그림이 아직 없어 스테이지1 그림을 쓰는 중 */
@@ -457,7 +458,7 @@ export class Level {
         g.fillStyle='rgba(8,12,18,.22)';g.fillRect(x,y,TILE,TILE)
       }
     }
-    if(this.def.firstTrail&&!this.def.cave)firstJungleTrunk(g)
+    if(this.def.firstTrail&&!this.def.cave)this.jungleTreeAudit=firstJungleTrunk(g)
     for(const deck of decks){
       const support=supports[deck.support]
       if(!support){terrainDeck(g,deck.x,deck.y,theme,deck.width);continue}
