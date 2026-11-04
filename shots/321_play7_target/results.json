@@ -1,0 +1,119 @@
+[
+  {
+    "stage": 7,
+    "target": "environment7-input-escape",
+    "complete": true,
+    "blocked": "",
+    "seconds": 104.65,
+    "position": {
+      "x": 3630.3125000000177,
+      "y": 313.5
+    },
+    "snapshot": {
+      "stage": 7,
+      "mode": "play",
+      "food": 60,
+      "time": 73.41500000000816,
+      "timeLeft": 115.83333333326509,
+      "x": 3630.3125000000177,
+      "cx": 3637.0625000000177,
+      "y": 313.5,
+      "h": 22.5,
+      "hp": 10,
+      "lives": 3,
+      "alive": true,
+      "out": false,
+      "ground": true,
+      "climbing": false,
+      "facing": 1,
+      "swing": -0.00500000000000014,
+      "vx": 0,
+      "environment": {
+        "phase": "RESOLVED",
+        "elapsed": 2.0166666666666644,
+        "rockX": 3488,
+        "route": {
+          "start": 2944,
+          "end": 3520,
+          "floor": 336,
+          "obstacle": 3376
+        }
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "waterAhead": false,
+      "gap": false,
+      "foods": [
+        {
+          "x": 2670.6702499999965,
+          "y": 326
+        },
+        {
+          "x": 3554,
+          "y": 320
+        },
+        {
+          "x": 3586,
+          "y": 320
+        },
+        {
+          "x": 3618,
+          "y": 320
+        }
+      ],
+      "foes": [],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 2.58,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "seconds": 55.05,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 1654.8440624999905,
+        "y": 329.5
+      },
+      {
+        "seconds": 92.91,
+        "phase": "TELEGRAPH",
+        "x": 3047.3750000000177,
+        "rockX": 2968,
+        "hp": 10,
+        "food": 60
+      },
+      {
+        "seconds": 95.71,
+        "phase": "ACTIVE",
+        "x": 3236.3750000000177,
+        "rockX": 3123.137500000018,
+        "hp": 10,
+        "food": 60
+      },
+      {
+        "phase": "JUMP",
+        "x": 3348.8750000000177,
+        "y": 291.9375
+      },
+      {
+        "seconds": 102.7,
+        "phase": "RESOLVED",
+        "x": 3637.0625000000177,
+        "rockX": 3488,
+        "hp": 10,
+        "food": 60
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\321_play7_target\\stage-07-1793784844063.png"
+  }
+]

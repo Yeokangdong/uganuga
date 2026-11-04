@@ -1,0 +1,106 @@
+[
+  {
+    "stage": 1,
+    "complete": false,
+    "blocked": "목숨 소진",
+    "seconds": 97.67,
+    "position": {
+      "x": 2498.49,
+      "y": 336.6875
+    },
+    "snapshot": {
+      "stage": 1,
+      "mode": "over",
+      "food": 60,
+      "time": 57.759166666671256,
+      "timeLeft": 137.44999999993823,
+      "x": 2498.49,
+      "cx": 2505.24,
+      "y": 336.6875,
+      "h": 22.5,
+      "hp": 0,
+      "lives": 0,
+      "alive": false,
+      "out": true,
+      "ground": false,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "CANCELLED",
+        "elapsed": 0,
+        "rockX": 0
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6272,
+      "wall": false,
+      "gap": false,
+      "foods": [
+        {
+          "x": 1652.5422500000082,
+          "y": 310
+        },
+        {
+          "x": 2095.610000000008,
+          "y": 342
+        }
+      ],
+      "foes": [],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 2.92,
+        "stage": 1,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 313.5
+      },
+      {
+        "seconds": 50.53,
+        "stage": 1,
+        "mode": "play",
+        "food": 60,
+        "x": 896.9378125000044,
+        "y": 320.3125
+      },
+      {
+        "seconds": 86.64,
+        "stage": 1,
+        "mode": "play",
+        "food": 60,
+        "x": 2498.14625000001,
+        "y": 336.6875
+      },
+      {
+        "seconds": 90.46,
+        "stage": 1,
+        "mode": "play",
+        "food": 60,
+        "x": 2497.8828125,
+        "y": 336.6875
+      },
+      {
+        "seconds": 94.52,
+        "stage": 1,
+        "mode": "play",
+        "food": 60,
+        "x": 2498.49,
+        "y": 336.6875
+      },
+      {
+        "seconds": 97.42,
+        "stage": 1,
+        "mode": "over",
+        "food": 60,
+        "x": 2498.49,
+        "y": 336.6875
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\321_play\\stage-01-1793784449178.png"
+  }
+]

@@ -1,7 +1,7 @@
 // Read-only observation of the development engine; all play uses real keyboard input.
 // node tools/playthrough.mjs --stages 1-15 --out shots/playthrough
 import { spawn } from 'node:child_process'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { access, mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -14,13 +14,15 @@ const range = /^(\d+)(?:-(\d+))?$/.exec(option('--stages', '1-15') ?? '')
 if (!range) throw new Error('--stages: 1-15 형식 필요')
 const first = Number(range[1]), last = Number(range[2] ?? range[1])
 if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
+const port=option('--port','5306')
+const chaseCheck = args.includes('--environment7')
 const limit = Number(option('--timeout', '240'))
 if (!Number.isFinite(limit) || limit <= 0) throw new Error('--timeout: 양수(초) 필요')
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const output = path.resolve(root, option('--out', 'shots/playthrough'))
 await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, [path.join(path.dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'),
-  'run', 'dev', '--', '--host', '127.0.0.1', '--port', '5306', '--strictPort', '--open', 'false'],
+  'run', 'dev', '--', '--host', '127.0.0.1', '--port', port, '--strictPort', '--open', 'false'],
 { cwd: root, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
 let startup = '', serverError
 server.stdout.on('data', b => { startup = (startup + b).slice(-4000) })
@@ -49,7 +51,7 @@ async function input(wanted = []) {
 try {
   for (let attempt = 0; ; attempt++) {
     if (serverError || server.exitCode !== null) throw serverError ?? new Error(startup)
-    if (/Local:.*5306/.test(startup)) break
+    if (new RegExp('Local:.*'+port).test(startup)) break
     if (attempt > 100) throw new Error('Vite 시작 시간 초과: ' + startup)
     await new Promise(resolve => setTimeout(resolve, 100))
   }
@@ -62,11 +64,12 @@ try {
     const started = Date.now(), events = [], errors = []
     let snapshot = null, reason = '', complete = false, lastProgress = Date.now()
     let anchor = null, previousSignature = '', tick = 0
+    const captured = new Set()
     const onError = e => errors.push(e.message)
     page.on('pageerror', onError)
     try {
       await input()
-      await page.goto(`http://127.0.0.1:5306/?stage=${stage}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+      await page.goto(`http://127.0.0.1:${port}/?stage=${stage}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
       await page.waitForFunction(() => !document.querySelector('.loading'), null, { timeout: 60000 })
       await page.keyboard.press('Space')
       await page.waitForFunction(() => window.__game?.players?.length, null, { timeout: 60000 })
@@ -79,18 +82,38 @@ try {
           const foes = g.enemies.filter(e => !e.dead && !e.dying && !e.invulnerable)
             .map(e => ({ x: e.cx, y: e.y, w: e.w, h: e.h }))
           const dir = p.facing || 1, feet = p.y + p.h
-          const x = p.cx + dir * 27, row = Math.floor((feet + 4) / 16), col = Math.floor(x / 16)
+          const x = p.cx + dir * (p.w/2+7), row = Math.floor((feet + 4) / 16), col = Math.floor(x / 16)
           return { stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
             climbing: p.climbing, facing: p.facing, swing: p.swingT, vx: p.vx,
+            environment: {phase:g.environmentEvents.phase,elapsed:g.environmentEvents.elapsed,
+              rockX:g.environmentEvents.rockX,route:lv.def.chase},
             intro: g.introT > 0, journey: g.journeyT !== null, arena: lv.arenaX,
-            wall: lv.solidAt(x, feet - 8),
+            wall: lv.solidAt(p.cx+dir*27, feet - 8),
+            waterAhead:lv.waterAt(x,feet+8),
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
               state: g.boss.state, vx: g.boss.vx } : null }
         })
         const s = snapshot
+        if(chaseCheck&&stage===7){
+          const phase=s.environment.phase
+          if(['TELEGRAPH','ACTIVE','RESOLVED'].includes(phase)&&!captured.has(phase)){
+            captured.add(phase)
+            const name=phase==='TELEGRAPH'?'telegraph':phase==='ACTIVE'?'chase':'rest'
+            const shot=path.join(root,`shots/321_${name}.png`)
+            if(!await access(shot).then(()=>true,()=>false))await page.screenshot({path:shot})
+            events.push({seconds:+((Date.now()-started)/1000).toFixed(2),phase,x:s.cx,rockX:s.environment.rockX,hp:s.hp,food:s.food})
+          }
+          if(phase==='ACTIVE'&&!s.ground&&!captured.has('JUMP')){
+            captured.add('JUMP');events.push({phase:'JUMP',x:s.cx,y:s.y})
+          }
+          if(phase==='RESOLVED'&&s.environment.elapsed>=2&&s.cx>s.environment.route.end+105){
+            complete=['TELEGRAPH','ACTIVE','JUMP','RESOLVED'].every(p=>captured.has(p))&&errors.length===0
+            reason=complete?'':'이벤트 단계/점프 증거 부족';break
+          }
+        }
         const signature = `${s.stage}:${s.mode}:${s.food >= 60}:${s.boss?.hp ?? ''}:${s.lives}`
         if (signature !== previousSignature) {
           events.push({ seconds: +((Date.now() - started) / 1000).toFixed(2),
@@ -130,6 +153,20 @@ try {
           }
           if (s.climbing || s.ground && !held.has('ArrowUp') && (s.wall || s.gap || stuck > 2 ||
             foods[0] && foods[0].y < s.y - 5 && Math.abs(foods[0].x - s.cx) < 35)) wanted.push('ArrowUp')
+          if(s.waterAhead&&s.ground){
+            wanted.length=0;wanted.push('ArrowRight')
+            if(!held.has('ArrowUp'))wanted.push('ArrowUp')
+          }
+          if(chaseCheck&&stage===7&&['TELEGRAPH','ACTIVE'].includes(s.environment.phase)){
+            wanted.length=0
+            const route=s.environment.route
+            if(s.cx<route.end+112)wanted.push('ArrowRight')
+            if(s.ground&&!held.has('ArrowUp')&&(s.wall||s.cx>route.obstacle-38&&s.cx<route.obstacle+40))wanted.push('ArrowUp')
+          }
+          if(chaseCheck&&stage===7&&s.environment.phase==='RESOLVED'&&s.environment.elapsed<2){
+            wanted.length=0
+            if(s.cx<s.environment.route.end+112)wanted.push('ArrowRight')
+          }
           if (!s.alive) wanted.length = 0
           await input(wanted)
         }
@@ -140,8 +177,8 @@ try {
     } catch (error) { reason = `실행 오류: ${error.message}` }
     await input()
     const screenshot = path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
-    await page.screenshot({ path: screenshot, fullPage: true })
-    const result = { stage, complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
+    if(!chaseCheck)await page.screenshot({ path: screenshot, fullPage: true })
+    const result = { stage, target:chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }
     results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))

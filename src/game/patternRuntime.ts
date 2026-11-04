@@ -107,6 +107,9 @@ function visible(g:Game,r:Rect):boolean{return r.x>=g.camX+4&&r.x+r.w<=g.camX+VI
 export function updateStagePattern(g:Game,dt:number):void{
   const id=g.level.def.id;if(id<1||id>15||g.level.def.cave||g.mode!=='play')return
   const s=patternState(g);s.elapsed+=dt;s.rect=null
+  if(id===7&&g.environmentEvents.suppressesPatterns){
+    s.phase='idle';s.site=null;s.age=0;s.wait=5;return
+  }
   if(s.phase==='idle'){
     s.wait=Math.max(0,s.wait-dt);if(s.wait>0)return
     const site=s.sites.map(p=>id===1?{...p,right:g.camX+VIEW_W-4}:p).find(p=>visible(g,bounds(p,id))&&g.players.some(b=>b.alive&&Math.abs(b.x-p.x)<240&&Math.abs(b.y+b.h-p.floor)<60)&&!g.players.some(b=>b.alive&&b.invuln>0&&Math.abs(b.x-p.x)<150))

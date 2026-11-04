@@ -135,6 +135,7 @@ export interface EncounterDef {
 }
 
 export interface StageDef {
+  chase?: {start:number;end:number;floor:number;obstacle:number}
   aerial?: {updrafts:{col:number;row:number;w:number;h:number}[]}
   aquatic?: {surfaceRow:number;startCol:number;endCol:number;airPockets:{col:number;row:number;w:number;h:number}[]}
   encounters?:EncounterDef[]
@@ -466,10 +467,26 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     for(const [col,row] of [[8,18],[9,17],[10,17],[11,18]])grid[row]![col]='f'
     map=Object.assign(grid.map(row=>row.join('')),{ladders:map.ladders})
   }
+  // Insert a dedicated dry corridor between exploration legs, after encounter planning.
+  // Existing doors, ladders and encounters retain their relative geometry.
+  let chase:StageDef['chase']
+  let encounters=planned.encounters
+  if(index===6){
+    const at=184, length=48, floor=21
+    map=Object.assign(map.map((row,r)=>row.slice(0,at)+(r>=floor?'#':'.').repeat(length)+row.slice(at)),{
+      ladders:(map.ladders??[]).map(([c,t,b]):Span=>[c>=at?c+length:c,t,b])
+    })
+    const grid=map.map(row=>row.split(''))
+    for(const c of [at+27,at+28])grid[floor-1]![c]='R'
+    map=Object.assign(grid.map(row=>row.join('')),{ladders:map.ladders})
+    encounters=encounters.map(e=>({...e,col:e.col>=at?e.col+length:e.col}))
+    chase={start:at*16,end:(at+36)*16,floor:floor*16,obstacle:(at+27)*16}
+  }
   return {
+    chase,
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
-    encounters:planned.encounters,
+    encounters,
     boss:{...bosses[set]!,key:cast.boss,name:cast.bossName,hp:24+index*2+progress,w:66+(index%5)*4,h:56+(index%4)*3,chargeSpeed:175+index*4},
     weapon:set===1?'fire':'bone',icy:index===2,final:last,
     map:withBossArena(map),arenaCol:map[0]!.length

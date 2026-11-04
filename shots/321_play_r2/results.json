@@ -1,0 +1,317 @@
+[
+  {
+    "stage": 1,
+    "complete": true,
+    "blocked": "",
+    "seconds": 241.43,
+    "position": {
+      "x": 6337.25,
+      "y": 313.5
+    },
+    "snapshot": {
+      "stage": 2,
+      "mode": "play",
+      "food": 0,
+      "time": 159.03416666666132,
+      "timeLeft": 216,
+      "x": 6337.25,
+      "cx": 6344,
+      "y": 313.5,
+      "h": 22.5,
+      "hp": 10,
+      "lives": 3,
+      "alive": true,
+      "out": false,
+      "ground": true,
+      "climbing": false,
+      "facing": -1,
+      "swing": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "IDLE",
+        "elapsed": 0,
+        "rockX": 0
+      },
+      "intro": true,
+      "journey": false,
+      "arena": 6528,
+      "wall": false,
+      "waterAhead": false,
+      "gap": true,
+      "foods": [],
+      "foes": [],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 4.27,
+        "stage": 1,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 313.5
+      },
+      {
+        "seconds": 70.86,
+        "stage": 1,
+        "mode": "play",
+        "food": 60,
+        "x": 1646.8312499999993,
+        "y": 297.5
+      },
+      {
+        "seconds": 208.24,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 24,
+        "x": 6295.211875000061,
+        "y": 313.5
+      },
+      {
+        "seconds": 211.48,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 23,
+        "x": 6480.718125000064,
+        "y": 313.5
+      },
+      {
+        "seconds": 212.06,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 22,
+        "x": 6487.974375000063,
+        "y": 313.5
+      },
+      {
+        "seconds": 213.09,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 21,
+        "x": 6480.950937500063,
+        "y": 313.5
+      },
+      {
+        "seconds": 214.24,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 20,
+        "x": 6474.082187500064,
+        "y": 313.5
+      },
+      {
+        "seconds": 214.69,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 19,
+        "x": 6476.332187500061,
+        "y": 313.5
+      },
+      {
+        "seconds": 215.7,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 18,
+        "x": 6474.82125000006,
+        "y": 313.5
+      },
+      {
+        "seconds": 219.59,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 17,
+        "x": 6410.6414427570135,
+        "y": 313.5
+      },
+      {
+        "seconds": 220.17,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 16,
+        "x": 6414.411755257015,
+        "y": 313.5
+      },
+      {
+        "seconds": 220.76,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 15,
+        "x": 6422.580505257015,
+        "y": 313.5
+      },
+      {
+        "seconds": 221.81,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 14,
+        "x": 6415.557067757015,
+        "y": 313.5
+      },
+      {
+        "seconds": 224.56,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 13,
+        "x": 6372.478942757015,
+        "y": 313.5
+      },
+      {
+        "seconds": 225.58,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 12,
+        "x": 6372.318005257015,
+        "y": 313.5
+      },
+      {
+        "seconds": 226.61,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 11,
+        "x": 6365.294567757015,
+        "y": 313.5
+      },
+      {
+        "seconds": 227.66,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 10,
+        "x": 6358.271130257015,
+        "y": 313.5
+      },
+      {
+        "seconds": 228.72,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 9,
+        "x": 6351.247692757015,
+        "y": 313.5
+      },
+      {
+        "seconds": 229.46,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 8,
+        "x": 6347.311755257012,
+        "y": 313.5
+      },
+      {
+        "seconds": 230.05,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 7,
+        "x": 6347.600817757012,
+        "y": 313.5
+      },
+      {
+        "seconds": 230.63,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 6,
+        "x": 6355.672692757012,
+        "y": 313.5
+      },
+      {
+        "seconds": 231.1,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 5,
+        "x": 6354.885192757011,
+        "y": 313.5
+      },
+      {
+        "seconds": 233.52,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 4,
+        "x": 6319.774255257013,
+        "y": 313.5
+      },
+      {
+        "seconds": 234.1,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 3,
+        "x": 6319.774255257013,
+        "y": 313.5
+      },
+      {
+        "seconds": 234.68,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 2,
+        "x": 6327.030505257012,
+        "y": 313.5
+      },
+      {
+        "seconds": 235.24,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 1,
+        "x": 6327.319567757012,
+        "y": 313.5
+      },
+      {
+        "seconds": 235.82,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 0,
+        "x": 6334.069567757012,
+        "y": 313.5
+      },
+      {
+        "seconds": 236.15,
+        "stage": 1,
+        "mode": "boss",
+        "food": 60,
+        "bossHp": 0,
+        "x": 6331.664880257013,
+        "y": 313.5
+      },
+      {
+        "seconds": 237.5,
+        "stage": 1,
+        "mode": "clear",
+        "food": 60,
+        "bossHp": 0,
+        "x": 6331.664880257013,
+        "y": 313.5
+      },
+      {
+        "seconds": 241.07,
+        "stage": 2,
+        "mode": "play",
+        "food": 0,
+        "x": 6337.25,
+        "y": 313.5
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\321_play_r2\\stage-01-1793784822544.png"
+  }
+]

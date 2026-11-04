@@ -193,6 +193,8 @@ export class Level {
 
   /** Require the whole body and edge margin to fit a dry collision surface. */
   combatFloor(x:number,floor:number,w:number,h:number):boolean {
+    const chase=this.def.cave?undefined:this.def.chase
+    if(chase&&x+w>chase.start-32&&x<chase.end+160)return false
     if(x<16||x+w>this.width-16||floor-h<8||floor>=this.height)return false
     for(let c=Math.floor((x-4)/TILE);c<=Math.floor((x+w+4)/TILE);c++){
       const r=Math.round(floor/TILE),t=this.tile(c,r)

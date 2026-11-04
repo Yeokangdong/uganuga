@@ -1,0 +1,136 @@
+[
+  {
+    "stage": 7,
+    "complete": false,
+    "blocked": "목숨 소진",
+    "seconds": 101.51,
+    "position": {
+      "x": 4016.142812500007,
+      "y": 410.4375
+    },
+    "snapshot": {
+      "stage": 7,
+      "mode": "over",
+      "food": 60,
+      "time": 69.64416666667395,
+      "timeLeft": 121.2499999999313,
+      "x": 4016.142812500007,
+      "cx": 4022.892812500007,
+      "y": 410.4375,
+      "h": 22.5,
+      "hp": 0,
+      "lives": 0,
+      "alive": false,
+      "out": true,
+      "ground": false,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "CANCELLED",
+        "elapsed": 0,
+        "rockX": 3488,
+        "route": {
+          "start": 2944,
+          "end": 3520,
+          "floor": 336,
+          "obstacle": 3376
+        }
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "waterAhead": false,
+      "gap": true,
+      "foods": [
+        {
+          "x": 3554,
+          "y": 320
+        },
+        {
+          "x": 3586,
+          "y": 320
+        }
+      ],
+      "foes": [
+        {
+          "x": 816.8726249999974,
+          "y": 266.625,
+          "w": 27,
+          "h": 21.375
+        },
+        {
+          "x": 3974.9562500000006,
+          "y": 236.875,
+          "w": 22.5,
+          "h": 19.125
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 4.68,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "seconds": 20.74,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 753.53125,
+        "y": 313.5
+      },
+      {
+        "seconds": 30.32,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 757.1875,
+        "y": 313.5
+      },
+      {
+        "seconds": 55.3,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 1701.0796874999949,
+        "y": 329.5
+      },
+      {
+        "seconds": 84.9,
+        "phase": "TELEGRAPH",
+        "x": 3042.330312500007,
+        "rockX": 2968
+      },
+      {
+        "seconds": 87.71,
+        "phase": "ACTIVE",
+        "x": 3232.455312500007,
+        "rockX": 3119.960312500007
+      },
+      {
+        "seconds": 94.65,
+        "phase": "RESOLVED",
+        "x": 3574.642812500007,
+        "rockX": 3488
+      },
+      {
+        "seconds": 101.51,
+        "stage": 7,
+        "mode": "over",
+        "food": 60,
+        "x": 4016.142812500007,
+        "y": 410.4375
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\321_play7_r2\\stage-07-1793784682984.png"
+  }
+]

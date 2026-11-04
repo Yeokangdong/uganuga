@@ -477,8 +477,8 @@ export class Game {
       p.update(this, dt, inp.get(i),realDt)
       p.advanceIdleThought(realDt,inp.get(i))
     })
-    updateStagePattern(this,realDt)
     this.environmentEvents.update(this,realDt,this.doors.map(d=>d.x))
+    updateStagePattern(this,realDt)
     this.updateCamera(dt)
     if(!this.saved)this.suukurets.update(this,dt)
     this.spawn()
@@ -719,7 +719,7 @@ export class Game {
           this.enemies.push(new FireTrap(x + 8, floor))
           break
         case 'f':
-          if(this.stage.id===1&&!lv.def.cave){
+          if((this.stage.id===1||this.stage.id===7)&&!lv.def.cave){
             const fruit=new Item('fruit',x+2,cy,false,n)
             this.routeFruit.add(fruit);this.items.push(fruit)
           }
@@ -1054,7 +1054,7 @@ export class Game {
       }
     }
     drawStagePattern(this,ctx,cx,cy)
-    if(!this.saved&&this.stage.id===1)this.environmentEvents.draw(ctx,cx,cy)
+    if(!this.saved&&[1,7].includes(this.stage.id))this.environmentEvents.draw(ctx,cx,cy)
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)

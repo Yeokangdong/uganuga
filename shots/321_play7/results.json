@@ -1,0 +1,107 @@
+[
+  {
+    "stage": 7,
+    "complete": false,
+    "blocked": "목숨 소진",
+    "seconds": 102.03,
+    "position": {
+      "x": 4049.9140625,
+      "y": 408.4375
+    },
+    "snapshot": {
+      "stage": 7,
+      "mode": "over",
+      "food": 60,
+      "time": 69.74000000000731,
+      "timeLeft": 120.79999999993147,
+      "x": 4049.9140625,
+      "cx": 4056.6640625,
+      "y": 408.4375,
+      "h": 22.5,
+      "hp": 0,
+      "lives": 0,
+      "alive": false,
+      "out": true,
+      "ground": false,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "CANCELLED",
+        "elapsed": 0,
+        "rockX": 0,
+        "route": {
+          "start": 2944,
+          "end": 3520,
+          "floor": 336,
+          "obstacle": 3376
+        }
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "gap": true,
+      "foods": [
+        {
+          "x": 2042.7247499999803,
+          "y": 326
+        }
+      ],
+      "foes": [
+        {
+          "x": 3966.05,
+          "y": 236.875,
+          "w": 22.5,
+          "h": 19.125
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 4.73,
+        "stage": 7,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 329.5
+      },
+      {
+        "seconds": 54.18,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 1697.6900000000023,
+        "y": 329.5
+      },
+      {
+        "seconds": 66.91,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 2146.09375,
+        "y": 313.5
+      },
+      {
+        "seconds": 100.2,
+        "stage": 7,
+        "mode": "play",
+        "food": 60,
+        "x": 3937.53125,
+        "y": 313.5
+      },
+      {
+        "seconds": 102.03,
+        "stage": 7,
+        "mode": "over",
+        "food": 60,
+        "x": 4049.9140625,
+        "y": 408.4375
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:\\99.Work\\Uganuga\\shots\\321_play7\\stage-07-1793784473328.png"
+  }
+]
