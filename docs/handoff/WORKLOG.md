@@ -22,4 +22,6 @@
 - 11-04 | 315 구현 | tools/playthrough.mjs, 구현_315.md, shots/results.json | LEAD_314 입력 정책 보완(Codex 판단) | 키 입력 1판 167.65초 FOOD60·보스HP0·clear·2판 진입 OK, 오류0, 빌드 성공, Pages cef5976 | 2~15판 입력 검증
 - 11-04 | 316 검수 | codex/reports/LEAD_316.md | 315 지시·결정·입력 정책·진행 분기 검수 | 314 지적 해소, 1판 입력 결과 확인·빌드 OK, 코드 수정 없음 | 2~15판 실제 입력 완주 미검증
 - 11-04 13:44 | 317 정리 | 요약_실장용.md·NEXT·RULES·정리_자동토큰·reports/_old | 상위3 원인 점검·실장 요약·旧報告78件 보관(Codex 판단), WORKLOG 23줄로 이관 불필요 | 코드·빌드·배포 없음 | 실장은 요약 확인 후 NEXT 상태 반영
+- 11-04 17:10 | Claude실장 | `codex\dispatcher.ps1`(v6), AGENTS.md, CODEX_CONTINUE.md, STATUS/NEXT, `codex\queue\318` | 대표 「코덱스 팀장도 없애」: 개발팀장 자동 검수·자동 수정 체인 끔. 팀원 자체 검증 + 실장 직접 확인으로 변경. 5번(318) 지시 | 08 재시작 alive 17:09 확인 | 318 보고서·스크린샷 1장 확인 후 6번
 - 11-04 17:22 | 318 구현 | entities/game/background/art.ts·구현_318.md·shots/318_* | 팝업·타격·잔잔한 배경 구현(Codex 판단) | 빌드·15판 로드 오류0·1판 클리어→2판 진입 OK, 독립2판 목숨 소진으로 전체 검증 실패; Pages b97ef92 | 2판 입력 정책/전투 회귀 원인 후속 확인
+- 11-04 17:45 | 319 정리 | 요약_실장용.md·NEXT·RULES·정리_자동토큰·reports/_old | 318 토큰 원인 확인·보고서 11건 보관(Codex 판단), WORKLOG 40줄 이하로 이관 불필요 | 코드·빌드·배포 없음 | 실장은 318 자체 검증 실패 범위 확인 후 다음 지시 판단
