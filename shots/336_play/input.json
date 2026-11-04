@@ -1,0 +1,1224 @@
+{
+  "stateInjection": false,
+  "complete": true,
+  "errors": [],
+  "assertions": {
+    "singleAuthoredScale": true,
+    "allSoleOffsetsZero": true,
+    "noEmptyFrames": true,
+    "leftRightStops": true,
+    "attackRepeats": 3,
+    "normalVineUpDownAndSafeLanding": true
+  },
+  "events": [
+    {
+      "event": "guard-food",
+      "seconds": 25.286,
+      "x": 310.08875000000114,
+      "feet": 336,
+      "onGround": true,
+      "climbing": false,
+      "vx": 90,
+      "hp": 10,
+      "lives": 3,
+      "food": 25,
+      "swing": -0.00500000000000014,
+      "walkDistance": 768.5637499999889,
+      "camX": 80.07802382278497,
+      "camY": 168,
+      "draw": {
+        "rect": [
+          1155,
+          2,
+          93,
+          132
+        ],
+        "dest": [
+          -8.390732385702291,
+          -25.5234375,
+          17.982421875,
+          25.5234375
+        ],
+        "matrix": [
+          4,
+          4
+        ]
+      },
+      "candidates": [
+        {
+          "key": "p1.walk",
+          "frame": 7
+        }
+      ]
+    },
+    {
+      "event": "vine-top",
+      "seconds": 30.232,
+      "x": 328,
+      "feet": 224,
+      "onGround": true,
+      "climbing": false,
+      "vx": 0,
+      "hp": 10,
+      "lives": 3,
+      "food": 25,
+      "swing": -0.00500000000000014,
+      "walkDistance": 785.0637499999889,
+      "camX": 105.27999999999997,
+      "camY": 136.64929969729727,
+      "draw": {
+        "rect": [
+          259,
+          2,
+          82,
+          129
+        ],
+        "dest": [
+          -6.765,
+          -24.943359375,
+          15.85546875,
+          24.943359375
+        ],
+        "matrix": [
+          4,
+          4
+        ]
+      },
+      "candidates": [
+        {
+          "key": "p1.idle",
+          "frame": 3
+        },
+        {
+          "key": "p1.boneIdle",
+          "frame": 3
+        }
+      ]
+    },
+    {
+      "event": "safe-return",
+      "seconds": 34.107,
+      "x": 328,
+      "feet": 336,
+      "onGround": true,
+      "climbing": false,
+      "vx": 0,
+      "hp": 10,
+      "lives": 3,
+      "food": 25,
+      "swing": -0.00500000000000014,
+      "walkDistance": 785.0637499999889,
+      "camX": 105.27999999999997,
+      "camY": 167.71653228545998,
+      "draw": {
+        "rect": [
+          345,
+          2,
+          81,
+          129
+        ],
+        "dest": [
+          -6.655,
+          -24.75,
+          15.662109375,
+          24.943359375
+        ],
+        "matrix": [
+          4,
+          4
+        ]
+      },
+      "candidates": [
+        {
+          "key": "p1.idle",
+          "frame": 4
+        },
+        {
+          "key": "p1.boneIdle",
+          "frame": 4
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "key": "p1.idle",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.75,
+      "opaqueWidth": 15.46875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.idle",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.556640625,
+      "opaqueWidth": 15.85546875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.idle",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.75,
+      "opaqueWidth": 16.048828125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.idle",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.943359375,
+      "opaqueWidth": 15.85546875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.idle",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.75,
+      "opaqueWidth": 15.662109375,
+      "sole": 0.9922480620155039,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.idle",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.75,
+      "opaqueWidth": 15.85546875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.943359375,
+      "opaqueWidth": 17.595703125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 24.943359375,
+      "opaqueWidth": 16.822265625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.330078125,
+      "opaqueWidth": 15.662109375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.13671875,
+      "opaqueWidth": 17.595703125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.5234375,
+      "opaqueWidth": 17.7890625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.716796875,
+      "opaqueWidth": 16.822265625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 6,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.5234375,
+      "opaqueWidth": 15.85546875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.walk",
+      "frame": 7,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.5234375,
+      "opaqueWidth": 17.982421875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.jump",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 19.3359375,
+      "opaqueWidth": 20.109375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.jump",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 22.81640625,
+      "opaqueWidth": 18.94921875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.jump",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.009765625,
+      "opaqueWidth": 18.94921875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.fall",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.009765625,
+      "opaqueWidth": 18.94921875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.fall",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.849609375,
+      "opaqueWidth": 18.369140625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.849609375,
+      "opaqueWidth": 20.49609375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 26.103515625,
+      "opaqueWidth": 18.5625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.396484375,
+      "opaqueWidth": 19.3359375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.849609375,
+      "opaqueWidth": 29.00390625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.849609375,
+      "opaqueWidth": 25.716796875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attack",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.26953125,
+      "opaqueWidth": 21.26953125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 22.236328125,
+      "opaqueWidth": 20.302734375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.009765625,
+      "opaqueWidth": 17.595703125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 26.876953125,
+      "opaqueWidth": 16.2421875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 27.84375,
+      "opaqueWidth": 21.076171875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 27.650390625,
+      "opaqueWidth": 21.076171875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackUp",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.009765625,
+      "opaqueWidth": 20.302734375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 22.623046875,
+      "opaqueWidth": 16.435546875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 21.076171875,
+      "opaqueWidth": 17.7890625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.9765625,
+      "opaqueWidth": 17.7890625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 23.58984375,
+      "opaqueWidth": 23.396484375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 19.3359375,
+      "opaqueWidth": 22.4296875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.attackDown",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 19.916015625,
+      "opaqueWidth": 21.076171875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 0,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.5234375,
+      "opaqueWidth": 10.44140625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 1,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.5234375,
+      "opaqueWidth": 10.634765625,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 2,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.13671875,
+      "opaqueWidth": 10.248046875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 3,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 26.103515625,
+      "opaqueWidth": 11.21484375,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 4,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.330078125,
+      "opaqueWidth": 10.248046875,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    },
+    {
+      "key": "p1.climb",
+      "frame": 5,
+      "src": "painted-v6/p1-d040fabca00a.webp",
+      "ppu": 0.193359375,
+      "opaqueHeight": 25.716796875,
+      "opaqueWidth": 9.861328125,
+      "sole": 1,
+      "anchor": 1,
+      "soleOffset": 0,
+      "empty": false
+    }
+  ],
+  "walkCycles": {
+    "walk-right-0": {
+      "sampledFrames": [
+        {
+          "seconds": 0.673,
+          "frame": 1,
+          "x": 48.4375,
+          "walkDistance": 8.4375
+        },
+        {
+          "seconds": 0.829,
+          "frame": 4,
+          "x": 58.5625,
+          "walkDistance": 18.5625
+        },
+        {
+          "seconds": 0.973,
+          "frame": 6,
+          "x": 68.6875,
+          "walkDistance": 28.6875
+        },
+        {
+          "seconds": 1.128,
+          "frame": 1,
+          "x": 78.8125,
+          "walkDistance": 38.8125
+        },
+        {
+          "seconds": 1.286,
+          "frame": 3,
+          "x": 88.9375,
+          "walkDistance": 48.9375
+        },
+        {
+          "seconds": 1.44,
+          "frame": 6,
+          "x": 100.1875,
+          "walkDistance": 60.1875
+        }
+      ],
+      "direction": 1,
+      "distance": 60.1875
+    },
+    "walk-left-0": {
+      "sampledFrames": [
+        {
+          "seconds": 2.046,
+          "frame": 3,
+          "x": 103.1875,
+          "walkDistance": 80.0625
+        },
+        {
+          "seconds": 2.203,
+          "frame": 6,
+          "x": 93.0625,
+          "walkDistance": 90.1875
+        },
+        {
+          "seconds": 2.343,
+          "frame": 0,
+          "x": 82.9375,
+          "walkDistance": 100.3125
+        },
+        {
+          "seconds": 2.5,
+          "frame": 3,
+          "x": 72.8125,
+          "walkDistance": 110.4375
+        },
+        {
+          "seconds": 2.641,
+          "frame": 5,
+          "x": 62.6875,
+          "walkDistance": 120.5625
+        },
+        {
+          "seconds": 2.797,
+          "frame": 0,
+          "x": 52.5625,
+          "walkDistance": 130.6875
+        }
+      ],
+      "direction": -1,
+      "distance": 59.0625
+    },
+    "walk-right-1": {
+      "sampledFrames": [
+        {
+          "seconds": 3.326,
+          "frame": 4,
+          "x": 45.0625,
+          "walkDistance": 146.0625
+        },
+        {
+          "seconds": 3.402,
+          "frame": 5,
+          "x": 49.5625,
+          "walkDistance": 150.5625
+        },
+        {
+          "seconds": 3.481,
+          "frame": 6,
+          "x": 55.1875,
+          "walkDistance": 156.1875
+        },
+        {
+          "seconds": 3.56,
+          "frame": 0,
+          "x": 60.8125,
+          "walkDistance": 161.8125
+        },
+        {
+          "seconds": 3.636,
+          "frame": 1,
+          "x": 65.3125,
+          "walkDistance": 166.3125
+        },
+        {
+          "seconds": 3.714,
+          "frame": 2,
+          "x": 70.9375,
+          "walkDistance": 171.9375
+        },
+        {
+          "seconds": 3.793,
+          "frame": 4,
+          "x": 76.5625,
+          "walkDistance": 177.5625
+        },
+        {
+          "seconds": 3.869,
+          "frame": 5,
+          "x": 81.0625,
+          "walkDistance": 182.0625
+        },
+        {
+          "seconds": 3.946,
+          "frame": 6,
+          "x": 86.6875,
+          "walkDistance": 187.6875
+        },
+        {
+          "seconds": 4.026,
+          "frame": 0,
+          "x": 92.3125,
+          "walkDistance": 193.3125
+        },
+        {
+          "seconds": 4.102,
+          "frame": 1,
+          "x": 96.8125,
+          "walkDistance": 197.8125
+        },
+        {
+          "seconds": 4.18,
+          "frame": 2,
+          "x": 102.4375,
+          "walkDistance": 203.4375
+        }
+      ],
+      "direction": 1,
+      "distance": 61.3125
+    },
+    "walk-left-1": {
+      "sampledFrames": [
+        {
+          "seconds": 4.646,
+          "frame": 5,
+          "x": 105.4375,
+          "walkDistance": 214.3125
+        },
+        {
+          "seconds": 4.726,
+          "frame": 6,
+          "x": 99.8125,
+          "walkDistance": 219.9375
+        },
+        {
+          "seconds": 4.803,
+          "frame": 7,
+          "x": 95.3125,
+          "walkDistance": 224.4375
+        },
+        {
+          "seconds": 4.881,
+          "frame": 1,
+          "x": 89.6875,
+          "walkDistance": 230.0625
+        },
+        {
+          "seconds": 4.961,
+          "frame": 2,
+          "x": 84.0625,
+          "walkDistance": 235.6875
+        },
+        {
+          "seconds": 5.037,
+          "frame": 3,
+          "x": 79.5625,
+          "walkDistance": 240.1875
+        },
+        {
+          "seconds": 5.114,
+          "frame": 5,
+          "x": 73.9375,
+          "walkDistance": 245.8125
+        },
+        {
+          "seconds": 5.193,
+          "frame": 6,
+          "x": 68.3125,
+          "walkDistance": 251.4375
+        },
+        {
+          "seconds": 5.268,
+          "frame": 7,
+          "x": 63.8125,
+          "walkDistance": 255.9375
+        },
+        {
+          "seconds": 5.348,
+          "frame": 1,
+          "x": 58.1875,
+          "walkDistance": 261.5625
+        },
+        {
+          "seconds": 5.426,
+          "frame": 2,
+          "x": 52.5625,
+          "walkDistance": 267.1875
+        },
+        {
+          "seconds": 5.503,
+          "frame": 3,
+          "x": 48.0625,
+          "walkDistance": 271.6875
+        }
+      ],
+      "direction": -1,
+      "distance": 61.3125
+    },
+    "walk-right-2": {
+      "sampledFrames": [
+        {
+          "seconds": 5.971,
+          "frame": 6,
+          "x": 43.9375,
+          "walkDistance": 281.4375
+        },
+        {
+          "seconds": 6.051,
+          "frame": 7,
+          "x": 49.5625,
+          "walkDistance": 287.0625
+        },
+        {
+          "seconds": 6.137,
+          "frame": 0,
+          "x": 55.1875,
+          "walkDistance": 292.6875
+        },
+        {
+          "seconds": 6.215,
+          "frame": 2,
+          "x": 60.8125,
+          "walkDistance": 298.3125
+        },
+        {
+          "seconds": 6.295,
+          "frame": 3,
+          "x": 66.4375,
+          "walkDistance": 303.9375
+        },
+        {
+          "seconds": 6.371,
+          "frame": 4,
+          "x": 70.9375,
+          "walkDistance": 308.4375
+        },
+        {
+          "seconds": 6.45,
+          "frame": 6,
+          "x": 76.5625,
+          "walkDistance": 314.0625
+        },
+        {
+          "seconds": 6.529,
+          "frame": 7,
+          "x": 82.1875,
+          "walkDistance": 319.6875
+        },
+        {
+          "seconds": 6.607,
+          "frame": 0,
+          "x": 86.6875,
+          "walkDistance": 324.1875
+        },
+        {
+          "seconds": 6.685,
+          "frame": 2,
+          "x": 92.3125,
+          "walkDistance": 329.8125
+        },
+        {
+          "seconds": 6.763,
+          "frame": 3,
+          "x": 97.9375,
+          "walkDistance": 335.4375
+        },
+        {
+          "seconds": 6.84,
+          "frame": 4,
+          "x": 102.4375,
+          "walkDistance": 339.9375
+        }
+      ],
+      "direction": 1,
+      "distance": 61.3125
+    },
+    "walk-left-2": {
+      "sampledFrames": [
+        {
+          "seconds": 7.309,
+          "frame": 7,
+          "x": 106.5625,
+          "walkDistance": 349.6875
+        },
+        {
+          "seconds": 7.386,
+          "frame": 0,
+          "x": 100.9375,
+          "walkDistance": 355.3125
+        },
+        {
+          "seconds": 7.465,
+          "frame": 2,
+          "x": 95.3125,
+          "walkDistance": 360.9375
+        },
+        {
+          "seconds": 7.542,
+          "frame": 3,
+          "x": 90.8125,
+          "walkDistance": 365.4375
+        },
+        {
+          "seconds": 7.619,
+          "frame": 4,
+          "x": 85.1875,
+          "walkDistance": 371.0625
+        },
+        {
+          "seconds": 7.698,
+          "frame": 5,
+          "x": 79.5625,
+          "walkDistance": 376.6875
+        },
+        {
+          "seconds": 7.776,
+          "frame": 7,
+          "x": 75.0625,
+          "walkDistance": 381.1875
+        },
+        {
+          "seconds": 7.854,
+          "frame": 0,
+          "x": 69.4375,
+          "walkDistance": 386.8125
+        },
+        {
+          "seconds": 7.931,
+          "frame": 1,
+          "x": 63.8125,
+          "walkDistance": 392.4375
+        },
+        {
+          "seconds": 8.008,
+          "frame": 3,
+          "x": 59.3125,
+          "walkDistance": 396.9375
+        },
+        {
+          "seconds": 8.086,
+          "frame": 4,
+          "x": 53.6875,
+          "walkDistance": 402.5625
+        },
+        {
+          "seconds": 8.164,
+          "frame": 5,
+          "x": 48.0625,
+          "walkDistance": 408.1875
+        }
+      ],
+      "direction": -1,
+      "distance": 61.3125
+    }
+  },
+  "attackTransitions": [
+    {
+      "repeat": 1,
+      "actualSampledFrames": [
+        {
+          "seconds": 8.632,
+          "frame": 1,
+          "feet": 336
+        },
+        {
+          "seconds": 8.708,
+          "frame": 2,
+          "feet": 336
+        },
+        {
+          "seconds": 8.786,
+          "frame": 3,
+          "feet": 336
+        },
+        {
+          "seconds": 8.863,
+          "frame": 4,
+          "feet": 336
+        },
+        {
+          "seconds": 8.94,
+          "frame": 5,
+          "feet": 336
+        }
+      ],
+      "last": {
+        "seconds": 9.488,
+        "keys": [
+          "p1.idle",
+          "p1.boneIdle"
+        ],
+        "feet": 336,
+        "onGround": true,
+        "vx": 0
+      },
+      "returnedToIdle": true
+    },
+    {
+      "repeat": 2,
+      "actualSampledFrames": [
+        {
+          "seconds": 9.641,
+          "frame": 1,
+          "feet": 336
+        },
+        {
+          "seconds": 9.719,
+          "frame": 2,
+          "feet": 336
+        },
+        {
+          "seconds": 9.796,
+          "frame": 3,
+          "feet": 336
+        },
+        {
+          "seconds": 9.873,
+          "frame": 4,
+          "feet": 336
+        },
+        {
+          "seconds": 9.951,
+          "frame": 5,
+          "feet": 336
+        }
+      ],
+      "last": {
+        "seconds": 10.495,
+        "keys": [
+          "p1.idle",
+          "p1.boneIdle"
+        ],
+        "feet": 336,
+        "onGround": true,
+        "vx": 0
+      },
+      "returnedToIdle": true
+    },
+    {
+      "repeat": 3,
+      "actualSampledFrames": [
+        {
+          "seconds": 10.658,
+          "frame": 1,
+          "feet": 336
+        },
+        {
+          "seconds": 10.737,
+          "frame": 2,
+          "feet": 336
+        },
+        {
+          "seconds": 10.816,
+          "frame": 3,
+          "feet": 336
+        },
+        {
+          "seconds": 10.887,
+          "frame": 4,
+          "feet": 336
+        }
+      ],
+      "last": {
+        "seconds": 11.507,
+        "keys": [
+          "p1.idle",
+          "p1.boneIdle"
+        ],
+        "feet": 336,
+        "onGround": true,
+        "vx": 0
+      },
+      "returnedToIdle": true
+    }
+  ],
+  "attackCoverageNote": "Real-input polling observes listed frames only (brief first pose can fall between polls); all six registered attack frames were separately inspected/measured without injecting game state.",
+  "source": "All Uga actions use painted-v6/p1-d040fabca00a.webp at one fixed 0.193359375 world-pixel scale. Opaque-height differences retain crouch/raised-hand anatomy, no frame stretching.",
+  "bodyHeightRanges": {
+    "p1.attack": [
+      21.26953125,
+      26.103515625
+    ],
+    "p1.attackDown": [
+      19.3359375,
+      23.9765625
+    ],
+    "p1.attackUp": [
+      22.236328125,
+      27.84375
+    ],
+    "p1.climb": [
+      25.13671875,
+      26.103515625
+    ],
+    "p1.fall": [
+      21.849609375,
+      23.009765625
+    ],
+    "p1.idle": [
+      24.556640625,
+      24.943359375
+    ],
+    "p1.jump": [
+      19.3359375,
+      23.009765625
+    ],
+    "p1.walk": [
+      24.943359375,
+      25.716796875
+    ]
+  },
+  "preview": "336_size.gif: actual idle/right-walk/stop/left-walk samples at identical camera scale; left edge can leave crop, so left full-cycle evidence uses numeric actual input samples above. Followed by clearly labeled fixed-scale existing atlas attack0-5/idle and climb0-5 preview (not an extra normal-input claim).",
+  "finalVisualRefresh": {
+    "scope": "after tree-render-only changes; no movement/collision changes",
+    "upToTop": true,
+    "extraDownReplay": "40s total visual-refresh budget ended still climbing at feet309.417; this extra replay is not a completed second landing assertion",
+    "originalNormalUpDownReturn": "safe-return event in main 34.107s input above, feet336/onGround true",
+    "inspectionData": "uncommitted raw preserved in shots/_old/336_diagnostics"
+  },
+  "finalBuild": "npm run build passed after final door pivot / stage1 green shoulder cap changes; console errors0 in actual input and apple acquisition"
+}

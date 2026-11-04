@@ -20,14 +20,14 @@ export class Background {
       const section=Math.max(0,camX)/900,index=Math.floor(section),local=section-index
       const q=Math.max(0,Math.min(1,(local-.64)/.36)),blend=q*q*(3-2*q)
       const paint=(n:number,alpha:number,position=local)=>{
-        const close=jungle[n%3]!,h=Math.max(VIEW_H*1.12,(VIEW_W+24)*close.height/close.width),w=h*close.width/close.height
+        const close=jungle[n%3]!,h=Math.max(VIEW_H*1.45,(VIEW_W+24)*close.height/close.width)*1.2,w=h*close.width/close.height
         const y=-(h-VIEW_H)*.5+Math.max(-6,Math.min(6,(groundCamY-camY)*.035))
         g.globalAlpha=alpha
         g.drawImage(close,(VIEW_W-w)/2-(position-.5)*12,y,w,h)
       }
       paint(index,1);if(blend>0)paint(index+1,blend,local-1)
       g.globalAlpha=1
-      g.fillStyle='rgba(28,53,34,.06)';g.fillRect(0,0,VIEW_W,VIEW_H)
+      g.fillStyle='rgba(28,53,34,.14)';g.fillRect(0,0,VIEW_W,VIEW_H)
     }else if(im){
       const h=VIEW_H*1.18,w=Math.max(VIEW_W,h*im.width/im.height)
       const offset=Math.sin(camX/1800)*(w-VIEW_W)*.45

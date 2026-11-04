@@ -1,0 +1,12 @@
+{
+  "key": "stage01_door",
+  "oldAnchor": 0.9375,
+  "newAnchor": 0.9296875,
+  "sourceFoundationPixels": 238,
+  "oldBroadBaseGap": 0.8529411764705882,
+  "newBroadBaseGap": 0,
+  "alphaTipBuried": 0.8529411764705882,
+  "scale": 0.4264705882352941,
+  "scope": "same registered sprite anchor used by exterior drawDoors and interior saved-world exit; no door collision or entry logic changed",
+  "playerScale": 0.193359375
+}

@@ -104,7 +104,9 @@ async function loadAnimationPack(stage:number):Promise<void>{
   }
   await Promise.all([...sprites].map(async([key,{folder,v}])=>{
     const img=await cachedImage(folder+'/'+v.frames[0].src)
-    art.sprites[key]={img,frames:v.frames.map((f:any)=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:folder==='painted-v6'?1:240/256,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+    const sprite:FrameSet={img,frames:v.frames.map((f:any)=>f.rect),h:v.h,ppu:v.ppu,fps:v.fps,ax:.5,ay:folder==='painted-v6'?1:240/256,facingLeft:v.facingLeft,pixelArt:v.pixelArt,durationsMs:v.durationsMs}
+    if(stage===1&&key===cast.door)sprite.frames=sprite.frames.map((f,index)=>[...f.slice(0,4),f[4]??sprite.ax,doorSole(sprite,index)])
+    art.sprites[key]=sprite
   }))
   await Promise.all([...images].map(async([key,src])=>{art.images[key]=await cachedImage(src)}))
   if(stage===18)await Promise.all(['cloud-floor','cloud-background'].map(async(name,i)=>{art.images[i?'sky.background':'sky.cloudFloor']=await cachedImage('sky-v1/'+name+'.webp')}))
@@ -127,25 +129,20 @@ async function loadAnimationPack(stage:number):Promise<void>{
     }))
   }
   const ludo=await (await fetch(BASE+'ludo/manifest.json')).json()
+  // Keep Uga's complete painted-v6 action set at one authored pixel scale.
+  // Ludo walk repeats idle; its attack/jump body scale differs between poses.
+  // Reuse the existing coherent poses instead of stretching individual frames.
   await Promise.all(Object.entries(ludo.sheets).filter(([key,v]:[string,any])=>
-    (key.startsWith('suukuret_')||key.startsWith('uga_')||stage===15&&key.startsWith('kingkong_'))&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{
-    let frames=v.frames
-    if(key==='uga_attack_ludo')frames=frames.filter((f:any)=>Number(f.sourceFrame.slice(-3))<9)
-    const sprite:FrameSet={img:await cachedImage('ludo/'+v.image),frames:frames.map((f:any)=>[f.frame.x,f.frame.y,f.frame.w,f.frame.h,f.footX/f.frame.w,f.footY/f.frame.h]),h:key.startsWith('uga_')?58:key.startsWith('kingkong_')?124:48,fps:12,ax:.5,ay:v.footBaseline/256,durationsMs:frames.map((f:any)=>f.durationMs)}
-    if(key.startsWith('uga_')){
-      const action=key==='uga_walk_ludo'?'walk':key==='uga_attack_ludo'?'attack':key==='uga_jump_ludo'?'jump':'climb'
-      art.sprites['p1.'+action]=sprite
-      if(action==='walk')art.sprites['p1.run']=sprite
-      if(action==='jump')art.sprites['p1.fall']=sprite
-    }else art.sprites[key.replace('_','.')]=sprite
+    (key.startsWith('suukuret_')||stage===15&&key.startsWith('kingkong_'))&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{
+    const sprite:FrameSet={img:await cachedImage('ludo/'+v.image),frames:v.frames.map((f:any)=>[f.frame.x,f.frame.y,f.frame.w,f.frame.h,f.footX/f.frame.w,f.footY/f.frame.h]),h:key.startsWith('kingkong_')?124:48,fps:12,ax:.5,ay:v.footBaseline/256,durationsMs:v.frames.map((f:any)=>f.durationMs)}
+    art.sprites[key.replace('_','.')]=sprite
   }))
-  // v2 contains a baked ladder and clipped feet: show a single transparent
-  // geometric placeholder rather than duplicating the level's ladder artwork.
-  if(!ludo.sheets.uga_ladder_ludo_v2?.image){
-    const img=document.createElement('canvas');img.width=64;img.height=64
-    const ctx=img.getContext('2d')!;ctx.fillStyle='#d4a078';ctx.fillRect(24,12,16,14);ctx.fillRect(24,28,16,15)
-    ctx.fillRect(15,28,8,6);ctx.fillRect(41,28,8,6);ctx.fillRect(23,43,7,10);ctx.fillRect(34,43,7,10)
-    art.sprites['p1.climb']={img,frames:[[0,0,64,64]],h:40,fps:1,ax:.5,ay:53/64}
+  // The existing painted-v6 climb poses are complete Uga without a ladder.
+  // Its old pivot lies below the cropped frame; align actual soles for the
+  // climbing renderer too (which intentionally does not request feet clipping).
+  for(const key of ['p1.climb','p1.climbIdle']){
+    const sprite=art.sprites[key]
+    if(sprite)sprite.frames=sprite.frames.map((f,index)=>[...f.slice(0,4),f[4]??sprite.ax,opaqueSole(sprite,index)])
   }
   if(stage===15){
     art.sprites['kingkong.idle']=art.sprites['kingkong.dizzy']!
@@ -208,6 +205,20 @@ const flameFrames = new WeakMap<FrameSet, Map<number, HTMLCanvasElement>>()
 /** 발 기준점(cx, bottom)에 그리기. 성공하면 true */
 const soleCache = new WeakMap<FrameSet, Map<number, number>>()
 /** Bottom edge of the last nontransparent pixel in the complete pose. */
+/** Broad door foundations, ignoring a few grass/pebble pixels below the stone. */
+function doorSole(s:FrameSet,index:number):number {
+  const [x,y,w,h]=s.frames[index]!
+  const cv=document.createElement('canvas');cv.width=w!;cv.height=h!
+  const g=cv.getContext('2d',{willReadFrequently:true})!
+  g.drawImage(s.img,x!,y!,w!,h!,0,0,w!,h!)
+  const pixels=g.getImageData(0,0,w!,h!).data,bottoms:number[]=[]
+  for(let col=0;col<w!;col++)for(let row=h!-1;row>=h!*.75;row--){
+    if(pixels[(row*w!+col)*4+3]!>128){bottoms.push(row+1);break}
+  }
+  bottoms.sort((a,b)=>a-b)
+  return (bottoms[Math.floor(bottoms.length/2)]??h!*s.ay)/h!
+}
+
 export function opaqueSole(s:FrameSet, frame:number):number {
   const index=Math.max(0,frame)%s.frames.length
   let poses=soleCache.get(s)
@@ -350,7 +361,7 @@ export function walkFrame(key: string, distance: number): number {
     : key.startsWith('kingkong.') ? 56
     : key.startsWith('boss2.') ? 54 : /(^boss|_boss\.)/.test(key) ? 60
     : key.startsWith('spider.') ? 20 : 28
-  const cycle=(key.endsWith('.climb')?distance:Math.max(0,distance))/(key.endsWith('.climb')?28:stride*CHARACTER_SCALE)
+  const cycle=(key.endsWith('.climb')?distance:Math.max(0,distance))/(key.endsWith('.climb')?28:key==='p1.walk'||key==='p1.run'?32:stride*CHARACTER_SCALE)
   return progressFrame(key,cycle-Math.floor(cycle))
 }
 

@@ -472,7 +472,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     grid[20]![14]='E'
     for(let col=24;col<=26;col++)for(let row=17;row<=21;row++)grid[row]![col]='R'
     for(let col=32;col<=37;col++)grid[14]![col]='='
-    for(const [col,row] of [[18,20],[25,13],[30,10],[34,6]])grid[row]![col]='f'
+    for(const [col,row] of [[18,20],[25,13],[30,6],[34,6]])grid[row]![col]='f'
     const ladders=[...(map.ladders??[]),[34,14,22] as Span]
     map=Object.assign(grid.map(row=>row.join('')),{ladders})
     encounters=[...encounters,{col:28,row:12,cfg:{...localRoles.U!,patrolRadius:16},group:'상층 먹이와 추적길 지킴이',facing:-1}]

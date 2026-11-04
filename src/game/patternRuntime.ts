@@ -1,5 +1,6 @@
 ﻿import type {Game} from './game'
 import type {Level} from './level'
+import {terrainSupport} from './paintedMap'
 import {TILE,VIEW_W,VIEW_H,overlap,type Rect} from './constants'
 
 type Frame={x:number;y:number;w:number;h:number;pivot:{x:number;y:number}}
@@ -202,8 +203,19 @@ export function drawStagePattern(g:Game,ctx:CanvasRenderingContext2D,cx:number,c
   if(id===1||[6,7,8].includes(id)){ax=x;ay=site.y-cy}
   if(id===1){
     ay=monkeyTop(site)-cy
-    ctx.strokeStyle='#63733c';ctx.lineWidth=1.8
-    ctx.beginPath();ctx.moveTo(x,site.y-cy);ctx.lineTo(x,ay+3);ctx.stroke()
+    // A rooted tree and short branch share the tail's visible attachment.
+    // No source-less cord extending to a canopy outside the current view.
+    ctx.save();ctx.translate(-cx,-cy)
+    terrainSupport(ctx,site.x+30,monkeyTop(site)-18,site.floor,1,site.x+8,site.x+52)
+    ctx.restore()
+    ctx.lineCap='round';ctx.strokeStyle='#654022';ctx.lineWidth=4
+    ctx.beginPath();ctx.moveTo(x+30,ay+12);ctx.quadraticCurveTo(x+16,ay-5,x,ay+3);ctx.stroke()
+    ctx.strokeStyle='#a9783c';ctx.lineWidth=1.3
+    ctx.beginPath();ctx.moveTo(x+30,ay+10);ctx.quadraticCurveTo(x+16,ay-6,x,ay+2);ctx.stroke()
+    ctx.strokeStyle='#52391f';ctx.lineWidth=.7
+    for(const [dx,dy]of [[24,5],[15,0],[7,0]]){
+      ctx.beginPath();ctx.moveTo(x+dx!,ay+dy!);ctx.lineTo(x+dx!-1.5,ay+dy!+2);ctx.stroke()
+    }
   }
   if(id===2)ax=x-32
   if(id===3){ax=x;ay=site.y-cy}

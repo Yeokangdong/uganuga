@@ -1,6 +1,7 @@
 import { art, image } from './art'
 import { terrainTheme } from './terrainThemes'
 import { SCALE } from './constants'
+import { STAGES } from './stages'
 
 /** Opt-in source-edge audit. Production builds never install the hook. */
 export const terrainDrawAudit = {
@@ -82,7 +83,15 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
   const im=part(stage,'support'),theme=terrainTheme(stage)
   if(!im||bottom<=top||right<=left||theme.floating)return
   const available=bottom-top+6
-  const limit=stage===1?(x>=280&&x<=680?68:34):theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
+  if(stage===1){
+    // Tall routes use slender climb vines and the spaced whole jungle trees.
+    // Short supports keep ONE complete tree, never a stack of cropped crowns.
+    if(available>96)return
+    const height=available,width=height*im.width/im.height
+    g.drawImage(im,x-width/2,top,width,height)
+    return
+  }
+  const limit=theme.organic?132:theme.structure==='snow'||theme.structure==='ice'?right-left:48
   const scale=Math.min(available/im.height,Math.min(limit,right-left)/im.width)
   const w=im.width*scale,h=im.height*scale
   const center=Math.max(left+w/2,Math.min(right-w/2,x))
@@ -107,8 +116,15 @@ export function terrainSupport(g:CanvasRenderingContext2D,x:number,top:number,bo
 /** An existing whole tree makes the short root obstacle read as jungle, not masonry. */
 export function firstJungleTrunk(g:CanvasRenderingContext2D):void {
   const im=part(1,'support');if(!im)return
-  const width=160,height=im.height*width/im.width
-  g.drawImage(im,408-width/2,352-height,width,height)
+  const map=STAGES[0]!.map
+  // Whole trees at spaced branch junctions; never stamp every climb route.
+  for(const [x,width] of [[408,160],[1240,148],[2168,172],[3096,150],[4024,164],[4952,152],[5880,166]]){
+    const col=Math.floor(x!/16);let row=map.length-1
+    if(map[row]?.[col]!=='#')continue
+    while(row>0&&map[row-1]?.[col]==='#')row--
+    const height=im.height*width!/im.width
+    g.drawImage(im,x!-width!/2,row*16-height,width!,height)
+  }
 }
 
 const platformTopCache = new WeakMap<HTMLImageElement, number>()
@@ -195,9 +211,17 @@ export function surface(g:CanvasRenderingContext2D,stage:number,x:number,y:numbe
 }
 
 export function ladder(g:CanvasRenderingContext2D,stage:number,x:number,top:number,end:number):void {
+  const span=end-top
+  if(stage===1){
+    const vine=image('traversal.vine');if(!vine||span<=0)return
+    // Slender climbing vine, not repeated complete tree crowns and roots.
+    const count=Math.max(1,Math.ceil(span/96)),height=span/count,width=height*vine.width/vine.height
+    for(let i=0;i<count;i++)g.drawImage(vine,x-width/2,top+i*height,width,height)
+    return
+  }
   const im=part(stage,'ladder')
   if(!im)return
-  const width=12,span=end-top
+  const width=12
   if(span<=0)return
   // Fit complete authored sections, including both ends. Uniform scaling keeps
   // their proportions and avoids cutting a rung at the final partial section.

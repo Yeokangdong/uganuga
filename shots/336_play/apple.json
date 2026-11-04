@@ -1,0 +1,237 @@
+{
+  "complete": true,
+  "visualAudit": {
+    "door": {
+      "key": "stage01_door",
+      "oldAnchor": 0.9375,
+      "newAnchor": 0.9296875,
+      "sourceFoundationPixels": 238,
+      "oldBroadBaseGap": 0.8529411764705882,
+      "newBroadBaseGap": 0,
+      "alphaTipBuried": 0.8529411764705882,
+      "scale": 0.4264705882352941,
+      "scope": "same registered sprite anchor used by exterior drawDoors and interior saved-world exit; no door collision or entry logic changed",
+      "playerScale": 0.193359375
+    },
+    "fruits": [
+      {
+        "col": 30,
+        "row": 6,
+        "x": 482,
+        "y": 96,
+        "belowGlyph": "=",
+        "belowTile": 2,
+        "floor": 112
+      },
+      {
+        "col": 34,
+        "row": 6,
+        "x": 546,
+        "y": 96,
+        "belowGlyph": "=",
+        "belowTile": 2,
+        "floor": 112
+      },
+      {
+        "col": 25,
+        "row": 13,
+        "x": 402,
+        "y": 208,
+        "belowGlyph": "=",
+        "belowTile": 2,
+        "floor": 224
+      },
+      {
+        "col": 18,
+        "row": 20,
+        "x": 290,
+        "y": 320,
+        "belowGlyph": "#",
+        "belowTile": 1,
+        "floor": 336
+      }
+    ],
+    "count": 4,
+    "relocated": {
+      "col": 30,
+      "row": 6
+    },
+    "doorMeasurementNote": "Final broad-foundation pivot probe replaces initial maximum-alpha probe; player input trace predates metadata-only door correction."
+  },
+  "blocked": "",
+  "seconds": 22.26,
+  "phase": 5,
+  "snapshot": {
+    "cx": 488,
+    "x": 481.25,
+    "y": 89.5,
+    "feet": 112,
+    "hp": 10,
+    "lives": 3,
+    "onGround": true,
+    "climbing": false,
+    "swing": -0.00500000000000014,
+    "facing": 1,
+    "food": 55,
+    "score": 1950,
+    "mode": "play",
+    "camX": 265.27999999990374,
+    "camY": 23.500127019366705,
+    "trail": {
+      "climbX": 328,
+      "upperClimbX": 488,
+      "retryX": 552,
+      "traceX": 440,
+      "traceY": 208,
+      "rejoinX": 848
+    },
+    "enemies": [],
+    "items": [
+      {
+        "kind": "fruit",
+        "x": 552,
+        "y": 96,
+        "t": 5.762500000000047
+      }
+    ],
+    "timer": 193.98333333331612
+  },
+  "events": [
+    {
+      "seconds": 0,
+      "event": "phase",
+      "phase": 0,
+      "x": 40,
+      "feet": 336,
+      "hp": 10,
+      "food": 0
+    },
+    {
+      "seconds": 0.06,
+      "event": "enemy-visible",
+      "enemy": "dino1_0",
+      "x": 265.31874999999997,
+      "phase": 0
+    },
+    {
+      "seconds": 6.18,
+      "event": "food-change",
+      "from": 0,
+      "to": 5,
+      "x": 283.9325000000014,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 8.44,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 312.2467500000012,
+      "food": 5,
+      "score": 600,
+      "phase": 0
+    },
+    {
+      "seconds": 8.97,
+      "event": "food-change",
+      "from": 5,
+      "to": 25,
+      "x": 311.7025000000018,
+      "feet": 336,
+      "phase": 0
+    },
+    {
+      "seconds": 9.04,
+      "event": "phase",
+      "phase": 1,
+      "x": 313.0150000000018,
+      "feet": 336,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 9.1,
+      "event": "enemy-visible",
+      "enemy": "boar",
+      "x": 446.04999999999995,
+      "phase": 1
+    },
+    {
+      "seconds": 13.2,
+      "event": "phase",
+      "phase": 2,
+      "x": 328,
+      "feet": 224,
+      "hp": 10,
+      "food": 25
+    },
+    {
+      "seconds": 14.27,
+      "event": "food-change",
+      "from": 25,
+      "to": 30,
+      "x": 398.3125,
+      "feet": 212.375,
+      "phase": 2
+    },
+    {
+      "seconds": 14.68,
+      "event": "phase",
+      "phase": 3,
+      "x": 426.4375,
+      "feet": 181.125,
+      "hp": 10,
+      "food": 30
+    },
+    {
+      "seconds": 17.52,
+      "event": "animal-drop",
+      "kind": "meat",
+      "x": 457.97650000000056,
+      "food": 30,
+      "score": 1350,
+      "phase": 3
+    },
+    {
+      "seconds": 18.03,
+      "event": "food-change",
+      "from": 30,
+      "to": 50,
+      "x": 450.68406250000027,
+      "feet": 208,
+      "phase": 3
+    },
+    {
+      "seconds": 18.09,
+      "event": "phase",
+      "phase": 4,
+      "x": 451.99656250000027,
+      "feet": 208,
+      "hp": 10,
+      "food": 50
+    },
+    {
+      "seconds": 21.38,
+      "event": "food-change",
+      "from": 50,
+      "to": 55,
+      "x": 488,
+      "feet": 127.98593368301462,
+      "phase": 4
+    },
+    {
+      "seconds": 22,
+      "event": "phase",
+      "phase": 5,
+      "x": 488,
+      "feet": 112,
+      "hp": 10,
+      "food": 55
+    }
+  ],
+  "errors": [],
+  "shots": [
+    "climb"
+  ],
+  "stateInjection": false
+}

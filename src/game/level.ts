@@ -433,7 +433,7 @@ export class Level {
         if(exposed&&!this.def.cave){
           if(t===T.Solid){
             surface(g,theme,x,y,c)
-            if(tl||tr){
+            if((tl||tr)&&theme!==1){
               // Carry the turf and soil bands around each exposed shoulder.
               for(const [color,inset,line] of [[material.base,3,5],[material.edge,1,2]] as const){
                 g.strokeStyle=color;g.lineWidth=line
