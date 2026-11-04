@@ -1,0 +1,41 @@
+{
+  "scope": "combat-only-state-injection; 1/60 physics steps; not keyboard completion",
+  "checks": [
+    {
+      "name": "pound-warning",
+      "ok": true
+    },
+    {
+      "name": "pound-attack",
+      "ok": true
+    },
+    {
+      "name": "pound-recovery",
+      "ok": true
+    },
+    {
+      "name": "charge-warning",
+      "ok": true
+    },
+    {
+      "name": "charge-attack",
+      "ok": true
+    },
+    {
+      "name": "charge-recovery",
+      "ok": true
+    },
+    {
+      "name": "slam-warning",
+      "ok": true
+    },
+    {
+      "name": "slam-attack",
+      "ok": true
+    },
+    {
+      "name": "slam-recovery",
+      "ok": true
+    }
+  ]
+}

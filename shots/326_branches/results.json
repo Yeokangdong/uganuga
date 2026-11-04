@@ -1,0 +1,280 @@
+[
+  {
+    "stage": 15,
+    "target": "normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart",
+    "complete": true,
+    "blocked": "",
+    "seconds": 6.18,
+    "position": null,
+    "snapshot": null,
+    "events": [
+      {
+        "branch": "state-injection-and-art-only",
+        "checks": [
+          {
+            "name": "start-1",
+            "ok": true
+          },
+          {
+            "name": "door59-1",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-1",
+            "ok": true
+          },
+          {
+            "name": "start-2",
+            "ok": true
+          },
+          {
+            "name": "door59-2",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-2",
+            "ok": true
+          },
+          {
+            "name": "start-3",
+            "ok": true
+          },
+          {
+            "name": "door59-3",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-3",
+            "ok": true
+          },
+          {
+            "name": "start-4",
+            "ok": true
+          },
+          {
+            "name": "door59-4",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-4",
+            "ok": true
+          },
+          {
+            "name": "start-5",
+            "ok": true
+          },
+          {
+            "name": "door59-5",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-5",
+            "ok": true
+          },
+          {
+            "name": "start-6",
+            "ok": true
+          },
+          {
+            "name": "door59-6",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-6",
+            "ok": true
+          },
+          {
+            "name": "start-7",
+            "ok": true
+          },
+          {
+            "name": "door59-7",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-7",
+            "ok": true
+          },
+          {
+            "name": "start-8",
+            "ok": true
+          },
+          {
+            "name": "door59-8",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-8",
+            "ok": true
+          },
+          {
+            "name": "start-9",
+            "ok": true
+          },
+          {
+            "name": "door59-9",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-9",
+            "ok": true
+          },
+          {
+            "name": "start-10",
+            "ok": true
+          },
+          {
+            "name": "door59-10",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-10",
+            "ok": true
+          },
+          {
+            "name": "start-11",
+            "ok": true
+          },
+          {
+            "name": "door59-11",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-11",
+            "ok": true
+          },
+          {
+            "name": "start-12",
+            "ok": true
+          },
+          {
+            "name": "door59-12",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-12",
+            "ok": true
+          },
+          {
+            "name": "start-13",
+            "ok": true
+          },
+          {
+            "name": "door59-13",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-13",
+            "ok": true
+          },
+          {
+            "name": "start-14",
+            "ok": true
+          },
+          {
+            "name": "door59-14",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-14",
+            "ok": true
+          },
+          {
+            "name": "start-15",
+            "ok": true
+          },
+          {
+            "name": "door59-15",
+            "ok": true
+          },
+          {
+            "name": "door60-boss-15",
+            "ok": true
+          },
+          {
+            "name": "kingkong-name",
+            "ok": true
+          },
+          {
+            "name": "charge-jump-clearance",
+            "ok": true
+          },
+          {
+            "name": "single-hit-score",
+            "ok": true
+          },
+          {
+            "name": "warning-invulnerable",
+            "ok": true
+          },
+          {
+            "name": "rage-half",
+            "ok": true
+          },
+          {
+            "name": "defeat-once",
+            "ok": true
+          },
+          {
+            "name": "rescue-branch",
+            "ok": true
+          },
+          {
+            "name": "rescue-bonus-once",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-uga_walk_ludo",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-uga_attack_ludo",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-uga_jump_ludo",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-kingkong_pound",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-kingkong_charge",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-kingkong_dizzy",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-kingkong_slam",
+            "ok": true
+          },
+          {
+            "name": "alpha-margin-kingkong_defeat",
+            "ok": true
+          },
+          {
+            "name": "attack-first9",
+            "ok": true
+          },
+          {
+            "name": "walk-safe18",
+            "ok": true
+          },
+          {
+            "name": "jump-exclusions",
+            "ok": true
+          },
+          {
+            "name": "climb-no-baked-ladder",
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "screenshot": "D:/99.Work/Uganuga/shots/326_uga.png"
+  }
+]

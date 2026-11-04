@@ -500,7 +500,7 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,
     encounters,
-    boss:{...bosses[set]!,key:cast.boss,name:cast.bossName,hp:24+index*2+progress,w:66+(index%5)*4,h:56+(index%4)*3,chargeSpeed:175+index*4},
+    boss:{...bosses[set]!,key:last?'kingkong':cast.boss,name:last?'킹콩':cast.bossName,hp:24+index*2+progress,w:last?88:66+(index%5)*4,h:last?82:56+(index%4)*3,chargeSpeed:175+index*4},
     weapon:set===1?'fire':'bone',icy:index===2,final:last,
     map:withBossArena(map),arenaCol:map[0]!.length
   }

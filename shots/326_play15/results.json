@@ -1,0 +1,172 @@
+[
+  {
+    "stage": 15,
+    "target": "normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart",
+    "complete": false,
+    "blocked": "목숨 소진",
+    "seconds": 147.7,
+    "position": {
+      "x": 4726.4765625,
+      "y": 408.4375
+    },
+    "snapshot": {
+      "story": null,
+      "stage": 15,
+      "mode": "over",
+      "food": 60,
+      "time": 96.67000000001333,
+      "timeLeft": 83.26666666660033,
+      "x": 4726.4765625,
+      "cx": 4733.2265625,
+      "y": 408.4375,
+      "h": 22.5,
+      "hp": 0,
+      "lives": 0,
+      "alive": false,
+      "out": true,
+      "ground": false,
+      "climbing": false,
+      "facing": 1,
+      "swing": 0,
+      "chargeReady": false,
+      "charge": 0,
+      "vx": 0,
+      "environment": {
+        "phase": "IDLE",
+        "elapsed": 0,
+        "rockX": 0,
+        "water": null
+      },
+      "intro": false,
+      "journey": false,
+      "arena": 6656,
+      "wall": false,
+      "waterAhead": false,
+      "gap": true,
+      "routeLadders": [
+        {
+          "x": 3528,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 3928,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 4600,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 5000,
+          "top": 288,
+          "bottom": 336
+        },
+        {
+          "x": 5720,
+          "top": 288,
+          "bottom": 352
+        },
+        {
+          "x": 6120,
+          "top": 288,
+          "bottom": 336
+        }
+      ],
+      "foods": [
+        {
+          "x": 2136.9030000000002,
+          "y": 326
+        },
+        {
+          "x": 3252.7434999999814,
+          "y": 326
+        },
+        {
+          "x": 4038.2314999999794,
+          "y": 326
+        },
+        {
+          "x": 4113.35374999999,
+          "y": 342
+        }
+      ],
+      "foes": [
+        {
+          "x": 3733.756250000014,
+          "y": 145.625,
+          "w": 28.125,
+          "h": 30.375
+        },
+        {
+          "x": 4634.824999999956,
+          "y": 254.04214806663836,
+          "w": 23.625,
+          "h": 21.375
+        }
+      ],
+      "boss": null
+    },
+    "events": [
+      {
+        "seconds": 13.06,
+        "stage": 15,
+        "mode": "play",
+        "food": 0,
+        "x": 33.25,
+        "y": 313.5
+      },
+      {
+        "seconds": 27.18,
+        "stage": 15,
+        "mode": "play",
+        "food": 0,
+        "x": 757.1875,
+        "y": 313.5
+      },
+      {
+        "seconds": 61.91,
+        "stage": 15,
+        "mode": "play",
+        "food": 60,
+        "x": 1970.4403124999972,
+        "y": 329.5
+      },
+      {
+        "seconds": 146.71,
+        "stage": 15,
+        "mode": "play",
+        "food": 60,
+        "x": 4689.25,
+        "y": 329.5
+      },
+      {
+        "seconds": 147.7,
+        "stage": 15,
+        "mode": "over",
+        "food": 60,
+        "x": 4726.4765625,
+        "y": 408.4375
+      }
+    ],
+    "errors": [],
+    "screenshot": null,
+    "previousAttempt": {
+      "seconds": 295.22,
+      "scope": "normal-speed real keyboard, before final HP/charge-hitbox corrections",
+      "food60": true,
+      "patterns": [
+        "pound",
+        "charge",
+        "slam"
+      ],
+      "rage": false,
+      "endBossHp": 48,
+      "blocked": "목숨 소진",
+      "errors": []
+    },
+    "finalCodeCaveat": "최종 돌진 판정 보완 뒤 전체 입력 완주 미실행; 분기 검사 별도"
+  }
+]

@@ -112,9 +112,30 @@ async function loadAnimationPack(stage:number):Promise<void>{
   const spiderFall=art.sprites['spider.dead']
   if(spiderFall)art.sprites['spider.recover']={...spiderFall,frames:[...spiderFall.frames].reverse(),durationsMs:spiderFall.durationsMs?[...spiderFall.durationsMs].reverse():undefined}
   const ludo=await (await fetch(BASE+'ludo/manifest.json')).json()
-  await Promise.all(Object.entries(ludo.sheets).filter(([key,v]:[string,any])=>key.startsWith('suukuret_')&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{
-    art.sprites[key.replace('_','.') ]={img:await cachedImage('ludo/'+v.image),frames:v.frames.map((f:any)=>[f.frame.x,f.frame.y,f.frame.w,f.frame.h,f.footX/f.frame.w,f.footY/f.frame.h]),h:48,fps:12,ax:.5,ay:v.footBaseline/256,durationsMs:v.frames.map((f:any)=>f.durationMs)}
+  await Promise.all(Object.entries(ludo.sheets).filter(([key,v]:[string,any])=>
+    (key.startsWith('suukuret_')||key.startsWith('uga_')||stage===15&&key.startsWith('kingkong_'))&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{
+    let frames=v.frames
+    if(key==='uga_attack_ludo')frames=frames.filter((f:any)=>Number(f.sourceFrame.slice(-3))<9)
+    const sprite:FrameSet={img:await cachedImage('ludo/'+v.image),frames:frames.map((f:any)=>[f.frame.x,f.frame.y,f.frame.w,f.frame.h,f.footX/f.frame.w,f.footY/f.frame.h]),h:key.startsWith('uga_')?58:key.startsWith('kingkong_')?124:48,fps:12,ax:.5,ay:v.footBaseline/256,durationsMs:frames.map((f:any)=>f.durationMs)}
+    if(key.startsWith('uga_')){
+      const action=key==='uga_walk_ludo'?'walk':key==='uga_attack_ludo'?'attack':key==='uga_jump_ludo'?'jump':'climb'
+      art.sprites['p1.'+action]=sprite
+      if(action==='walk')art.sprites['p1.run']=sprite
+      if(action==='jump')art.sprites['p1.fall']=sprite
+    }else art.sprites[key.replace('_','.')]=sprite
   }))
+  // v2 contains a baked ladder and clipped feet: show a single transparent
+  // geometric placeholder rather than duplicating the level's ladder artwork.
+  if(!ludo.sheets.uga_ladder_ludo_v2?.image){
+    const img=document.createElement('canvas');img.width=64;img.height=64
+    const ctx=img.getContext('2d')!;ctx.fillStyle='#d4a078';ctx.fillRect(24,12,16,14);ctx.fillRect(24,28,16,15)
+    ctx.fillRect(15,28,8,6);ctx.fillRect(41,28,8,6);ctx.fillRect(23,43,7,10);ctx.fillRect(34,43,7,10)
+    art.sprites['p1.climb']={img,frames:[[0,0,64,64]],h:40,fps:1,ax:.5,ay:53/64}
+  }
+  if(stage===15){
+    art.sprites['kingkong.idle']=art.sprites['kingkong.dizzy']!
+    art.sprites['kingkong.walk']=art.sprites['kingkong.charge']!
+  }
   art.ready=true
 }
 

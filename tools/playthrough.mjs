@@ -15,6 +15,7 @@ if (!range) throw new Error('--stages: 1-15 형식 필요')
 const first = Number(range[1]), last = Number(range[2] ?? range[1])
 if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
 const port=option('--port','5306')
+const kingkongCheck = args.includes('--kingkong326')
 const floodCheck = args.includes('--environment13')
 const chaseCheck = args.includes('--environment7')
 const storyCheck = args.includes('--story325')
@@ -75,8 +76,17 @@ try {
       await page.goto(`http://127.0.0.1:${port}/?stage=${stage}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
       await page.waitForFunction(() => !document.querySelector('.loading'), null, { timeout: 60000 })
       await page.keyboard.press('Space')
-      await page.waitForFunction(() => window.__game?.players?.length, null, { timeout: 60000 })
-      while (!args.includes('--branches323') && Date.now() - started < limit * 1000) {
+      await page.waitForFunction(() => window.__game?.players?.length && !window.__game.stageLoading && window.__game.mode==='play', null, { timeout: 60000 })
+      while (!args.includes('--branches326')&&!args.includes('--branches323') && Date.now() - started < limit * 1000) {
+        if(kingkongCheck&&await page.locator('.result.clear').count()){
+          events.push({branch:'result-clear'})
+          await input();await page.keyboard.press('Enter')
+          await page.waitForFunction(()=>window.__game?.players?.length&&!window.__game.stageLoading&&window.__game.mode==='play')
+          const reset=await page.evaluate(()=>({stage:window.__game.stage.id,mode:window.__game.mode,food:window.__game.food,boss:!!window.__game.boss,hp:window.__game.players[0].hp}))
+          events.push({branch:'keyboard-restart',reset})
+          complete=events.some(e=>e.food>=60)&&events.some(e=>e.mode==='rescue')&&['pound','charge','slam'].every(p=>captured.has(p))&&captured.has('rage')&&reset.food===0&&!reset.boss&&errors.length===0
+          reason=complete?'':'구출/3패턴/분노/재시작 증거 부족';break
+        }
         // Observation only: do not call engine methods, set fields, or alter clocks.
         snapshot = await page.evaluate(async (argsStory) => {
           const g = window.__game, p = g.players[0], lv = g.level
@@ -90,17 +100,27 @@ try {
           return { story,stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
-            climbing: p.climbing, facing: p.facing, swing: p.swingT, vx: p.vx,
+            climbing: p.climbing, facing: p.facing, swing: p.swingT, chargeReady:p.chargeReady, charge:p.charge, vx: p.vx,
             environment: {phase:g.environmentEvents.phase,elapsed:g.environmentEvents.elapsed,
               rockX:g.environmentEvents.rockX,route:lv.def.chase,flood:lv.def.flood,water:lv.floodWater},
             intro: g.introT > 0, journey: g.journeyT !== null, arena: lv.arenaX,
             wall: lv.solidAt(p.cx+dir*27, feet - 8),
             waterAhead:lv.waterAt(x,feet+8),
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
+            routeLadders:argsStory?[]:(lv.def.map.ladders??[]).filter(([c,t,b])=>c>=lv.arenaX/32&&b>=20&&t<=18).map(([c,t,b])=>({x:c*16+8,top:t*16,bottom:b*16})),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
-              state: g.boss.state, vx: g.boss.vx } : null }
+              state: g.boss.state, pattern:g.boss.pattern, rage:g.boss.phase2, y:g.boss.y, h:g.boss.h, t:g.boss.t, vy:g.boss.vy, waves:g.boss.waves?.map(w=>({x:w.x,dir:w.dir})),target:g.boss.targetX, vx: g.boss.vx } : null }
         },storyCheck)
         const s = snapshot
+        if(kingkongCheck){
+          if(!captured.has('uga')&&!await access(path.join(root,'shots/326_uga.png')).then(()=>true,()=>false)&&s.ground&&s.x>80){await page.screenshot({path:path.join(root,'shots/326_uga.png')});captured.add('uga')}
+          if(s.boss){
+            for(const tag of ['pound','charge','slam'])if(s.boss.state===tag&&!captured.has(tag)){captured.add(tag);events.push({branch:tag,seconds:(Date.now()-started)/1000,hp:s.boss.hp})}
+            if(s.boss.rage&&!captured.has('rage')){captured.add('rage');events.push({branch:'rage',hp:s.boss.hp})}
+            if(s.boss.state==='warn'&&!captured.has('kingkong')){await page.screenshot({path:path.join(root,'shots/326_kingkong.png')});captured.add('kingkong')}
+          }
+          if(s.mode==='rescue'&&!captured.has('rescue')){await page.screenshot({path:path.join(root,'shots/326_rescue.png')});captured.add('rescue')}
+        }
         if(storyCheck&&s.story&&!s.intro&&s.mode==='play'){
           if(!captured.has('STORY')&&s.cx>s.story.x-90&&s.cx<s.story.x+40&&s.ground){
             await page.screenshot({path:path.join(root,'shots/325_story.png')})
@@ -159,7 +179,7 @@ try {
             stage: s.stage, mode: s.mode, food: s.food, bossHp: s.boss?.hp, x: s.x, y: s.y })
           previousSignature = signature
         }
-        if (s.stage > stage || stage === 15 && s.mode === 'clear') {
+        if (!kingkongCheck&&(s.stage > stage || stage === 15 && s.mode === 'clear')) {
           complete = events.some(e => e.food >= 60) && events.some(e => e.mode === 'boss' && e.bossHp > 0) && events.some(e => e.bossHp === 0)
             && events.some(e => e.mode === 'clear' || e.mode === 'rescue')
           reason = complete ? '' : '전환 관측했으나 필수 진행 증거 부족'
@@ -220,11 +240,93 @@ try {
               }
             }
           }
+          if(kingkongCheck&&s.mode==='play'){
+            const ladder=s.routeLadders.find(l=>l.x>s.cx-12&&l.x<s.cx+90&&s.y+s.h>l.top+3&&s.y+s.h<=l.bottom+4)
+            if(ladder){
+              wanted.length=0
+              if(s.cx<ladder.x-3)wanted.push('ArrowRight')
+              else if(s.cx>ladder.x+3)wanted.push('ArrowLeft')
+              else wanted.push('ArrowUp')
+              if(s.climbing){wanted.length=0;wanted.push('ArrowUp')}
+            }
+          }
+          if(kingkongCheck&&s.mode==='boss'&&s.boss){
+            const b=s.boss,dx=b.x-s.cx
+            if(b.state==='warn'||b.state==='pound'||b.state==='slam'||b.state==='charge'){
+              wanted.length=0
+              // Retreat from the locked slam landing, jump the ground wave or charge.
+              if(b.pattern==='slam'&&b.state==='warn')wanted.push(s.cx<s.arena+192?'ArrowRight':'ArrowLeft')
+              const nearWave=b.waves?.some(w=>Math.abs(w.x-s.cx)<28&&Math.sign(s.cx-w.x)===w.dir)
+              if(s.ground&&!held.has('ArrowUp')&&(nearWave||b.state==='charge'&&Math.abs(dx)<75||b.state==='slam'&&b.vy>0&&Math.abs(dx)<80))wanted.push('ArrowUp')
+              wanted.push('Space')
+            }else if(b.state==='stun'){
+              const index=wanted.indexOf('Space');if(index>=0)wanted.splice(index,1)
+              if(!s.chargeReady)wanted.push('Space')
+            }
+          }
+          if(kingkongCheck&&tick%100===0)console.log(JSON.stringify({seconds:Math.round((Date.now()-started)/1000),mode:s.mode,x:Math.round(s.cx),food:s.food,lives:s.lives,hp:s.hp,boss:s.boss?.hp}))
           if (!s.alive) wanted.length = 0
           await input(wanted)
         }
         tick++
         await page.waitForTimeout(100)
+      }
+      if(args.includes('--branches326')){
+        const checks=await page.evaluate(async()=>{
+          const {STAGES}=await import('/src/game/stages.ts'),{Level}=await import('/src/game/level.ts')
+          const {art,loadStageArt,drawArt}=await import('/src/game/art.ts')
+          const g=window.__game,checks=[]
+          const check=(name,ok)=>checks.push({name,ok:!!ok})
+          for(let i=0;i<15;i++){
+            await loadStageArt(i+1)
+            g.stageIdx=i;g.stage=STAGES[i];g.level=new Level(g.stage);g.beginStage();g.introT=0
+            const p=g.players[0];p.alive=true;p.out=false;p.lives=3
+            check(`start-${i+1}`,g.mode==='play'&&p.alive&&g.foodMax===60)
+            p.x=g.level.arenaX+32;p.y=300;p.onGround=true
+            g.food=59;g.checkEnd(0);check(`door59-${i+1}`,g.mode==='play')
+            g.food=60;g.checkEnd(0)
+            check(`door60-boss-${i+1}`,g.mode==='boss'&&g.boss.kingkong===(i===14))
+          }
+          const b=g.boss,p=g.players[0]
+          check('kingkong-name',b.name==='킹콩')
+          b.state='charge';check('charge-jump-clearance',b.hitbox.h===30&&340*340/(2*1200)>b.hitbox.h+2)
+          const score=p.score;b.state='stun';b.flash=0;b.hit(g,1,p)
+          check('single-hit-score',p.score-score===10)
+          b.state='warn';b.flash=0;const hp=b.hp;b.hit(g,1,p);check('warning-invulnerable',b.hp===hp&&b.contactDmg===0)
+          b.hp=b.maxHp/2;check('rage-half',b.phase2)
+          b.state='stun';b.flash=0;const before=p.score;b.hit(g,b.hp,p);const after=p.score;b.hit(g,100,p)
+          check('defeat-once',b.dying&&p.score===after&&after-before===5000+b.maxHp/2*10)
+          // Independent branch injection only, never claimed as keyboard completion.
+          b.dead=true;g.checkEnd(0);check('rescue-branch',g.mode==='rescue')
+          const rescueScore=p.score;g.checkEnd(0);check('rescue-bonus-once',p.score===rescueScore)
+          const manifest=await(await fetch('/assets/ludo/manifest.json')).json()
+          for(const key of ['uga_walk_ludo','uga_attack_ludo','uga_jump_ludo','kingkong_pound','kingkong_charge','kingkong_dizzy','kingkong_slam','kingkong_defeat']){
+            const sheet=manifest.sheets[key],img=new Image();img.src='/assets/ludo/'+sheet.image;await img.decode()
+            const cv=document.createElement('canvas');cv.width=cv.height=256;const c=cv.getContext('2d',{willReadFrequently:true})
+            let valid=true
+            for(const f of sheet.frames){
+              c.clearRect(0,0,256,256);c.drawImage(img,f.frame.x,f.frame.y,256,256,0,0,256,256)
+              const data=c.getImageData(0,0,256,256).data
+              for(let y=0;y<256;y++)for(let x=0;x<256;x++)if(data[(y*256+x)*4+3]&&(x<38||y<38||x>=218||y>=218))valid=false
+            }
+            check('alpha-margin-'+key,valid)
+          }
+          check('attack-first9',art.sprites['p1.attack'].frames.length===9)
+          check('walk-safe18',art.sprites['p1.walk'].frames.length===18)
+          check('jump-exclusions',manifest.sheets.uga_jump_ludo.frames.every(f=>![6,8,9,10,11].includes(Number(f.sourceFrame.slice(-3)))))
+          check('climb-no-baked-ladder',art.sprites['p1.climb'].frames.length===1&&art.sprites['p1.climb'].img instanceof HTMLCanvasElement)
+          // Static frame/sole review, without changing any source bitmap.
+          const cv=document.createElement('canvas');cv.width=960;cv.height=640;const c=cv.getContext('2d');c.fillStyle='#283641';c.fillRect(0,0,960,640)
+          for(const [row,key] of ['p1.walk','p1.attack','p1.jump','p1.climb'].entries()){
+            c.fillStyle='white';c.font='18px sans-serif';c.fillText(key,10,row*150+28)
+            const set=art.sprites[key],count=Math.min(6,set.frames.length)
+            for(let i=0;i<count;i++){const x=100+i*145,y=row*150+130;c.strokeStyle='#ffdc70';c.beginPath();c.moveTo(x-50,y);c.lineTo(x+50,y);c.stroke();drawArt(c,key,Math.floor(i*(set.frames.length-1)/Math.max(1,count-1)),x,y,false,{scale:2,feet:key!=='p1.climb'})}
+          }
+          document.body.replaceChildren(cv);cv.style.width='960px';cv.style.height='640px'
+          return checks
+        })
+        events.push({branch:'state-injection-and-art-only',checks});complete=checks.every(c=>c.ok)&&errors.length===0
+        reason=complete?'':'분기/그림 검증 실패';if(!await access(path.join(root,'shots/326_uga.png')).then(()=>true,()=>false))await page.screenshot({path:path.join(root,'shots/326_uga.png')})
       }
       if(args.includes('--branches323')){
         const branch=await page.evaluate(async(argsStory)=>{
@@ -301,9 +403,9 @@ try {
       if (!complete && !reason) reason = `실시간 ${limit}초 제한`
     } catch (error) { reason = `실행 오류: ${error.message}` }
     await input()
-    const screenshot = storyCheck?path.join(root,args.includes('--branches323')?'shots/325_late.png':'shots/325_story.png'):path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
-    if(!chaseCheck&&!floodCheck&&!storyCheck&&!args.includes('--branches323'))await page.screenshot({ path: screenshot, fullPage: true })
-    const result = { stage, target:storyCheck?'story-trace-real-input-and-control':floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
+    const screenshot = kingkongCheck?(args.includes('--branches326')?path.join(root,'shots/326_uga.png'):captured.has('kingkong')?path.join(root,'shots/326_kingkong.png'):null):storyCheck?path.join(root,args.includes('--branches323')?'shots/325_late.png':'shots/325_story.png'):path.join(output, `stage-${String(stage).padStart(2, '0')}-${Date.now()}.png`)
+    if(!kingkongCheck&&!chaseCheck&&!floodCheck&&!storyCheck&&!args.includes('--branches323'))await page.screenshot({ path: screenshot, fullPage: true })
+    const result = { stage, target:kingkongCheck?'normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart':storyCheck?'story-trace-real-input-and-control':floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }
     results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))
