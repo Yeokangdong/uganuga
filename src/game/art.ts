@@ -89,9 +89,18 @@ async function loadAnimationPack(stage:number):Promise<void>{
     return true
   }
   const sprites=new Map<string,{folder:string;v:any}>(),images=new Map<string,string>()
-  for(const {folder,pack}of await manifests){
+  const packs=await manifests
+  for(const {folder,pack}of packs){
     for(const [key,v]of Object.entries(pack.sprites??{}))if(needed(key)&&!key.startsWith('squirrel.'))sprites.set(key,{folder,v})
     for(const [key,src]of Object.entries(pack.images??{}))if(needed(key))images.set(key,folder+'/'+src)
+  }
+  // Prefer the selected original cute sets for monster keys only. Leave doors,
+  // scenery, weapons and the separate Uga/Nuga/Suukuret/Ludo registrations alone.
+  const monsterKeys=new Set(packs.filter(p=>p.folder==='fierce-monsters-v1'||p.folder==='hq-monsters-v1')
+    .flatMap(({pack})=>Object.keys(pack.sprites??{})))
+  for(const folder of ['world-v8','monsters-v7','monsters-v9']){
+    const pack=packs.find(p=>p.folder===folder)!.pack
+    for(const [key,v]of Object.entries(pack.sprites??{}))if(monsterKeys.has(key)&&needed(key))sprites.set(key,{folder,v})
   }
   await Promise.all([...sprites].map(async([key,{folder,v}])=>{
     const img=await cachedImage(folder+'/'+v.frames[0].src)
