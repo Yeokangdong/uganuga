@@ -1,10 +1,9 @@
 import { drawArt, frameAt, walkFrame } from './art'
 import { Background } from './background'
 import { VIEW_H, VIEW_W } from './constants'
-import { STAGES } from './stages'
 import { terrainTheme } from './terrainThemes'
 
-export const JOURNEY_DURATION=6.2
+export const JOURNEY_DURATION=1.8
 type Passage='ridge'|'descent'|'river'|'forest'|'cave'|'ruins'|'dive'|'updraft'
 export interface Journey {from:number;to:number;landmark:string;reason:string;clue:string;passage:Passage}
 const routes:[string,string,string,Passage][]=[
@@ -61,19 +60,7 @@ export function drawPursuitExit(g:CanvasRenderingContext2D,stage:number,arenaX:n
   // A low cairn and an arrow carved into local stone mark a real onward trail.
   g.beginPath();g.moveTo(x-24,y+2);g.lineTo(x-21,y-8);g.lineTo(x-5,y-12);g.lineTo(x+8,y-10);g.lineTo(x+23,y-4);g.lineTo(x+8,y+1);g.closePath();g.fill();g.stroke()
   g.strokeStyle=material.edge;g.lineWidth=1.3;g.beginPath();g.moveTo(x-14,y-5);g.lineTo(x+10,y-5);g.moveTo(x+5,y-9);g.lineTo(x+10,y-5);g.lineTo(x+5,y-2);g.stroke()
-  g.font='bold 6px "Malgun Gothic",sans-serif';g.textAlign='center';g.lineWidth=2;g.strokeStyle='#30271f';g.fillStyle='#fff1c9'
-  g.strokeText(route.landmark,x,y-17);g.fillText(route.landmark,x,y-17)
   g.restore()
-}
-
-function lines(g:CanvasRenderingContext2D,text:string,maxWidth:number):string[]{
-  const result:string[]=[];let line=''
-  for(const word of text.split(' ')){
-    const next=line?line+' '+word:word
-    if(line&&g.measureText(next).width>maxWidth){result.push(line);line=word}else line=next
-  }
-  if(line)result.push(line)
-  return result
 }
 
 /** A camera-following pursuit links the actual source and destination scenery. */
@@ -117,16 +104,11 @@ export function drawJourney(g:CanvasRenderingContext2D,route:Journey,elapsed:num
   drawArt(g,'kingkong.carry',walkFrame('kingkong.carry',distance*.8),282,floor-(cliff?21:0),false)
   g.restore()
   bone(g,202,floor-2)
-  g.fillStyle='rgba(32,24,19,.84)';g.beginPath();g.roundRect(12,12,VIEW_W-24,28,7);g.fill()
-  g.textAlign='center';g.fillStyle='#fff0ca';g.font='bold 9px "Malgun Gothic",sans-serif'
-  g.fillText(`${STAGES[route.from-1]!.sub}  →  ${STAGES[route.to-1]!.sub}`,VIEW_W/2,25)
-  g.font='6px "Malgun Gothic",sans-serif';g.fillStyle='#d8c6a4';g.fillText(route.landmark,VIEW_W/2,35)
-  g.fillStyle='rgba(255,245,217,.95)';g.strokeStyle='#795a3a';g.lineWidth=1
-  g.beginPath();g.roundRect(12,166,VIEW_W-24,37,6);g.fill();g.stroke()
-  g.font='bold 7px "Malgun Gothic",sans-serif';g.fillStyle='#563d2b'
-  const caption=lines(g,route.reason,VIEW_W-48)
-  caption.slice(0,3).forEach((line,i)=>g.fillText(line,VIEW_W/2,179+i*9))
-  g.fillStyle='#fff0c9';g.font='5px "Malgun Gothic",sans-serif';g.fillText('클릭 · Enter로 계속',VIEW_W/2,VIEW_H-4)
+  g.textAlign='center';g.fillStyle='#fff0ca';g.strokeStyle='#30271f';g.lineWidth=3
+  g.font='bold 11px "Malgun Gothic",sans-serif'
+  const caption='누가가 남긴 흔적이다. 조금만 기다려!'
+  g.strokeText(caption,VIEW_W/2,42);g.fillText(caption,VIEW_W/2,42)
+  g.font='6px sans-serif';g.fillText('아무 키로 계속',VIEW_W/2,VIEW_H-10)
   const fade=Math.max(1-t/.3,(t-(JOURNEY_DURATION-.3))/.3,0)
   if(fade>0){g.fillStyle=`rgba(16,13,11,${Math.min(1,fade)})`;g.fillRect(0,0,VIEW_W,VIEW_H)}
   g.restore()

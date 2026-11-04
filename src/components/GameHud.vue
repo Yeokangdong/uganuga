@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import type { HudState } from '../game/game'
-import { art } from '../game/art'
+import { art, drawNugaPortrait } from '../game/art'
 import CartoonText from './CartoonText.vue'
 defineProps<{hud:HudState}>()
 defineEmits<{resume:[];quit:[]}>()
+const nuga=ref<HTMLCanvasElement|null>(null)
 const help=ref(true)
 let helpTimer=0
-onMounted(()=>{helpTimer=window.setTimeout(()=>help.value=false,9000)})
+onMounted(()=>{if(nuga.value)drawNugaPortrait(nuga.value);helpTimer=window.setTimeout(()=>help.value=false,9000)})
 onBeforeUnmount(()=>clearTimeout(helpTimer))
 const digits=(n:number)=>String(n).padStart(7,'0')
 const weaponLabel=(key:string)=>key==='fire'?'FIRE':key==='bone'?'BONE':key==='stone'?'STONE':'CLUB'
@@ -15,6 +16,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 </script>
 <template>
   <div class="hud">
+    <div class="rescue-goal"><canvas ref="nuga" width="48" height="48" aria-label="누가 얼굴" role="img"/><span>누가 구출 · {{hud.stage}}/15<small>{{hud.stage===15?'누가를 구해줘!':'마지막 판까지 '+(15-hud.stage)+'판'}}</small></span></div>
     <div v-if="hud.trail&&!hud.paused&&!hud.boss" class="trail-clue" role="status">{{hud.trail}}</div>
     <div class="stage-score" v-if="hud.players[0]">
       <span :aria-label="'스테이지 '+hud.stage"><CartoonText :text="'STAGE '+hud.stage"/></span>
@@ -54,6 +56,7 @@ const weaponIcon=(key:string)=>{const img=art.sprites['item.weapon.'+key]?.img;r
 </template>
 <style scoped>
 .hud{position:absolute;inset:0;pointer-events:none;color:#fff2cd;font-family:system-ui,sans-serif;text-shadow:0 2px 2px #130c08}
+.rescue-goal{position:absolute;right:12cqw;top:1cqw;display:flex;align-items:center;gap:.5cqw;font-size:1.1cqw;line-height:1.4}.rescue-goal canvas{width:3cqw;height:3cqw;border-radius:50%;background:#55412e}.rescue-goal small{display:block;font-size:.9cqw;color:#ffe0a0}
 .trail-clue{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);max-width:80%;padding:8px 14px;border:1px solid #b69a67;border-radius:9px;background:#30271ee8;color:#fff1ce;font:600 clamp(11px,1.5cqw,20px)/1.6 "Malgun Gothic",sans-serif;text-align:center;text-shadow:none}
 /* Nine-slice the leather: stretch its middle, preserve the bone corners. */
 .status{--pixel:.2604167cqw;position:absolute;left:calc(var(--pixel)*4);top:calc(var(--pixel)*4);width:calc(var(--pixel)*245);height:calc(var(--pixel)*38);transform:scale(.72);transform-origin:top left;color:#fff0cb;text-shadow:none}

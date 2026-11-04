@@ -167,9 +167,18 @@ export class Game {
   private trailT=0
   private arrivalT=0
 
+  private skipCutKey = (event: KeyboardEvent): void => {
+    if (event.repeat || this.paused) return
+    if(this.introT>0 || this.journeyT!==null || this.mode==='clear' && this.endT>0){
+      this.input.consume(event.code)
+      this.skipIntro()
+    }
+  }
+
   skipIntro(): void {
     if(this.stageLoadFailed){this.beginJourney();return}
-    if(this.journeyT!==null){if(this.journeyT>=.6)this.nextStage();return}
+    if(this.journeyT!==null){this.nextStage();return}
+    if(this.mode==='clear' && this.endT>0){this.endT=.001;return}
     if (this.introT <= 0) return
     this.introT = 0
     this.players.forEach(p => { p.invuln = 1.5 })
@@ -180,6 +189,7 @@ export class Game {
   private darkCtx: CanvasRenderingContext2D
 
   constructor(canvas: HTMLCanvasElement, private cb: GameCallbacks, startStage = 0, private directStage = false) {
+    window.addEventListener('keydown',this.skipCutKey)
     canvas.width = VIEW_W * SCALE
     canvas.height = VIEW_H * SCALE
     this.ctx = canvas.getContext('2d')!
@@ -240,7 +250,7 @@ export class Game {
     this.openingDuration=this.stageIdx===0&&!this.directStage?OPENING_DURATION:0
     this.openingCue=false
     this.openingScratCue=false
-    this.introT = this.directStage&&this.stageIdx>0?0:this.openingDuration+this.dreamCount * 2.5 + 2.1
+    this.introT = this.openingDuration+this.dreamCount * 2.5 + 1.8
     this.banner = null
     this.pushHud()
     this.sfx.playMusic('stage',this.stage.theme.music)
@@ -315,6 +325,7 @@ export class Game {
     this.stopped = true
     cancelAnimationFrame(this.raf)
     this.input.dispose()
+    window.removeEventListener('keydown',this.skipCutKey)
     this.sfx.stopMusic()
   }
 
@@ -923,8 +934,8 @@ export class Game {
 
   private completeStage():void {
     if(this.mode==='clear')return
-    this.mode='clear';this.endT=2.5;this.sfx.stopMusic();this.sfx.fanfare()
-    this.showBanner('STAGE CLEAR!',2.5)
+    this.mode='clear';this.endT=1.5;this.sfx.stopMusic();this.sfx.fanfare()
+    this.showBanner('발자국을 찾았다! 누가를 향해 앞으로',1.5)
     const seconds=Math.max(0,Math.ceil(this.timeLeft/TIME_UNIT))
     const bonus=seconds*10
     for(const p of this.players) if(!p.out) {p.score+=bonus;p.lives=Math.min(9,p.lives+1)}
@@ -935,7 +946,7 @@ export class Game {
     const b = this.boss
     this.cb.onHud({
       journey:this.journeyT!==null,
-      trail:this.journeyT!==null?JOURNEYS[this.stageIdx]?.reason??null:this.trailT>0?JOURNEYS[this.stageIdx]?.clue??null:this.arrivalT>0&&this.stageIdx>0?`${STAGES[this.stageIdx-1]!.sub}에서 이어진 길 · 킹콩의 발자국을 따라가자.`:null,
+      trail:null,
       aquatic:!!this.level.def.aquatic,
       aerial:!!this.level.def.aerial,
       food: this.food / this.foodMax,
@@ -1119,7 +1130,7 @@ export class Game {
         if(!p.out)drawArt(ctx,'p1.respawn',progressFrame('p1.respawn',Math.max(0,(t-.7)/.8)),p.cx-this.camX,p.y+p.h-this.camY,false)
       }
       ctx.save();ctx.font='bold 24px "Trebuchet MS", sans-serif';ctx.textAlign='center';ctx.lineJoin='round'
-      ctx.lineWidth=3;ctx.strokeStyle='#573a25';ctx.fillStyle='#fff0bc';ctx.strokeText('READY!',VIEW_W/2,66);ctx.fillText('READY!',VIEW_W/2,66);ctx.restore()
+      ctx.lineWidth=3;ctx.strokeStyle='#573a25';ctx.fillStyle='#fff0bc';ctx.strokeText('누가를 구하러!',VIEW_W/2,66);ctx.fillText('누가를 구하러!',VIEW_W/2,66);ctx.font='8px sans-serif';ctx.fillText(`${this.stage.id}/15 · ${this.stage.final?'드디어 누가가 있는 곳이다!':'킹콩의 발자국을 따라가자'}`,VIEW_W/2,84);ctx.font='6px sans-serif';ctx.fillText('아무 키로 계속',VIEW_W/2,98);ctx.restore()
     }
 
   }

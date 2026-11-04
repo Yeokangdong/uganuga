@@ -324,3 +324,12 @@ export function ugaSwingFrame(elapsed: number, duration: number): number {
   return elapsed < start / 2 ? 0 : elapsed < start ? 1 : elapsed <= end ? 2 : 3
 }
 
+
+/** Reuse the existing princess frame for the small rescue marker. */
+export function drawNugaPortrait(canvas:HTMLCanvasElement):void {
+  const sprite=art.sprites['nuga.run'];const g=canvas.getContext('2d')
+  if(!sprite||!g)return
+  const [x,y,w,h]=sprite.frames[0]!
+  g.clearRect(0,0,canvas.width,canvas.height)
+  g.drawImage(sprite.img,x!,y!,w!,h!*.55,4,4,40,40)
+}
