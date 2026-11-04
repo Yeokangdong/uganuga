@@ -9,7 +9,7 @@ export class Background {
   setStage(stage:number):void {this.stage=stage}
   setBoss(on:boolean):void {this.boss=on}
 
-  draw(g:CanvasRenderingContext2D,camX:number,_time:number,camY=0,groundCamY=0):void {
+  draw(g:CanvasRenderingContext2D,camX:number,time:number,camY=0,groundCamY=0):void {
     const im=this.stage===17?(image('underwater.background')??image('stage.bg17')):this.stage===18?(image('sky.background')??image('stage.bg18')):image('stage.bg'+this.stage)
     g.save()
     g.imageSmoothingEnabled=true
@@ -23,6 +23,23 @@ export class Background {
       const y=Math.max(-overscan,Math.min(0,-overscan*.5+(groundCamY-camY)*.22))
       g.drawImage(im,(VIEW_W-w)/2-offset,y,w,h)
     }
+    // Sparse decorative silhouettes stay behind all gameplay and warnings.
+    g.globalAlpha=.22
+    const cold=[5,6,10,14].includes(this.stage), dry=[3,7,8,11,12,15].includes(this.stage)
+    g.fillStyle=cold?'#e2f4ed':dry?'#e5bd87':'#b4d77b'
+    for(let i=0;i<6;i++){
+      const x=((i*79+this.stage*23+time*(dry?2:4)-camX*.08)% (VIEW_W+20)+VIEW_W+20)%(VIEW_W+20)-10
+      const y=48+(i*29+this.stage*7)%100+Math.sin(time*.7+i)*5
+      g.beginPath();g.ellipse(x,y,cold?1:3,cold?1:1.2,Math.sin(time+i)*.5,0,Math.PI*2);g.fill()
+    }
+    if(!cold&&!dry){
+      for(let i=0;i<2;i++){
+        const x=80+i*210+Math.sin(time*.25+i)*14,y=64+i*36+Math.cos(time*.6+i)*5
+        const wing=1+Math.abs(Math.sin(time*3+i))*2
+        g.beginPath();g.ellipse(x-2,y,wing,1.5,-.5,0,Math.PI*2);g.ellipse(x+2,y,wing,1.5,.5,0,Math.PI*2);g.fill()
+      }
+    }
+    g.globalAlpha=1
     if(this.boss){g.fillStyle='rgba(19,12,18,.15)';g.fillRect(0,0,VIEW_W,VIEW_H)}
     g.restore()
   }

@@ -135,7 +135,7 @@ export class Particle {
 
 export class Popup {
   dead = false
-  life = 0.9
+  life = 0.65
   constructor(public x: number, public y: number, public text: string, public color = '#fff') {}
   update(dt: number): void {
     this.y -= 30 * dt
@@ -149,7 +149,12 @@ export class Popup {
     ctx.strokeStyle = '#1c0f08'
 
     ctx.fillStyle = this.color
-    drawPaintedText(ctx, this.text, this.x - cx, this.y - cy, 8)
+    const x = Math.max(34, Math.min(VIEW_W - 34, this.x - cx))
+    const y = Math.max(42, Math.min(VIEW_H - 12, this.y - cy))
+    ctx.save()
+    ctx.globalAlpha *= Math.min(1, this.life / .15)
+    drawPaintedText(ctx, this.text, x, y, 8)
+    ctx.restore()
   }
 }
 
@@ -164,6 +169,20 @@ export class Fx {
   }
   draw(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
     const k = this.t / this.life
+    if(this.key==='fx.hit'){
+      ctx.save();ctx.globalAlpha*=1-k;ctx.fillStyle='#ffe5a1'
+      for(let i=0;i<3;i++){
+        const a=i*Math.PI*2/3+k*.8,x=this.x-cx+Math.cos(a)*(4+k*8),y=this.y-cy+Math.sin(a)*(3+k*5)
+        ctx.beginPath()
+        for(let j=0;j<10;j++){
+          const r=(j%2?1.1:2.5)*this.scale,angle=j*Math.PI/5-Math.PI/2
+          if(j===0)ctx.moveTo(x+Math.cos(angle)*r,y+Math.sin(angle)*r)
+          else ctx.lineTo(x+Math.cos(angle)*r,y+Math.sin(angle)*r)
+        }
+        ctx.closePath();ctx.fill()
+      }
+      ctx.restore()
+    }
     drawArt(ctx, this.key, frameAt(this.key,this.t,false), this.x - cx, this.y - cy, this.faceLeft, { alpha: 1 - k * k, scale: this.scale * (0.9 + k * 0.25) })
   }
 }
@@ -542,7 +561,9 @@ export class Player implements Body {
     const b = g.boss
     if (b && !b.dying && !this.swingHit.has(b) && overlap(hb, b.hitbox)) {
       this.swingHit.add(b)
+      const hp = b.hp
       b.hit(g, dmg, this)
+      if(b.hp < hp)g.impact(b.cx,b.y-8,true)
       g.fx('fx.hit', hb.x + hb.w / 2, hb.y + hb.h / 2, false, 0.2)
       if (this.swingKind === 'air') this.vy = -240
     }
@@ -1051,6 +1072,7 @@ export abstract class Enemy implements Body {
   hit(g: Game, dmg: number, fromX: number, by: Player | null): void {
     if(this.dead || this.dying || this.invulnerable || this.flash>0) return
     this.flash=.24
+    g.impact(this.cx,this.y-8)
     g.burst(this.cx,this.y+this.h/2,'#fff2be',4)
     if(this.stunT>0){
       this.finishHits++

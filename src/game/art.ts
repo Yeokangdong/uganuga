@@ -266,6 +266,7 @@ Object.assign(paintedWords, {
 function paintedKeys(text: string): string[] {
   const key = textArtKey(text)
   if (key) return [key]
+  if (text.startsWith('FOOD ')) return ['ui.word_food', ...paintedKeys(text.slice(5))]
   if (text.startsWith('TIME BONUS ')) return ['ui.word_time', ...paintedKeys(text.slice(11))]
   return [...text].flatMap(c => c === 's' || c === '초' ? ['ui.word_sec'] : /[0-9+x:]/.test(c) ? [`ui.digit_${c}`] : [])
 }

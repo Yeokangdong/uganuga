@@ -142,6 +142,7 @@ export class Game {
   private passage: { t: number; door: Door | null } | null = null
   private rescueT = 0
   private lastBeep = 0
+  private hitStop = 0
   private shakeT = 0
   private shakeMag = 0
   private endT = 0
@@ -198,7 +199,7 @@ export class Game {
   /** ?�테?��? ?�작 (처음 ?�는 ?�음 ?�테?��?�??�어�??? */
   private beginStage(): void {
     this.environmentEvents.reset(this.level)
-    this.shakeT = 0; this.shakeMag = 0
+    this.hitStop = 0; this.shakeT = 0; this.shakeMag = 0
     this.journeyT=null
     this.journeyPreview=false
     this.trailSeen=false
@@ -346,12 +347,20 @@ export class Game {
   }
 
   popup(x: number, y: number, text: string, color = '#ffffff'): void {
+    const p = this.players[0]
+    if(p && Math.abs(x-p.cx)<32 && Math.abs(y-p.y)<p.h+20)y=p.y-20
     this.popups.push(new Popup(x, y, text, color))
   }
 
   /** Codex ?�펙??그림 ?�생 (그림???�으�??�무것도 ???? */
   fx(key: string, x: number, y: number, faceLeft: boolean, life = 0.25, scale = 1): void {
     this.effects.push(new Fx(key, x, y, faceLeft, life, scale))
+  }
+
+  impact(x:number,y:number,boss=false):void {
+    this.hitStop=Math.max(this.hitStop,boss?.075:.06)
+    this.shake(boss?.12:.08,boss?1.8:.8)
+    this.fx('fx.hit',x,y,false,.16,boss?.65:.4)
   }
 
   shake(t: number, mag: number): void {
@@ -430,7 +439,16 @@ export class Game {
     }
     if(this.mode==='clear' || this.mode==='over') {
       this.time+=dt;for(const p of this.players)p.anim+=dt
+      for(const p of this.popups)p.update(dt)
+      removeDead(this.popups)
       this.checkEnd(dt);this.pushHud();return
+    }
+    if(this.hitStop>0){
+      const stopped=Math.min(dt,this.hitStop)
+      this.hitStop-=stopped
+      this.updateTimer(stopped)
+      dt-=stopped
+      if(dt<=0){this.pushHud();return}
     }
     const realDt = dt
     this.trailT=Math.max(0,this.trailT-realDt)
@@ -469,7 +487,7 @@ export class Game {
       else it.update(this, dt)
     }
     for (const p of this.particles) p.update(dt)
-    for (const p of this.popups) p.update(dt)
+    for (const p of this.popups) p.update(realDt)
     for (const f of this.effects) f.update(dt)
 
     this.collide()
@@ -523,7 +541,7 @@ export class Game {
 
   private enterCave(door:Door):void {
     this.environmentEvents.cancel()
-    this.shakeT=0;this.shakeMag=0
+    this.hitStop=0;this.shakeT=0;this.shakeMag=0
     this.saved={level:this.level,camX:this.camX,camY:this.camY,enemies:this.enemies,projectiles:this.projectiles,items:this.items,ambushes:this.ambushes,door}
     const room=door.room
     this.level=room?.level ?? new Level(makeCaveRoom(this.stage,this.stage.id*100+door.id))
@@ -544,7 +562,7 @@ export class Game {
 
   private exitCave():void {
     this.environmentEvents.cancel()
-    this.shakeT=0;this.shakeMag=0
+    this.hitStop=0;this.shakeT=0;this.shakeMag=0
     const s=this.saved;if(!s)return
     s.door.room={level:this.level,enemies:this.enemies,items:this.items,ambushes:this.ambushes}
     s.door.used=true;this.saved=null;this.level=s.level;this.camX=s.camX;this.camY=s.camY
@@ -769,7 +787,9 @@ export class Game {
       }
       const b = this.boss
       if (!pr.dead && b && !b.dying && !pr.hitSet.has(b) && overlap(pr, b.hitbox)) {
+        const hp = b.hp
         b.hit(this, pr.dmg, pr.owner)
+        if(b.hp<hp)this.impact(b.cx,b.y-8,true)
         pr.hitSet.add(b)
         if (!pr.pierce) pr.dead = true
       }
@@ -799,23 +819,24 @@ export class Game {
           continue
         }
         this.sfx.pickup()
+        const foodBefore=this.food
         switch (it.kind) {
           case 'meat':
             this.food = Math.min(this.foodMax, this.food + 20)
             p.heal(3)
             p.score += 100
-          this.popup(it.x + 6, it.y - 4, '+100', '#c9c0ae')
+          this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
           case 'bigmeat':
             this.food = Math.min(this.foodMax, this.food + 40)
             p.heal(99)
             p.score += 500
-          this.popup(it.x + 6, it.y - 4, '+500', '#c9c0ae')
+          this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
           case 'fruit':
             this.food = Math.min(this.foodMax, this.food + 5)
             p.score += 500
-          this.popup(it.x + 6, it.y - 4, '+500', '#c9c0ae')
+          this.popup(it.x + 6, it.y - 4, `FOOD +${this.food-foodBefore}`, '#c9c0ae')
             break
           case 'cross':
             p.lives=addCaveLife(p.lives)
@@ -904,9 +925,10 @@ export class Game {
     if(this.mode==='clear')return
     this.mode='clear';this.endT=2.5;this.sfx.stopMusic();this.sfx.fanfare()
     this.showBanner('STAGE CLEAR!',2.5)
-    const bonus=Math.ceil(this.timeLeft/TIME_UNIT)*10
+    const seconds=Math.max(0,Math.ceil(this.timeLeft/TIME_UNIT))
+    const bonus=seconds*10
     for(const p of this.players) if(!p.out) {p.score+=bonus;p.lives=Math.min(9,p.lives+1)}
-    if(bonus>0)this.popup(this.camX+VIEW_W/2,70,`TIME BONUS ${bonus}`,'#ffe14a')
+    if(bonus>0)this.popup(this.camX+VIEW_W/2,70,`TIME BONUS ${seconds}x10 +${bonus}`,'#ffe14a')
   }
 
   private pushHud(): void {
