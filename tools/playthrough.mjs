@@ -15,8 +15,8 @@ if (!range) throw new Error('--stages: 1-15 형식 필요')
 const first = Number(range[1]), last = Number(range[2] ?? range[1])
 if (first < 1 || last > 15 || first > last) throw new Error('판 범위: 1~15')
 const port=option('--port','5306')
-const kingkongCheck = args.includes('--kingkong326') || args.includes('--kingkong328')
-const shotPrefix = args.includes('--kingkong328') ? '328' : '326'
+const kingkongCheck = args.includes('--kingkong326') || args.includes('--kingkong328') || args.includes('--kingkong329')
+const shotPrefix = args.includes('--kingkong329') ? '329' : args.includes('--kingkong328') ? '328' : '326'
 const floodCheck = args.includes('--environment13')
 const chaseCheck = args.includes('--environment7')
 const storyCheck = args.includes('--story325')
@@ -69,6 +69,7 @@ try {
     let snapshot = null, reason = '', complete = false, lastProgress = Date.now()
     let anchor = null, previousSignature = '', tick = 0
     const captured = new Set()
+    const recent = []; let previousHealth = null, routePlan = null
     const onError = e => errors.push(e.message)
     const onConsole=m=>{if(m.type()==='error')errors.push(m.text())}
     page.on('pageerror', onError);page.on('console',onConsole)
@@ -78,6 +79,31 @@ try {
       await page.waitForFunction(() => !document.querySelector('.loading'), null, { timeout: 60000 })
       await page.keyboard.press('Space')
       await page.waitForFunction(() => window.__game?.players?.length && !window.__game.stageLoading && window.__game.mode==='play', null, { timeout: 60000 })
+      if(shotPrefix==='329'){
+        routePlan=await page.evaluate(async()=>{
+          const {GRAVITY,JUMP_VEL,RUN_SPEED}=await import('/src/game/constants.ts')
+          const lv=window.__game.level,columns=[]
+          for(let x=24;x<lv.arenaX+32;x+=8){
+            const tops=[]
+            for(let y=160;y<lv.height;y+=16)if((lv.solidAt(x,y)||lv.tile(Math.floor(x/16),y/16)===2||lv.isLadderTop(Math.floor(x/16),y/16))&&!lv.solidAt(x,y-1)&&!lv.waterAt(x,y-3))tops.push(y)
+            columns.push({x,tops,water:Array.from({length:Math.ceil(lv.height/16)},(_,r)=>r*16).filter(y=>lv.waterAt(x,y))})
+          }
+          const nodes=columns.flatMap(c=>c.tops.map(y=>({x:c.x,y}))),reachable=new Set(),edges=[]
+          const p=window.__game.players[0]; const start=nodes.findIndex(n=>Math.abs(n.x-p.cx)<12&&Math.abs(n.y-p.y-p.h)<20)
+          if(start>=0)reachable.add(start)
+          for(let i=0;i<nodes.length;i++)if(reachable.has(i))for(let j=i+1;j<nodes.length&&nodes[j].x-nodes[i].x<=64;j++){
+            const a=nodes[i],b=nodes[j],d=b.y-a.y,disc=JUMP_VEL**2+2*GRAVITY*d
+            if(disc<0)continue
+            const flight=(JUMP_VEL+Math.sqrt(disc))/GRAVITY,dx=b.x-a.x
+            if(dx>RUN_SPEED*flight-3)continue
+            let safe=true
+            for(let k=1;k<20;k++){const t=flight*k/20,x=a.x+dx*k/20,y=a.y-JUMP_VEL*t+GRAVITY*t*t/2;if(lv.waterAt(x,y-3)||lv.solidAt(x,y-4)||lv.solidAt(x,y-p.h))safe=false}
+            if(safe){reachable.add(j);if(dx>32)edges.push({from:a,to:b})}
+          }
+          return {gravity:GRAVITY,jump:JUMP_VEL,speed:RUN_SPEED,rise:JUMP_VEL**2/(2*GRAVITY),range:RUN_SPEED*2*JUMP_VEL/GRAVITY,connected:[...reachable].some(i=>nodes[i].x>=lv.arenaX-16),furthest:Math.max(...[...reachable].map(i=>nodes[i].x)),columns:columns.filter(c=>c.water.length||c.x>6480),longEdges:edges.slice(-12),qualification:'read-only ballistic approximation; ladders/enemies/acceleration require live confirmation'}
+        })
+        events.push({branch:'preflight-route',...routePlan});console.log(JSON.stringify({preflight:routePlan.connected,furthest:routePlan.furthest,rise:routePlan.rise,range:routePlan.range,hypothesis:'floorBelow includes water: bank-to-bank jump must launch within 8px; feet-3 differs from previous feet+8 probe'}))
+      }
       while (!args.includes('--branches326')&&!args.includes('--branches323') && Date.now() - started < limit * 1000) {
         if(kingkongCheck&&await page.locator('.result.clear').count()){
           events.push({branch:'result-clear'})
@@ -100,7 +126,7 @@ try {
           const story=argsStory?(await import('/src/game/journey.ts')).storyTraceAnchor(lv,g.doors.map(d=>d.x)):null
           return { story,stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
-            lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
+            vy:p.vy,invuln:p.invuln,bodyWater:lv.waterAt(p.cx,p.y+p.h-3),feetWater:lv.waterAt(p.cx,p.y+p.h+1),collision:{left:lv.solidAt(p.x,p.y+p.h-4),right:lv.solidAt(p.x+p.w,p.y+p.h-4)},lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
             climbing: p.climbing, facing: p.facing, swing: p.swingT, chargeReady:p.chargeReady, charge:p.charge, vx: p.vx,
             environment: {phase:g.environmentEvents.phase,elapsed:g.environmentEvents.elapsed,
               rockX:g.environmentEvents.rockX,route:lv.def.chase,flood:lv.def.flood,water:lv.floodWater},
@@ -109,12 +135,18 @@ try {
             wall: lv.solidAt(p.cx+dir*27, feet - 8),
             waterAhead:lv.waterAt(x,feet+8),
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
-            terrain: Array.from({length:9},(_,i)=>{const px=p.cx+i*8;return {x:px,floor:lv.floorBelow(px,feet-2),water:lv.waterAt(px,feet+8),ladder:lv.isLadder(Math.floor(px/16),Math.floor((feet-2)/16))}}),
+            terrain: Array.from({length:15},(_,i)=>{const px=p.cx+i*4;return {x:px,floor:lv.floorBelow(px,feet-2),water:lv.waterAt(px,lv.floorBelow(px,feet-2)+1),top:lv.floorBelow(px,feet-48),ladder:lv.isLadder(Math.floor(px/16),Math.floor((feet-2)/16))}}),
             routeLadders:argsStory?[]:(lv.def.map.ladders??[]).filter(([c,t,b])=>c>=lv.arenaX/32&&b>=20&&t<=18).map(([c,t,b])=>({x:c*16+8,top:t*16,bottom:b*16})),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
               state: g.boss.state, pattern:g.boss.pattern, rage:g.boss.phase2, y:g.boss.y, h:g.boss.h, t:g.boss.t, vy:g.boss.vy, waves:g.boss.waves?.map(w=>({x:w.x,dir:w.dir})),target:g.boss.targetX, vx: g.boss.vx } : null }
         },storyCheck)
         const s = snapshot
+        if(shotPrefix==='329'){
+          const frame={seconds:+((Date.now()-started)/1000).toFixed(2),x:s.cx,y:s.y,vy:s.vy,hp:s.hp,lives:s.lives,ground:s.ground,climbing:s.climbing,bodyWater:s.bodyWater,feetWater:s.feetWater,collision:s.collision,terrain:s.terrain,foes:s.foes.filter(e=>Math.abs(e.x-s.cx)<90),keys:[...held]}
+          recent.push(frame);if(recent.length>12)recent.shift()
+          if(previousHealth&&(s.hp<previousHealth.hp||s.lives<previousHealth.lives)){events.push({branch:'health-loss',before:previousHealth,frames:[...recent]});console.log(JSON.stringify({loss:true,x:s.cx,y:s.y,hp:s.hp,lives:s.lives,bodyWater:s.bodyWater}))}
+          previousHealth={hp:s.hp,lives:s.lives}
+        }
         if(kingkongCheck){
           if(shotPrefix==='326'&&!captured.has('uga')&&!await access(path.join(root,'shots/326_uga.png')).then(()=>true,()=>false)&&s.ground&&s.x>80){await page.screenshot({path:path.join(root,'shots/326_uga.png')});captured.add('uga')}
           if(s.boss){
@@ -202,12 +234,12 @@ try {
           const foe = s.mode === 'boss' ? s.boss : s.foes.filter(e => Math.abs(e.y + e.h - s.y - s.h) < 40 && Math.abs(e.x - s.cx) < 125)
             .sort((a, b) => Math.abs(a.x - s.cx) - Math.abs(b.x - s.cx))[0]
           let target = foods[0]?.x ?? foe?.x ?? s.arena + 64
-          if (foe) target = foe.x - Math.sign(foe.x - s.cx || 1) * (foe.w / 2 + 14)
+          if (foe && !(shotPrefix==='329'&&!s.ground&&s.gap)) target = foe.x - Math.sign(foe.x - s.cx || 1) * (foe.w / 2 + 14)
           const wanted = []
           const projected = s.cx + s.vx * .12
           if (target < projected - 3) wanted.push('ArrowLeft')
           if (target > projected + 3) wanted.push('ArrowRight')
-          if (foe && Math.abs(foe.x - s.cx) < foe.w / 2 + 42) {
+          if (foe && !(shotPrefix==='329'&&!s.ground&&s.gap) && Math.abs(foe.x - s.cx) < foe.w / 2 + 42) {
             if (Math.sign(foe.x - s.cx) !== s.facing) {
               wanted.length = 0; wanted.push(foe.x < s.cx ? 'ArrowLeft' : 'ArrowRight')
             }
@@ -244,12 +276,12 @@ try {
             }
           }
           if(kingkongCheck&&s.mode==='play'){
-            if(s.cx>4500&&s.ground&&!held.has('ArrowUp')&&s.terrain.slice(2,5).some(t=>t.floor>s.y+s.h+16))wanted.push('ArrowUp')
-            if(s.cx>4540&&s.cx<4800&&tick%3===0)events.push({branch:'route-input',x:s.cx,y:s.y,ground:s.ground,climbing:s.climbing,hp:s.hp,lives:s.lives,terrain:s.terrain,keys:[...held]})
+            if(s.ground&&!held.has('ArrowUp')&&s.terrain.slice(2,5).some(t=>t.floor>s.y+s.h+16))wanted.push('ArrowUp')
+            if(shotPrefix!=='329'&&s.cx>4540&&s.cx<4800&&tick%3===0)events.push({branch:'route-input',x:s.cx,y:s.y,ground:s.ground,climbing:s.climbing,hp:s.hp,lives:s.lives,terrain:s.terrain,keys:[...held]})
 
             // A water jump launched 32px early lands inside a 32px pool (90px/s, ~0.57s flight).
             // Keep rightward speed and launch only within 8–16px of the near bank.
-            if(s.terrain.slice(1,3).some(t=>t.water)&&s.ground){
+            if(s.terrain.filter(t=>t.x-s.cx<=12).some(t=>t.water)&&s.ground){
               wanted.length=0;wanted.push('ArrowRight');if(!held.has('ArrowUp'))wanted.push('ArrowUp')
             }
             const ladder=s.routeLadders.find(l=>l.x>s.cx-12&&l.x<s.cx+90&&s.y+s.h>l.top+3&&s.y+s.h<=l.bottom+4)
@@ -260,6 +292,10 @@ try {
               else wanted.push('ArrowUp')
               if(s.climbing){wanted.length=0;wanted.push('ArrowUp')}
             }
+          }
+          if(shotPrefix==='329'&&s.mode==='play'&&!s.climbing){
+            const feet=s.y+s.h,edge=s.terrain.find(t=>t.water||t.floor>feet+32),step=s.terrain.find(t=>t.top<feet-3&&t.top>=feet-44)
+            if(s.ground&&!held.has('ArrowUp')&&((edge&&edge.x-s.cx<=9)||(step&&step.x-s.cx<=16)))wanted.push('ArrowUp')
           }
           if(kingkongCheck&&s.mode==='boss'&&s.boss){
             const b=s.boss,dx=b.x-s.cx
@@ -280,7 +316,7 @@ try {
           await input(wanted)
         }
         tick++
-        await page.waitForTimeout(100)
+        await page.waitForTimeout(shotPrefix==='329'?40:100)
       }
       if(args.includes('--branches326')){
         const checks=await page.evaluate(async()=>{
@@ -418,6 +454,11 @@ try {
     if(!kingkongCheck&&!chaseCheck&&!floodCheck&&!storyCheck&&!args.includes('--branches323'))await page.screenshot({ path: screenshot, fullPage: true })
     const result = { stage, target:kingkongCheck?'normal-speed-FOOD60-3patterns-rage-rescue-result-keyboard-restart':storyCheck?'story-trace-real-input-and-control':floodCheck?'environment13-input-drain':chaseCheck?'environment7-input-escape':'clear-and-next-stage', complete, blocked: reason, seconds: +((Date.now() - started) / 1000).toFixed(2),
       position: snapshot ? { x: snapshot.x, y: snapshot.y } : null, snapshot, events, errors, screenshot }
+    if(shotPrefix==='329'){
+      const {readFile}=await import('node:fs/promises')
+      const prior=await readFile(path.join(output,'results.json'),'utf8').then(JSON.parse,()=>[])
+      results.push(...prior)
+    }
     results.push(result)
     await writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2))
     page.off('pageerror', onError);page.off('console',onConsole)
