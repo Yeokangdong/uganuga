@@ -1,4 +1,5 @@
 import {updateStagePattern,drawStagePattern} from './patternRuntime'
+import { EnvironmentEvents } from './environmentEvents'
 import { Piranha } from './piranha'
 import { rollCaveReward, addCaveLife } from './caveRewards'
 import { drawOpening, OPENING_DURATION, OPENING_GRAB_START, OPENING_ESCAPE_START, OPENING_PLEA_START, OPENING_DIALOGUE_START, OPENING_HERO_LINE_START } from './opening'
@@ -108,6 +109,7 @@ interface Ambush {
 }
 
 export class Game {
+  readonly environmentEvents = new EnvironmentEvents()
   ctx: CanvasRenderingContext2D
   stageIdx: number
   stage: StageDef
@@ -195,6 +197,8 @@ export class Game {
 
   /** ?�테?��? ?�작 (처음 ?�는 ?�음 ?�테?��?�??�어�??? */
   private beginStage(): void {
+    this.environmentEvents.reset(this.level)
+    this.shakeT = 0; this.shakeMag = 0
     this.journeyT=null
     this.journeyPreview=false
     this.trailSeen=false
@@ -445,6 +449,7 @@ export class Game {
       p.advanceIdleThought(realDt,inp.get(i))
     })
     updateStagePattern(this,realDt)
+    this.environmentEvents.update(this,realDt,this.doors.map(d=>d.x))
     this.updateCamera(dt)
     this.updateScrat(dt)
     this.spawn()
@@ -552,6 +557,8 @@ export class Game {
   }
 
   private enterCave(door:Door):void {
+    this.environmentEvents.cancel()
+    this.shakeT=0;this.shakeMag=0
     this.saved={level:this.level,camX:this.camX,camY:this.camY,enemies:this.enemies,projectiles:this.projectiles,items:this.items,ambushes:this.ambushes,door}
     const room=door.room
     this.level=room?.level ?? new Level(makeCaveRoom(this.stage,this.stage.id*100+door.id))
@@ -571,6 +578,8 @@ export class Game {
   }
 
   private exitCave():void {
+    this.environmentEvents.cancel()
+    this.shakeT=0;this.shakeMag=0
     const s=this.saved;if(!s)return
     s.door.room={level:this.level,enemies:this.enemies,items:this.items,ambushes:this.ambushes}
     s.door.used=true;this.saved=null;this.level=s.level;this.camX=s.camX;this.camY=s.camY
@@ -1047,6 +1056,7 @@ export class Game {
       }
     }
     drawStagePattern(this,ctx,cx,cy)
+    if(!this.saved&&this.stage.id===1)this.environmentEvents.draw(ctx,cx,cy)
     this.drawWater(ctx, cx, cy)
     this.drawAirPockets(ctx,cx,cy)
     this.drawUpdrafts(ctx,cx,cy)
