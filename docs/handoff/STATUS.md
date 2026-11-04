@@ -89,3 +89,8 @@
 - 대표 「모두중지하고 게임사이트 열어봐」: 330작업/dispatcher프로세스중지, queue/running없음, HOLD_ON.txt로재실행차단. 10분점검(10)·매시간보고(automation)예약삭제. 대표재개지시전새작업/검증/재시작금지.
 - 1~9완료,10~12미완료유지.330은프로세스중단으로done으로이동됐어도완료/검수통과아님. 기존변경/로그보존 (Codex 판단).
 - 공개게임 https://yeokangdong.github.io/uganuga/ 열기요청. 다음행동:대표사이트확인/재개지시대기.
+
+## 20:29 대표 추가 지시 — 개별 예외작업
+- 「케릭터가 떠있는거같다」「니가 하지말고 시켜」: 발 접지331만팀원foot_contact_331에위임. HOLD_ON/dispatcher중지/예약삭제/330중단유지,자동연쇄재개아님. 1~9완료·10~12미완료체크유지.
+- 「귀엽지는 않는 그림체가 같은 몬스터 원화」기존자료탐색: public/assets/fierce-monsters-v1(표정강화만화풍)·hq-monsters-v1(질감강화·덜귀여움)확인. 현재코드등록순서는HQ우선이며공개빌드와일치여부미검증. 원본art-src접근/신규제작/교체없음. 비교표는현재채팅visualizations/monster_existing_comparison_equal.png.
+- 다음:대표기존몬스터후보확인·331팀원보고서/접지비교화면직접검수.
