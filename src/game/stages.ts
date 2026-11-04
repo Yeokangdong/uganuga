@@ -460,6 +460,12 @@ export const STAGES: StageDef[] = STAGE_NAMES.map((sub,index)=>{
   }
   const planned=planEncounters(map,index,localRoles,habitat,BESTIARY)
   map=planned.map
+  if(index===0){
+    // Four +5 fruit trace the first jump; two normal animal drops supply +40.
+    const grid=map.map(row=>row.replace(/f/g,'.').split(''))
+    for(const [col,row] of [[8,18],[9,17],[10,17],[11,18]])grid[row]![col]='f'
+    map=Object.assign(grid.map(row=>row.join('')),{ladders:map.ladders})
+  }
   return {
     id:index+1,title:`STAGE ${index+1}`,sub,kind:'explore',aquatic:sea?.aquatic,aerial:sky?.aerial,
     theme:{...themes[set]!,background:index+1,music:index===1?'volcano':[2,7,14].includes(index)?'glacier':'jungle'},roles:localRoles,caveEntrance:cast.door,

@@ -459,7 +459,10 @@ export class Game {
       this.boss.afterUpdate(this)
     }
     for (const p of this.projectiles) p.update(this, dt)
-    for (const it of this.items) it.update(this, dt)
+    for (const it of this.items) {
+      if(this.routeFruit.has(it))it.t+=dt
+      else it.update(this, dt)
+    }
     for (const p of this.particles) p.update(dt)
     for (const p of this.popups) p.update(dt)
     for (const f of this.effects) f.update(dt)
@@ -585,6 +588,17 @@ export class Game {
     for(const d of this.doors){
       if(d.x<cx-64||d.x>cx+VIEW_W+64)continue
       drawArt(ctx,entrance,0,d.x-cx,d.floor-cy,false,{alpha:d.used?.8:1})
+      // Quiet reflected light and tracks leave the entrance and walking lane clear.
+      const x=d.x-cx,y=d.floor-cy
+      ctx.save()
+      const light=ctx.createRadialGradient(x,y-22,2,x,y-22,35)
+      light.addColorStop(0,'rgba(255,220,140,0.18)');light.addColorStop(1,'rgba(255,220,140,0)')
+      ctx.fillStyle=light;ctx.fillRect(x-35,y-57,70,57)
+      ctx.fillStyle='rgba(221,199,151,0.6)'
+      for(let i=0;i<4;i++){ctx.beginPath();ctx.ellipse(x-62+i*6,y-1-i%2*2,2,1,.25,0,Math.PI*2);ctx.fill()}
+      ctx.strokeStyle='rgba(188,153,103,0.65)';ctx.lineWidth=1
+      ctx.beginPath();ctx.moveTo(x+53,y-2);ctx.lineTo(x+61,y-5);ctx.lineTo(x+58,y-8);ctx.stroke()
+      ctx.restore()
       if(this.players.some(p=>p.alive&&Math.abs(d.x-p.cx)<18&&Math.abs(d.floor-p.y-p.h)<6)){
         ctx.fillStyle='#ffe8a3';ctx.beginPath();ctx.moveTo(d.x-cx-3,d.floor-cy-61);ctx.lineTo(d.x-cx+3,d.floor-cy-61);ctx.lineTo(d.x-cx,d.floor-cy-56);ctx.closePath();ctx.fill()
       }
@@ -659,6 +673,8 @@ export class Game {
     return new ContactAnimal(resolved,x,cfg.cls==='flyer'&&this.stage.id>15?_row*TILE:floorY-cfg.h)
   }
 
+  private routeFruit = new WeakSet<Item>()
+
   private spawn(): void {
     const edge = this.camX + VIEW_W + 8
     const lv = this.level
@@ -700,7 +716,10 @@ export class Game {
           this.enemies.push(new FireTrap(x + 8, floor))
           break
         case 'f':
-          // Fruit is a cave reward, never a pre-placed map decoration.
+          if(this.stage.id===1&&!lv.def.cave){
+            const fruit=new Item('fruit',x+2,cy,false,n)
+            this.routeFruit.add(fruit);this.items.push(fruit)
+          }
           break
         case 'k':
           this.items.push(new Item('clock', x + 2, floor - 12, false, n))
