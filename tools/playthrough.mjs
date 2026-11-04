@@ -83,12 +83,12 @@ try {
           return { stage: g.stage.id, mode: g.mode, food: g.food, time: g.time,
             timeLeft: g.timeLeft, x: p.x, cx: p.cx, y: p.y, h: p.h, hp: p.hp,
             lives: p.lives, alive: p.alive, out: p.out, ground: p.onGround,
-            climbing: p.climbing, facing: p.facing, swing: p.swingT,
+            climbing: p.climbing, facing: p.facing, swing: p.swingT, vx: p.vx,
             intro: g.introT > 0, journey: g.journeyT !== null, arena: lv.arenaX,
             wall: lv.solidAt(x, feet - 8),
             gap: !(lv.solidAt(x, feet + 4) || lv.tile(col, row) === 2 || lv.isLadderTop(col, row)),
             foods, foes, boss: g.boss ? { hp: g.boss.hp, x: g.boss.cx, w: g.boss.w,
-              phase: g.boss.phase, move: g.boss.move } : null }
+              state: g.boss.state, vx: g.boss.vx } : null }
         })
         const s = snapshot
         const signature = `${s.stage}:${s.mode}:${s.food >= 60}:${s.boss?.hp ?? ''}:${s.lives}`
@@ -117,19 +117,19 @@ try {
           const foe = s.mode === 'boss' ? s.boss : s.food < 60 ? s.foes.filter(e => Math.abs(e.y + e.h - s.y - s.h) < 40 && Math.abs(e.x - s.cx) < 125)
             .sort((a, b) => Math.abs(a.x - s.cx) - Math.abs(b.x - s.cx))[0] : null
           let target = foods[0]?.x ?? foe?.x ?? s.arena + 64
-          if (foe) target = foe.x - Math.sign(foe.x - s.cx || 1) * (foe.w / 2 + 9)
+          if (foe) target = foe.x - Math.sign(foe.x - s.cx || 1) * (foe.w / 2 + 14)
           const wanted = []
-          if (target < s.cx - 3) wanted.push('ArrowLeft')
-          if (target > s.cx + 3) wanted.push('ArrowRight')
+          const projected = s.cx + s.vx * .12
+          if (target < projected - 3) wanted.push('ArrowLeft')
+          if (target > projected + 3) wanted.push('ArrowRight')
           if (foe && Math.abs(foe.x - s.cx) < foe.w / 2 + 42) {
             if (Math.sign(foe.x - s.cx) !== s.facing) {
               wanted.length = 0; wanted.push(foe.x < s.cx ? 'ArrowLeft' : 'ArrowRight')
             }
-            if (tick % 3 === 0) wanted.push('Space')
+            if (s.swing <= 0 && !held.has('Space')) wanted.push('Space')
           }
           if (s.climbing || s.ground && tick % 3 === 0 && (s.wall || s.gap || stuck > 2 ||
-            foods[0] && foods[0].y < s.y - 5 && Math.abs(foods[0].x - s.cx) < 35 ||
-            s.boss?.phase === 'attack')) wanted.push('ArrowUp')
+            foods[0] && foods[0].y < s.y - 5 && Math.abs(foods[0].x - s.cx) < 35)) wanted.push('ArrowUp')
           if (!s.alive) wanted.length = 0
           await input(wanted)
         }
