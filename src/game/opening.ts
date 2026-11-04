@@ -88,10 +88,10 @@ export function drawOpening(g:CanvasRenderingContext2D,t:number):void {
     // First clutch the acorn, notice Nuga behind, then spring away and accelerate.
     // Leave a clear chase gap while Scrat pauses and Nuga keeps approaching.
     const run=Math.max(0,t-flee),distance=56*(run-.16*(1-Math.exp(-run/.16))),x=166+distance
-    const frame=t<flee?(alarmed?1:0):walkFrame('squirrel.run',distance)
+    const frame=t<flee?(alarmed?1:0):walkFrame('suukuret.flee',distance)
     const jump=alarmed?Math.sin((t-notice)/(flee-notice)*Math.PI)*8:0
     const hop=t<flee?jump:frame===3||frame===7?3:frame===2||frame===6?1:0
-    shadow(x,5);drawArt(g,'squirrel.run',frame,x,floor-hop,alarmed)
+    shadow(x,5);drawArt(g,'suukuret.flee',frame,x,floor-hop,alarmed)
     if(alarmed){
       g.save();g.translate(x+2,floor-hop-26);g.strokeStyle='#67432e';g.lineWidth=2.1;g.lineCap='round'
       g.beginPath();g.moveTo(0,-5);g.lineTo(0,-1);g.moveTo(0,2);g.lineTo(0,2.1);g.stroke()

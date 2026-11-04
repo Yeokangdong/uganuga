@@ -1,3 +1,4 @@
+import { SuukuretPopulation } from './suukuret'
 import {updateStagePattern,drawStagePattern} from './patternRuntime'
 import { EnvironmentEvents } from './environmentEvents'
 import { Piranha } from './piranha'
@@ -10,10 +11,10 @@ import { Background } from './background'
 import { Boss } from './boss'
 import {
   ContactAnimal, Enemy, Spider, FireTrap, Fx, Item, Particle, Player, Popup, Projectile, SpikeTrap,
-  WEAPON_NAME, moveBody, type Weapon,
+  WEAPON_NAME, type Weapon,
 } from './entities'
 import { STAGES, makeCaveRoom, type EnemyCfg, type StageDef } from './stages'
-import { drawArt, frameAt, progressFrame, walkFrame, image, has, loadStageArt, drawPaintedText, art } from './art'
+import { drawArt, frameAt, progressFrame, image, has, loadStageArt, drawPaintedText, art } from './art'
 import { sfx, type Sfx } from './audio'
 import { terrainDrawAudit } from './paintedMap'
 import { JOURNEYS, JOURNEY_DURATION, drawJourney, drawPursuitExit } from './journey'
@@ -157,8 +158,7 @@ export class Game {
   private openingDuration=0
   private openingCue=false
   private openingScratCue=false
-  private scratSeen=false
-  private scrat:{x:number;y:number;w:number;h:number;vx:number;vy:number;onGround:boolean;hitWall:number;stepHeight:number;walkDistance:number;age:number;state:'pet'|'startled'|'run';stateT:number;lookLeft:boolean}|null=null
+  readonly suukurets=new SuukuretPopulation()
   private introElapsed = 0
   private journeyT:number|null=null
   private journeyPreview=false
@@ -216,7 +216,7 @@ export class Game {
     this.saved = null
     this.passage = null
     this.boss = null
-    this.scrat=null
+    this.suukurets.place(this.level)
     this.mode = 'play'
     this.food = 0
     this.foodFullAt = null
@@ -451,7 +451,7 @@ export class Game {
     updateStagePattern(this,realDt)
     this.environmentEvents.update(this,realDt,this.doors.map(d=>d.x))
     this.updateCamera(dt)
-    this.updateScrat(dt)
+    if(!this.saved)this.suukurets.update(this,dt)
     this.spawn()
     this.checkAmbush()
 
@@ -500,41 +500,6 @@ export class Game {
     }
   }
 
-  /** One optional encounter midway through stage one, independent of combat. */
-  private updateScrat(dt:number):void {
-    if(this.saved||this.mode!=='play')return
-    if(!this.scratSeen&&this.stageIdx===0){
-      const p=this.players.find(p=>p.alive&&p.onGround&&!p.climbing&&p.cx>=this.level.arenaX*.48)
-      if(p)for(let ahead=104;ahead<=152;ahead+=16){
-        const x=p.cx+ahead,floor=this.level.floorBelow(x,p.y+p.h-12)
-        if(floor<this.camY+20||floor>this.camY+VIEW_H-8||Math.abs(floor-(p.y+p.h))>TILE||this.level.waterAt(x,floor+1))continue
-        const c=Math.floor(x/TILE),r=Math.floor((floor-10)/TILE)
-        if(this.level.isSolidTile(this.level.tile(c,r)))continue
-        this.scratSeen=true
-        this.scrat={x:x-6,y:floor-14,w:12,h:14,vx:0,vy:0,onGround:true,hitWall:0,stepHeight:TILE,walkDistance:0,age:0,state:'pet',stateT:0,lookLeft:false}
-        break
-      }
-    }
-    const s=this.scrat;if(!s)return
-    s.age+=dt;s.stateT+=dt
-    if(s.state==='pet'){
-      const approaching=this.players.find(p=>p.alive&&Math.abs(p.cx-(s.x+s.w/2))<58&&Math.abs(p.y+p.h-s.y-s.h)<40)
-      if(s.stateT>=.9&&approaching){
-        s.state='startled';s.stateT=0;s.lookLeft=approaching.cx<s.x+s.w/2;this.sfx.scrat()
-      }
-      return
-    }
-    if(s.state==='startled'){
-      if(s.stateT<.28)return
-      s.state='run';s.stateT=0
-    }
-    s.vx=150*Math.min(1,s.stateT/.15)
-    const feet=s.y+s.h,next=s.x+s.w+12
-    if(s.onGround&&(s.hitWall||this.level.waterAt(next,feet+4)||this.level.floorBelow(next,feet-4)>feet+TILE))s.vy=-175
-    s.vy=Math.min(300,s.vy+500*dt)
-    moveBody(s,this.level,dt)
-    if(s.stateT>4.7||s.x>this.camX+VIEW_W+40||s.y>this.camY+VIEW_H+24)this.scrat=null
-  }
 
   // ?????????????????????????? ?�굴 �???????????????????????????
   /** ?�굴 ?�구 ?�에???????�굴 방으�?*/
@@ -988,7 +953,7 @@ export class Game {
   private previousLevel: Level | null = null
   private captureRenderState():void {
     this.previousPositions.clear()
-    for(const e of [...this.players,...this.enemies,...this.items,...this.projectiles,...this.particles,...(this.boss?[this.boss]:[]),...(this.scrat?[this.scrat]:[])])
+    for(const e of [...this.players,...this.enemies,...this.items,...this.projectiles,...this.particles,...(this.boss?[this.boss]:[])])
       this.previousPositions.set(e,[e.x,e.y,'walkDistance' in e ? e.walkDistance : undefined])
     this.previousCamera=this.camX;this.previousCameraY=this.camY;this.previousLevel=this.level
   }
@@ -1062,12 +1027,7 @@ export class Game {
     this.drawUpdrafts(ctx,cx,cy)
     this.drawDoors(ctx, cx, cy)
     if(!this.saved)drawPursuitExit(ctx,this.stage.id,this.level.arenaX,x=>this.level.floorBelow(x,0),cx,cy)
-    if(this.scrat&&!this.saved&&this.mode==='play'){
-      const s=this.scrat,key=s.state==='pet'?'squirrel.pet':s.state==='startled'?'squirrel.startled':'squirrel.run'
-      const frame=s.state==='pet'?frameAt(key,s.stateT):s.state==='startled'?progressFrame(key,s.stateT/.28):walkFrame(key,s.walkDistance)
-      const hop=s.state==='startled'?Math.sin(Math.min(1,s.stateT/.28)*Math.PI)*4:0
-      drawArt(ctx,key,frame,s.x+s.w/2-cx,s.y+s.h-cy-hop,s.state==='startled'&&s.lookLeft,{alpha:Math.min(1,s.age/.1,s.state==='run'?(4.7-s.stateT)/.35:1)})
-    }
+    if(!this.saved&&this.mode==='play')this.suukurets.draw(ctx,cx,cy)
 
     if(!this.saved) {
       const x=this.level.arenaX+(this.stage.final?16:VIEW_W-32),y=this.level.floorBelow(x,100)

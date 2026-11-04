@@ -90,7 +90,7 @@ async function loadAnimationPack(stage:number):Promise<void>{
   }
   const sprites=new Map<string,{folder:string;v:any}>(),images=new Map<string,string>()
   for(const {folder,pack}of await manifests){
-    for(const [key,v]of Object.entries(pack.sprites??{}))if(needed(key))sprites.set(key,{folder,v})
+    for(const [key,v]of Object.entries(pack.sprites??{}))if(needed(key)&&!key.startsWith('squirrel.'))sprites.set(key,{folder,v})
     for(const [key,src]of Object.entries(pack.images??{}))if(needed(key))images.set(key,folder+'/'+src)
   }
   await Promise.all([...sprites].map(async([key,{folder,v}])=>{
@@ -111,6 +111,10 @@ async function loadAnimationPack(stage:number):Promise<void>{
   for(const [to,from]of Object.entries({collapse:'dead',windup:'attack',swing:'attack',charge:'attack'}))alias('spider',to,from)
   const spiderFall=art.sprites['spider.dead']
   if(spiderFall)art.sprites['spider.recover']={...spiderFall,frames:[...spiderFall.frames].reverse(),durationsMs:spiderFall.durationsMs?[...spiderFall.durationsMs].reverse():undefined}
+  const ludo=await (await fetch(BASE+'ludo/manifest.json')).json()
+  await Promise.all(Object.entries(ludo.sheets).filter(([key,v]:[string,any])=>key.startsWith('suukuret_')&&v.image&&v.frames.length).map(async([key,v]:[string,any])=>{
+    art.sprites[key.replace('_','.') ]={img:await cachedImage('ludo/'+v.image),frames:v.frames.map((f:any)=>[f.frame.x,f.frame.y,f.frame.w,f.frame.h,f.footX/f.frame.w,f.footY/f.frame.h]),h:48,fps:12,ax:.5,ay:v.footBaseline/256,durationsMs:v.frames.map((f:any)=>f.durationMs)}
+  }))
   art.ready=true
 }
 
@@ -305,7 +309,7 @@ export function walkFrame(key: string, distance: number): number {
   // quadruped footfalls. A short cycle made the feet churn several times/sec.
   const stride = /^p[12]\./.test(key)
     ? key.endsWith('.climb') ? 48 : key.endsWith('.rescueRun') ? 50 : 32
-    : key.startsWith('squirrel.') ? 42
+    : key.startsWith('suukuret.') ? 42
     : key.startsWith('kingkong.') ? 56
     : key.startsWith('boss2.') ? 54 : /(^boss|_boss\.)/.test(key) ? 60
     : key.startsWith('spider.') ? 20 : 28
