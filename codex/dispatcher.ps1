@@ -1,4 +1,4 @@
-﻿# Uganuga Codex 작업 배차기 (v4: 팀장 체제 자동 수행 + 멈춘 작업 자동 정리)
+﻿# Uganuga Codex 작업 배차기 (v5: 팀장 체제 자동 수행 + 멈춘 작업 자동 정리 + 1시간마다 정리 담당 토큰 점검)
 # codex\queue\*.txt -> running -> done. 구현 작업이 끝나면 개발팀장 검수를 자동으로 넣고,
 # 검수에서 지적이 나오면 구현 수정 작업을 자동으로 넣는다 (최대 3회). 통과/한도 도달 시 codex\reports\AUTO_팀장체제.md 에 기록.
 $ErrorActionPreference = 'SilentlyContinue'
@@ -91,6 +91,31 @@ while ($true) {
     try { Move-Item -Force $rf.FullName $dest -ErrorAction Stop } catch { Copy-Item -Force $rf.FullName $dest; $stale[$rf.Name] = $true }
     $why = if ($finished) { '끝났는데 멈춤' } else { '90분 무응답' }
     Add-Content -Path "$cx\dispatcher-log.txt" -Value "$(Get-Date -Format 'HH:mm:ss') 정리($why): $($rf.BaseName)" -Encoding UTF8
+  }
+
+  # --- 1시간마다 정리 담당 토큰 점검 (대표 지시 11-04: 「1시간마다 정리시켜 토큰 아껴야돼」) ---
+  $tidyStamp = "$cx\last_tidy.txt"
+  if (-not (Test-Path $tidyStamp)) { Set-Content -Path $tidyStamp -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8 }
+  $lastTidy = (Get-Item $tidyStamp).LastWriteTime
+  if (-not $hold -and ((Get-Date) - $lastTidy).TotalMinutes -ge 60) {
+    $pending = @(Get-ChildItem $dirs.queue, $dirs.running -Filter '*_정리_자동토큰점검*.txt').Count
+    $newLogs = @(Get-ChildItem $dirs.logs -Filter *.log | Where-Object { $_.LastWriteTime -gt $lastTidy -and $_.Name -notlike '*_정리_자동토큰점검*' })
+    if ($pending -eq 0 -and $newLogs.Count -gt 0) {
+      $rows = foreach ($l in $newLogs) {
+        $tok = ''
+        try {
+          $fs = [IO.File]::Open($l.FullName, 'Open', 'Read', 'ReadWrite'); $sr = New-Object IO.StreamReader($fs); $all = $sr.ReadToEnd(); $sr.Close()
+          $tail = $all.Substring([Math]::Max(0, $all.Length - 2000))
+          if ($tail -match 'tokens used\s*[:\r\n]*\s*([\d,]+)') { $tok = $Matches[1] }
+        } catch {}
+        [pscustomobject]@{ n = $l.BaseName; t = $tok; kb = [int]($l.Length / 1KB) }
+      }
+      $table = ($rows | Sort-Object { if ($_.t) { [int]($_.t -replace ',', '') } else { 0 } } -Descending | ForEach-Object { "| $($_.n) | $($_.t) | $($_.kb)KB |" }) -join "`r`n"
+      $n = NextNum
+      $since = $lastTidy.ToString('MM-dd HH:mm')
+      NewJob "${n}_정리_자동토큰점검" "[정리] 1시간 자동 토큰 점검 ($n) — 게임 코드 수정 금지. $COMMON`r`n아래는 작업 관리자가 미리 뽑은 $since 이후 작업별 토큰 표다. 로그 전체를 다시 읽지 말 것.`r`n| 작업 | tokens used | 로그 크기 |`r`n|---|---|---|`r`n$table`r`n할 일: (1) 상위 3개만 해당 로그에서 원인을 검색으로 확인(필요 부분만). (2) codex\reports\정리_자동토큰.md 맨 아래에 '- 날짜 시간 | 상위3 | 원인 | 조치' 한 줄. (3) 새 원인이면 codex\RULES.md 에 절약 규칙 1줄 추가(기존 줄 유지, 같은 뜻 중복 금지, 전체 15줄 넘지 않게). (4) 특정 지시서 습관이 원인이면 docs\handoff\NEXT.md 맨 아래 '실장에게' 항목에 1줄.`r`n끝나면: git add codex\reports\정리_자동토큰.md codex\RULES.md docs\handoff\NEXT.md; git commit -m ""자동 토큰 점검""; git push origin main (다른 파일 add 금지). 빌드·배포 하지 말 것. 출력은 한 줄."
+    }
+    Set-Content -Path $tidyStamp -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8
   }
 
   # --- 배차 ---

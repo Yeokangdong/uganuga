@@ -4,9 +4,11 @@ import type { Game } from './game'
 import type { Level } from './level'
 
 export type EnvironmentPhase = 'IDLE' | 'TELEGRAPH' | 'ACTIVE' | 'RESOLVED' | 'CANCELLED'
-const LEAVES = 1.2, WARNING = 2.4, FALL = .8, LENGTH = 72
+const LEAVES = 1.2, WARNING = 2.4, FALL = .8, LENGTH = 72, WARNING_ANGLE = .18
 
 /** One encounter per stage visit. No wall-clock timers or persistent colliders. */
+const fallAngle = (elapsed: number): number => WARNING_ANGLE + Math.min(1, elapsed / FALL) * (Math.PI / 2 - WARNING_ANGLE)
+
 export class EnvironmentEvents {
   phase: EnvironmentPhase = 'IDLE'
   elapsed = 0
@@ -69,7 +71,7 @@ export class EnvironmentEvents {
         this.phase = 'ACTIVE'; this.elapsed = 0
       }
       if (this.phase === 'ACTIVE') {
-        const angle = Math.min(1, this.elapsed / FALL) * Math.PI / 2
+        const angle = fallAngle(this.elapsed)
         // Sample the same rotating trunk drawn below; each event can hurt once.
         for (let d = 8; d < LENGTH; d += 5) {
           if (!this.hit && overlap(p, {x:this.x - Math.sin(angle)*d-6,
@@ -86,9 +88,9 @@ export class EnvironmentEvents {
     if (!this.x || this.phase === 'CANCELLED' || this.phase === 'RESOLVED' && this.elapsed > 1.4) return
     const im = image('world.rootedTree')
     const t = this.elapsed
-    const angle = this.phase === 'ACTIVE' ? Math.min(1,t/FALL)*Math.PI/2
+    const angle = this.phase === 'ACTIVE' ? fallAngle(t)
       : this.phase === 'RESOLVED' ? Math.PI/2
-      : this.phase === 'TELEGRAPH' ? (t < LEAVES ? Math.sin(t*30)*.025 : (t-LEAVES)/(WARNING-LEAVES)*.18) : 0
+      : this.phase === 'TELEGRAPH' ? (t < LEAVES ? Math.sin(t*30)*.025 : (t-LEAVES)/(WARNING-LEAVES)*WARNING_ANGLE) : 0
     ctx.save(); ctx.translate(this.x-cx,this.floor-cy); ctx.rotate(-angle)
     if (this.phase === 'RESOLVED') ctx.globalAlpha = Math.max(0, 1-(t-.7)/.7)
     if (im) ctx.drawImage(im, im.width*.15, 0, im.width*.7, im.height, -18,-LENGTH,36,LENGTH)
