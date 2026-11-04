@@ -34,7 +34,7 @@
 - 비밀번호·API 키·토큰을 파일에 적지 않는다.
 
 ## 4. 실행·빌드·배포
-- 개발: `npm run dev -- --port 5298 --open false` (기본 5173). 확인은 headless Chrome.
+- 개발: `npm run dev -- --port 5298 --no-open` (기본 5173). 확인은 headless Chrome.
 - 빌드: `npm run build` (vue-tsc + vite). 완료 확인에 1회.
 - 페이지 배포(.bat 실행 금지, 명령 직접): `robocopy dist _pages /MIR /XD .git` → `_pages`에 `.nojekyll` 유지 → `cd _pages` → `git add -A` → `git commit -m "요약"` → `git push -f origin gh-pages`
 - 공개 주소: https://yeokangdong.github.io/uganuga/ (`?stage=1~15`로 판 바로 진입)

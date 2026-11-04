@@ -22,7 +22,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const output = path.resolve(root, option('--out', 'shots/playthrough'))
 await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, [path.join(path.dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'),
-  'run', 'dev', '--', '--host', '127.0.0.1', '--port', port, '--strictPort', '--open', 'false'],
+  'run', 'dev', '--', '--host', '127.0.0.1', '--port', port, '--strictPort', '--no-open'],
 { cwd: root, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
 let startup = '', serverError
 server.stdout.on('data', b => { startup = (startup + b).slice(-4000) })

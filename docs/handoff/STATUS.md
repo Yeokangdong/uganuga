@@ -72,3 +72,5 @@
 - 18:51 작업관리자 alive가18:47이후2분초과정지하여08배치를숨김재시작. alive18:50:52·323시작로그18:50:42 확인. 323실행중,7완료/8미완료 유지. 원격main푸시초기Internal Server Error는재시도로0ac4a4b푸시성공. 다음:323결과직접검수 (Codex 판단).
 
 - 18:55 대표 /false 자동열림신고: 검사기 --open false가문자열경로로해석·vite open:true 확인. 324수정지시(323done후겹치는파일수정),8번323미완료유지. 직접게임코드수정없음 (Codex 판단).
+
+- 18:58 대표 「니가 직접 고쳐」에 따라 팀장이 직접 /false열림수정: vite open:false·검사기 --no-open·AGENTS명령교정. 324대기팀원중단·지시서_old/cancelled보존,323변경보존. 직접 서버open=false(boolean)/HTTP200·빌드통과. 다음:323수위결과검수,완료시9번 (Codex 판단).

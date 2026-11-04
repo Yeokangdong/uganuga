@@ -6,7 +6,7 @@ export default defineConfig({
   base: './',
   server: {
     port: 5173,
-    open: true,
+    open: false,
     // Pixelorama writes source art atomically; Windows can lock these large files.
     watch: { ignored: ['**/art-src/**', '**/tools/**', '**/codex/**'] },
   },
