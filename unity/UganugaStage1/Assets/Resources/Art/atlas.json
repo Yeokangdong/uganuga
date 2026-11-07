@@ -1,0 +1,703 @@
+{
+  "version": 1,
+  "coordinateSystem": "Top-left pixels for frame rectangles and local foot pivot. Unity runtime converts to bottom-left. All Uga clips use fixed 80 source pixels/unit; never normalize each pose height.",
+  "clips": [
+    {
+      "key": "uga.idle",
+      "texture": "Art/uga",
+      "fps": 4.491017964071856,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 2,
+          "y": 2,
+          "w": 80,
+          "h": 128,
+          "footX": 35.55555555555556,
+          "footY": 128
+        },
+        {
+          "x": 86,
+          "y": 2,
+          "w": 82,
+          "h": 127,
+          "footX": 35.27111111111111,
+          "footY": 127
+        },
+        {
+          "x": 172,
+          "y": 2,
+          "w": 83,
+          "h": 128,
+          "footX": 34.702222222222225,
+          "footY": 128
+        },
+        {
+          "x": 259,
+          "y": 2,
+          "w": 82,
+          "h": 129,
+          "footX": 34.986666666666665,
+          "footY": 129
+        },
+        {
+          "x": 345,
+          "y": 2,
+          "w": 81,
+          "h": 129,
+          "footX": 34.41777777777778,
+          "footY": 128
+        },
+        {
+          "x": 430,
+          "y": 2,
+          "w": 82,
+          "h": 128,
+          "footX": 34.986666666666665,
+          "footY": 128
+        }
+      ]
+    },
+    {
+      "key": "uga.walk",
+      "texture": "Art/uga",
+      "fps": 7.8431372549019605,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 516,
+          "y": 2,
+          "w": 91,
+          "h": 129,
+          "footX": 42.72430951512388,
+          "footY": 129
+        },
+        {
+          "x": 611,
+          "y": 2,
+          "w": 87,
+          "h": 129,
+          "footX": 38.70319803134751,
+          "footY": 129
+        },
+        {
+          "x": 702,
+          "y": 2,
+          "w": 81,
+          "h": 131,
+          "footX": 34.011901300275085,
+          "footY": 131
+        },
+        {
+          "x": 787,
+          "y": 2,
+          "w": 91,
+          "h": 130,
+          "footX": 41.21639270870774,
+          "footY": 130
+        },
+        {
+          "x": 882,
+          "y": 2,
+          "w": 92,
+          "h": 132,
+          "footX": 43.72958738606796,
+          "footY": 132
+        },
+        {
+          "x": 978,
+          "y": 2,
+          "w": 87,
+          "h": 133,
+          "footX": 38.36810540769948,
+          "footY": 133
+        },
+        {
+          "x": 1069,
+          "y": 2,
+          "w": 82,
+          "h": 132,
+          "footX": 35.017179171219176,
+          "footY": 132
+        },
+        {
+          "x": 1155,
+          "y": 2,
+          "w": 93,
+          "h": 132,
+          "footX": 43.39449476241993,
+          "footY": 132
+        }
+      ]
+    },
+    {
+      "key": "uga.jump",
+      "texture": "Art/uga",
+      "fps": 8.928571428571429,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 1012,
+          "y": 139,
+          "w": 104,
+          "h": 100,
+          "footX": 67.41333333333333,
+          "footY": 100
+        },
+        {
+          "x": 1120,
+          "y": 139,
+          "w": 98,
+          "h": 118,
+          "footX": 48.92444444444445,
+          "footY": 118
+        },
+        {
+          "x": 1222,
+          "y": 139,
+          "w": 98,
+          "h": 119,
+          "footX": 50.91555555555556,
+          "footY": 119
+        }
+      ]
+    },
+    {
+      "key": "uga.attack",
+      "texture": "Art/uga",
+      "fps": 17.857142857142858,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 1725,
+          "y": 139,
+          "w": 106,
+          "h": 113,
+          "footX": 71.39555555555556,
+          "footY": 113
+        },
+        {
+          "x": 1835,
+          "y": 139,
+          "w": 96,
+          "h": 135,
+          "footX": 56.888888888888886,
+          "footY": 135
+        },
+        {
+          "x": 1935,
+          "y": 139,
+          "w": 100,
+          "h": 121,
+          "footX": 71.96444444444444,
+          "footY": 121
+        },
+        {
+          "x": 2,
+          "y": 278,
+          "w": 150,
+          "h": 113,
+          "footX": 56.03555555555556,
+          "footY": 113
+        },
+        {
+          "x": 156,
+          "y": 278,
+          "w": 133,
+          "h": 113,
+          "footX": 52.33777777777778,
+          "footY": 113
+        },
+        {
+          "x": 293,
+          "y": 278,
+          "w": 110,
+          "h": 110,
+          "footX": 53.19111111111111,
+          "footY": 110
+        }
+      ]
+    },
+    {
+      "key": "uga.climb",
+      "texture": "Art/uga",
+      "fps": 4.838709677419355,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 406,
+          "y": 426,
+          "w": 54,
+          "h": 132,
+          "footX": 26.493023255813952,
+          "footY": 132
+        },
+        {
+          "x": 464,
+          "y": 426,
+          "w": 55,
+          "h": 132,
+          "footX": 27.088372093023256,
+          "footY": 132
+        },
+        {
+          "x": 523,
+          "y": 426,
+          "w": 54,
+          "h": 130,
+          "footX": 27.08837209302326,
+          "footY": 130
+        },
+        {
+          "x": 581,
+          "y": 426,
+          "w": 58,
+          "h": 135,
+          "footX": 28.57674418604651,
+          "footY": 135
+        },
+        {
+          "x": 643,
+          "y": 426,
+          "w": 53,
+          "h": 131,
+          "footX": 26.195348837209302,
+          "footY": 131
+        },
+        {
+          "x": 700,
+          "y": 426,
+          "w": 51,
+          "h": 133,
+          "footX": 25.89767441860465,
+          "footY": 133
+        }
+      ]
+    },
+    {
+      "key": "uga.hurt",
+      "texture": "Art/uga",
+      "fps": 17.857142857142858,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 1219,
+          "y": 426,
+          "w": 135,
+          "h": 132,
+          "footX": 60.13023255813953,
+          "footY": 132
+        },
+        {
+          "x": 1358,
+          "y": 426,
+          "w": 136,
+          "h": 132,
+          "footX": 53.283720930232555,
+          "footY": 132
+        },
+        {
+          "x": 1498,
+          "y": 426,
+          "w": 121,
+          "h": 105,
+          "footX": 64.89302325581396,
+          "footY": 105
+        }
+      ]
+    },
+    {
+      "key": "uga.win",
+      "texture": "Art/uga",
+      "fps": 3.0120481927710845,
+      "ppu": 80,
+      "frames": [
+        {
+          "x": 2,
+          "y": 565,
+          "w": 118,
+          "h": 145,
+          "footX": 53.283720930232555,
+          "footY": 145
+        },
+        {
+          "x": 124,
+          "y": 565,
+          "w": 117,
+          "h": 139,
+          "footX": 57.15348837209302,
+          "footY": 139
+        }
+      ]
+    },
+    {
+      "key": "background1",
+      "texture": "Art/background1",
+      "fps": 1,
+      "ppu": 85.33333333333333,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1536,
+          "h": 1024,
+          "footX": 768.0,
+          "footY": 512.0
+        }
+      ]
+    },
+    {
+      "key": "background2",
+      "texture": "Art/background2",
+      "fps": 1,
+      "ppu": 85.33333333333333,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1536,
+          "h": 1024,
+          "footX": 768.0,
+          "footY": 512.0
+        }
+      ]
+    },
+    {
+      "key": "background3",
+      "texture": "Art/background3",
+      "fps": 1,
+      "ppu": 85.33333333333333,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1536,
+          "h": 1024,
+          "footX": 768.0,
+          "footY": 512.0
+        }
+      ]
+    },
+    {
+      "key": "ground1",
+      "texture": "Art/ground1",
+      "fps": 1,
+      "ppu": 128,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1254,
+          "h": 1254,
+          "footX": 627.0,
+          "footY": 0
+        }
+      ]
+    },
+    {
+      "key": "ground2",
+      "texture": "Art/ground2",
+      "fps": 1,
+      "ppu": 128,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1254,
+          "h": 1254,
+          "footX": 627.0,
+          "footY": 0
+        }
+      ]
+    },
+    {
+      "key": "branch",
+      "texture": "Art/branch",
+      "fps": 1,
+      "ppu": 64,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 512,
+          "h": 196,
+          "footX": 256,
+          "footY": 41
+        }
+      ]
+    },
+    {
+      "key": "tree1",
+      "texture": "Art/tree1",
+      "fps": 1,
+      "ppu": 100,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1024,
+          "h": 1536,
+          "footX": 512,
+          "footY": 1493
+        }
+      ]
+    },
+    {
+      "key": "tree2",
+      "texture": "Art/tree2",
+      "fps": 1,
+      "ppu": 50,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 512,
+          "h": 587,
+          "footX": 256,
+          "footY": 585
+        }
+      ]
+    },
+    {
+      "key": "vine",
+      "texture": "Art/vine",
+      "fps": 1,
+      "ppu": 128,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 93,
+          "h": 1400,
+          "footX": 46.5,
+          "footY": 700.0
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "texture": "Art/fruit",
+      "fps": 1,
+      "ppu": 495.83333333333337,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 192,
+          "h": 239,
+          "footX": 96.0,
+          "footY": 239
+        }
+      ]
+    },
+    {
+      "key": "meat",
+      "texture": "Art/meat",
+      "fps": 1,
+      "ppu": 374.5454545454545,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 324,
+          "h": 207,
+          "footX": 162.0,
+          "footY": 207
+        }
+      ]
+    },
+    {
+      "key": "goal",
+      "texture": "Art/goal",
+      "fps": 1,
+      "ppu": 124.4,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 241,
+          "h": 311,
+          "footX": 120.5,
+          "footY": 311
+        }
+      ]
+    },
+    {
+      "key": "snake.idle",
+      "texture": "Art/snake",
+      "fps": 1,
+      "ppu": 384,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1037,
+          "h": 172,
+          "footX": 518.5,
+          "footY": 170
+        }
+      ]
+    },
+    {
+      "key": "monkey.idle",
+      "texture": "Art/monkey",
+      "fps": 6,
+      "ppu": 100,
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        },
+        {
+          "x": 256,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        }
+      ]
+    },
+    {
+      "key": "monkey.windup",
+      "texture": "Art/monkey",
+      "fps": 6,
+      "ppu": 100,
+      "frames": [
+        {
+          "x": 512,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        },
+        {
+          "x": 768,
+          "y": 0,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        }
+      ]
+    },
+    {
+      "key": "monkey.throw",
+      "texture": "Art/monkey",
+      "fps": 6,
+      "ppu": 100,
+      "frames": [
+        {
+          "x": 0,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        },
+        {
+          "x": 256,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        }
+      ]
+    },
+    {
+      "key": "monkey.return",
+      "texture": "Art/monkey",
+      "fps": 6,
+      "ppu": 100,
+      "frames": [
+        {
+          "x": 512,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        },
+        {
+          "x": 768,
+          "y": 256,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 46
+        }
+      ]
+    },
+    {
+      "key": "coconut",
+      "texture": "Art/monkey",
+      "fps": 6,
+      "ppu": 400,
+      "frames": [
+        {
+          "x": 0,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 128
+        },
+        {
+          "x": 256,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 128
+        },
+        {
+          "x": 512,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 128
+        },
+        {
+          "x": 768,
+          "y": 512,
+          "w": 256,
+          "h": 256,
+          "footX": 128,
+          "footY": 128
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "uga": "painted-v6/p1-d040fabca00a.webp",
+    "background1": "jungle-close-v1/background-01-v1.png",
+    "background2": "jungle-close-v1/background-02-v1.png",
+    "background3": "jungle-close-v1/background-03-v1.png",
+    "ground1": "jungle-close-v1/ground-01-v1.png",
+    "ground2": "jungle-close-v1/ground-02-v1.png",
+    "branch": "terrain-v10/01-jungle-platform.webp",
+    "tree1": "painted-v6/jungle-rooted-tree.webp",
+    "tree2": "terrain-v10/01-jungle-support.webp",
+    "vine": "traversal-v2/vine.webp",
+    "fruit": "painted-v6/item-fruit-4e87d4654d59.webp",
+    "meat": "painted-v6/item-meat-6327d4950a1f.webp",
+    "goal": "painted-v6/v2-flag-46e4aa08be8d.webp",
+    "snake": "jungle-snake-v1/snake.png",
+    "monkey": "patterns-v1/stage01/sheet.webp"
+  },
+  "notes": [
+    "Branch origin is actual broad grass walking plane at source y=41, not transparent image top.",
+    "Monkey origin is tail suspension point (128,46); attach branch above at transform origin.",
+    "Snake source flipped right to match actors; facingRight is default.",
+    "Trees use actual roots as pivot and require ground support; do not float roots over pits.",
+    "Vine retains authored proportions; repeating segments or SpriteRenderer tiled mode is preferable to arbitrary width stretch.",
+    "All images reused from existing project; no newly generated art."
+  ]
+}
